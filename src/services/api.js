@@ -77,3 +77,18 @@ export async function fakeRegister(params) {
 export async function queryNotices() {
   return request('/api/notices');
 }
+
+
+export async function queryPatients(params) {
+  return request(`/patient/allPatientList.do?${stringify(params)}`);
+}
+
+export async function addPatient(params) {
+  return request('/patient/addPatient.do', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+

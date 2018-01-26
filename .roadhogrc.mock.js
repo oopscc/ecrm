@@ -7,6 +7,8 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
+import { getPatients } from './mock/patient';
+
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -130,6 +132,13 @@ const proxy = {
       "error": "Unauthorized",
       "message": "Unauthorized",
       "path": "/base/category/list"
+    });
+  },
+  'GET /patient/allPatientList.do': getPatients,
+  'POST /patient/addPatient.do': (req, res) => {
+    res.send({ 
+      result: 0,
+      message: 'Ok' 
     });
   },
 };

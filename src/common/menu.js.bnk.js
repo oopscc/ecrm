@@ -31,15 +31,31 @@ const menuData = [{
     path: 'advanced-form',
   }],
 }, {
-  name: '患者管理',
-  icon: 'user',
-  path: 'patient',
+  name: '列表页',
+  icon: 'table',
+  path: 'list',
   children: [{
-    name: '全部患者列表',
-    path: 'list',
+    name: '查询表格',
+    path: 'table-list',
   }, {
-    name: '新增患者',
-    path: 'add',
+    name: '标准列表',
+    path: 'basic-list',
+  }, {
+    name: '卡片列表',
+    path: 'card-list',
+  }, {
+    name: '搜索列表',
+    path: 'search',
+    children: [{
+      name: '搜索列表（文章）',
+      path: 'articles',
+    }, {
+      name: '搜索列表（项目）',
+      path: 'projects',
+    }, {
+      name: '搜索列表（应用）',
+      path: 'applications',
+    }],
   }],
 }, {
   name: '详情页',
@@ -97,7 +113,14 @@ const menuData = [{
     name: '注册结果',
     path: 'register-result',
   }],
-}];
+}
+// , {
+//   name: '使用文档',
+//   icon: 'book',
+//   path: 'http://pro.ant.design/docs/getting-started',
+//   target: '_blank',
+// }
+];
 
 function formatter(data, parentPath = '', parentAuthority) {
   return data.map((item) => {

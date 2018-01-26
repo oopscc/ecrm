@@ -1,7 +1,7 @@
-import { queryRule, removeRule, addRule } from '../services/api';
+import { queryPatients, addPatient } from '../services/api';
 
 export default {
-  namespace: 'rule',
+  namespace: 'patient',
 
   state: {
     data: {
@@ -12,28 +12,20 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryRule, payload);
+      const response = yield call(queryPatients, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
+      const response = yield call(addPatient, payload);
       yield put({
         type: 'save',
         payload: response,
       });
       if (callback) callback();
-    },
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
+    }
   },
 
   reducers: {
@@ -45,3 +37,4 @@ export default {
     },
   },
 };
+
