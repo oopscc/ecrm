@@ -109,8 +109,8 @@ export const getRouterData = (app) => {
     '/patient/list': {
       component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/List')),
     },
-    '/patient/add': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/Add')),
+    '/patient/info': {
+      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/Info')),
     },
     '/list/card-list': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),

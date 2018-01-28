@@ -80,11 +80,34 @@ export async function queryNotices() {
 
 
 export async function queryPatients(params) {
-  return request(`/patient/allPatientList.do?${stringify(params)}`);
+  return request('/patient/allPatientList.do', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
 }
 
 export async function addPatient(params) {
   return request('/patient/addPatient.do', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
+export async function editPatient(params) {
+  return request('/patient/editPatient.do', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
+export async function getPatient(params) {
+  return request('/patient/patientInfo.do', {
     method: 'POST',
     body: {
       ...params

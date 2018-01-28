@@ -38,8 +38,8 @@ const menuData = [{
     name: '全部患者列表',
     path: 'list',
   }, {
-    name: '新增患者',
-    path: 'add',
+    name: '患者信息',
+    path: 'info',
   }],
 }, {
   name: '详情页',

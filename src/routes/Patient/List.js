@@ -1,9 +1,12 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider } from 'antd';
+const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import DropOption from '../../components/DropOption';
 
 import styles from './List.less';
 
@@ -29,7 +32,8 @@ const columns = [
     title: '性别',
     dataIndex: 'sex',
     key: 'sex',
-    width: 80
+    width: 80,
+    render: val => val ? <span>女</span> : <span>男</span>
   },{
     title: '联系电话',
     dataIndex: 'mobile',
@@ -42,9 +46,10 @@ const columns = [
     width: 120
   },{
     title: '确诊时间',
-    dataIndex: 'diagnoseTimeStr',
-    key: 'diagnoseTimeStr',
-    width: 150
+    dataIndex: 'diagnoseTime',
+    key: 'diagnoseTime',
+    width: 150,
+    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '原发性诊断名称',
     dataIndex: 'diagnoseName',
@@ -69,15 +74,41 @@ const columns = [
     title: '随访时间',
     dataIndex: 'callTime',
     key: 'callTime',
-    width: 150
+    width: 150,
+    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '随访结果',
     dataIndex: 'callResult',
     key: 'callResult',
     width: 100,
     fixed: 'right'
+  },{
+    title: '操作',
+    key: 'operation',
+    width: 100,
+    fixed: 'right',
+    render: (text, record) => {
+      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
+        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
+    }
   }]
-
+const handleOptionClick = (record, e) => {
+    // const { dispatch } = this.props;
+    if (e.key === '1') {
+      window.location.hash = `/patient/info?patientCode=${record.patientCode}`;
+      // console.log(record);
+      // dispatch(routerRedux.push({
+      //   pathname: '/patient/add',
+      //   query: {
+      //     page: 2,
+      //   },
+      // }))
+    } else if (e.key === '2') {
+      alert('住院信息');
+    }else if (e.key === '3') {
+      alert('问卷');
+    }
+  }
 const CreateForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
@@ -125,6 +156,10 @@ export default class TableList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'patient/fetch',
+      payload: {
+        currentPage: 1,
+        pageSize: 10
+      }
     });
   }
 
@@ -205,15 +240,15 @@ export default class TableList extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
-
-    const { dispatch, form } = this.props;
-
+    const { dispatch, form,  patient} = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
       const values = {
         ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
+        pageSize: patient.data.pagination.pageSize,
+        currentPage: patient.data.pagination.current,
+        beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
+        endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD'): '',
       };
 
       this.setState({
@@ -260,9 +295,9 @@ export default class TableList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="确证时间">
-              {getFieldDecorator('diagnoseTimeStr')(
-                <DatePicker />
+            <FormItem label="确诊时间">
+              {getFieldDecorator('diagnoseTime')(
+                <RangePicker />
               )}
             </FormItem>
           </Col>
