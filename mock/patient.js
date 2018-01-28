@@ -74,12 +74,12 @@ export function getPatients(req, res, u) {
   }
 
   const result = {
-    list: dataSource,
-    pagination: {
+    data: {
+      rows: dataSource,
       total: dataSource.length,
       pageSize,
-      current: parseInt(params.currentPage, 10) || 1,
-    },
+      currentPage: parseInt(params.currentPage, 10) || 1,
+    }
   };
 
   if (res && res.json) {

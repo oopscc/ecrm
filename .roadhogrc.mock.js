@@ -135,7 +135,7 @@ const proxy = {
       "path": "/base/category/list"
     });
   },
-  // 'POST /patient/allPatientList.do': getPatients,
+  'POST /patient/allPatientList.do': getPatients,
   // 'POST /patient/addPatient.do': (req, res) => {
   //   res.send({ 
   //     result: 0,
