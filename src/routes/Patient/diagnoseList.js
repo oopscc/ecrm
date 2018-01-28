@@ -2,11 +2,13 @@ import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
-import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider } from 'antd';
+import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider, Alert } from 'antd';
 const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import { Link } from 'react-router-dom';
+import qs from 'query-string'
 
 import styles from './List.less';
 
@@ -15,6 +17,7 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
+
 const columns = [
   {
     title: '病案号',
@@ -29,68 +32,62 @@ const columns = [
     width: 100,
     fixed: 'left'
   },{
-    title: '性别',
-    dataIndex: 'sex',
-    key: 'sex',
+    title: '诊断时间',
+    dataIndex: 'diagnoseTime',
+    key: 'diagnoseTime',
     width: 80,
     render: val => val ? <span>女</span> : <span>男</span>
   },{
-    title: '联系电话',
-    dataIndex: 'mobile',
-    key: 'mobile',
+    title: '诊断科别',
+    dataIndex: 'diagnoseDept',
+    key: 'diagnoseDept',
     width: 120
   },{
-    title: '病种',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
+    title: '患者第几次住院',
+    dataIndex: 'admissionNumber',
+    key: 'admissionNumber',
     width: 120
   },{
-    title: '确诊时间',
-    dataIndex: 'diagnoseTime',
-    key: 'diagnoseTime',
+    title: '入院时间',
+    dataIndex: 'admissionTime',
+    key: 'admissionTime',
     width: 150,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
-    title: '原发性诊断名称',
+    title: '入院科别',
+    dataIndex: 'admissionDept',
+    key: 'admissionDept',
+    width: 150
+  },{
+    title: '主要诊断',
     dataIndex: 'diagnoseName',
     key: 'diagnoseName',
     width: 150
-  },{
-    title: '原发性病理诊断名称',
-    dataIndex: 'pathologyName',
-    key: 'pathologyName',
-    width: 150
-  },{
-    title: '治疗方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 100
   },{
     title: '主治医师',
     dataIndex: 'treatmentDoctor',
     key: 'treatmentDoctor',
     width: 120
   },{
-    title: '随访时间',
-    dataIndex: 'callTime',
-    key: 'callTime',
+    title: '主治时间',
+    dataIndex: 'outTime',
+    key: 'outTime',
     width: 150,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
-    title: '随访结果',
-    dataIndex: 'callResult',
-    key: 'callResult',
+    title: '出院科别',
+    dataIndex: 'outDept',
+    key: 'outDept',
     width: 100,
-    fixed: 'right'
   },{
     title: '操作',
     key: 'operation',
     width: 100,
     fixed: 'right',
-    render: (text, record) => {
-      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
-    }
+    render: (text, record) => <Link to={`/patient/info?patientCode=${record.patientCode}`}>{'查看'}</Link>
+
+      // <DropOption onMenuClick={e => handleOptionClick(record, e)} 
+        // menuOptions={[{ key: '1', name: '查看' }]} />
   }]
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
@@ -103,10 +100,6 @@ const handleOptionClick = (record, e) => {
       //     page: 2,
       //   },
       // }))
-    } else if (e.key === '2') {
-      window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    }else if (e.key === '3') {
-      alert('问卷');
     }
   }
 const CreateForm = Form.create()((props) => {
@@ -153,12 +146,18 @@ export default class TableList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, location } = this.props;
+    let {patientCode, name} = qs.parse(location.search);
+    if (!patientCode) {
+      return
+    }
     dispatch({
-      type: 'patient/fetch',
+      type: 'patient/fetchDiagnose',
       payload: {
         currentPage: 1,
-        pageSize: 10
+        pageSize: 10,
+        patientCode,
+        name
       }
     });
   }
@@ -408,37 +407,16 @@ export default class TableList extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="查询表格">
+      <PageHeaderLayout title="住院信息管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>
-              {this.renderForm()}
-            </div>
-            <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" href="/#/patient/add">
-                新建
-              </Button>
-              {
-                selectedRows.length > 0 && (
-                  <span>
-                    <Button>批量操作</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多操作 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
-                  </span>
-                )
-              }
-            </div>
+            <Alert message={`患者病案号：patient.patientCode 患者姓名：patient.name`} type="info" />
             <StandardTable
-              selectedRows={selectedRows}
               loading={loading}
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1650 }}
-              onSelectRow={this.handleSelectRows}
+              scroll={{ x: 1450 }}
               onChange={this.handleStandardTableChange}
             />
           </div>

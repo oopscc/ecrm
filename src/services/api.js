@@ -115,3 +115,11 @@ export async function getPatient(params) {
   });
 }
 
+export async function queryDiagnoses(params) {
+  return request('/patient/diagnosePageQuery.do', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}

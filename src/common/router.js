@@ -112,6 +112,12 @@ export const getRouterData = (app) => {
     '/patient/info': {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/Info')),
     },
+    '/patient/diagnoseList': {
+      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/diagnoseList')),
+    },
+    '/patient/diagnoseInfo': {
+      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/diagnoseInfo')),
+    },
     '/list/card-list': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),
     },

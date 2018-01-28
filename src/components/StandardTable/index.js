@@ -26,7 +26,7 @@ class StandardTable extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // clean state
-    if (nextProps.selectedRows.length === 0) {
+    if (nextProps.selectedRows && nextProps.selectedRows.length === 0) {
       const needTotalList = initTotalList(nextProps.columns);
       this.setState({
         selectedRowKeys: [],
@@ -82,6 +82,7 @@ class StandardTable extends PureComponent {
     return (
       <div className={styles.standardTable}>
         <div className={styles.tableAlert}>
+          {this.props.onSelectRow ?
           <Alert
             message={(
               <div>
@@ -102,11 +103,13 @@ class StandardTable extends PureComponent {
             type="info"
             showIcon
           />
+          : ''
+          }
         </div>
         <Table
           loading={loading}
           rowKey={record => record.key}
-          rowSelection={rowSelection}
+          rowSelection={this.props.onSelectRow ? rowSelection : {}}
           dataSource={list}
           columns={columns}
           pagination={paginationProps}

@@ -40,6 +40,12 @@ const menuData = [{
   }, {
     name: '患者信息',
     path: 'info',
+  }, {
+    name: '住院信息列表',
+    path: 'diagnoseList',
+  }, {
+    name: '住院信息',
+    path: 'diagnoseInfo',
   }],
 }, {
   name: '详情页',
