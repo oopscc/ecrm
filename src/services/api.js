@@ -1,6 +1,13 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
+const req = (url, prrams) => request('url', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }
@@ -123,3 +130,31 @@ export async function queryDiagnoses(params) {
     },
   });
 }
+
+export async function addDiagnose(params) {
+  return request('/patient/addDiagnoseInfo.do', {
+    method: 'POST',
+    body: {
+      ...params
+    },
+  });
+}
+
+export async function getDiagnose(params) {
+  return req('/patient/getDiagnoseInfo.do', params);
+}
+
+export async function editDiagnose(params) {
+  return req('/patient/editDiagnoseInfo.do', params);
+}
+
+// TODO 获得电话随访的各种信息
+export async function getCallData(params) {
+  return req('/patient/getPhonePageData.do', params);
+}
+
+
+
+
+
+
