@@ -1,23 +1,19 @@
 import {
-  queryPatients,
-  addPatient,
-  getPatient,
-  editPatient,
-  queryDiagnoses,
-  addDiagnose,
-  getDiagnose,
-  editDiagnose
-} from '../services/api';
+  queryWJs,
+  getQuestionnaire,
+  getWJTplList,
+} from '../services/questionnaire';
+
 
 export default {
-  namespace: 'patient',
+  namespace: 'sms',
 
   state: {
     data: {
       list: [],
       pagination: {}
     },
-    diagnosesData: {
+    tplList: {
       list: [],
       pagination: {}
     }
@@ -25,44 +21,24 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryPatients, payload);
+      const response = yield call(queryWJs, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addPatient, payload);
-      if (callback) callback();
-    },
-    *edit({ payload, callback }, { call, put }) {
-      const response = yield call(editPatient, payload);
-      if (callback) callback();
-    },
     *get({ payload, callback }, { call, put }) {
-      const response = yield call(getPatient, payload);
-      if (callback) callback(response);
+      const response = yield call(getQuestionnaire, payload);
+      if (callback) callback();
     },
-    *fetchDiagnose({ payload }, { call, put }) {
-      const response = yield call(queryDiagnoses, payload);
+    
+    *fetchTpls({ payload }, { call, put }) {
+      const response = yield call(getWJTplList, payload);
       yield put({
-        type: 'saveDiagnoses',
+        type: 'saveTpls',
         payload: response,
       });
     },
-    *addDiagnose({ payload, callback }, { call, put }) {
-      const response = yield call(addDiagnose, payload);
-      if (callback) callback();
-    },
-    *editDiagnose({ payload, callback }, { call, put }) {
-      const response = yield call(editDiagnose, payload);
-      if (callback) callback();
-    },
-    *getDiagnose({ payload, callback }, { call, put }) {
-      const response = yield call(getDiagnose, payload);
-      if (callback) callback(response);
-    },
-
   },
 
   reducers: {
@@ -79,10 +55,10 @@ export default {
         },
       };
     },
-    saveDiagnose(state, action) {
+    saveTpls(state, action) {
       return {
         ...state,
-        diagnosesData: {
+        tplList: {
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,

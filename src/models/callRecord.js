@@ -12,7 +12,7 @@ import {
 } from '../services/callRecord';
 
 export default {
-  namespace: 'patient',
+  namespace: 'callRecord',
 
   state: {
     data: {
