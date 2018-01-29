@@ -12,6 +12,7 @@ export async function queryCallRecords(params) {
   return req('/callRecord/patientCallRecord.do', params);
 }
 
+
 export async function addCallRecord(params) {
   return req('/callRecord/addCallRecord.do', params);
 }

@@ -46,6 +46,12 @@ const menuData = [{
   }, {
     name: '住院信息',
     path: 'diagnoseInfo',
+  }, {
+    name: '待随访患者',
+    path: 'todo',
+  }, {
+    name: '已随访患者',
+    path: 'todo',
   }],
 }, {
   name: '详情页',
@@ -102,6 +108,83 @@ const menuData = [{
   }, {
     name: '注册结果',
     path: 'register-result',
+  }],
+},{
+  name: '随访任务管理',
+  icon: 'user',
+  path: 'task',
+  children: [{
+    name: '随访任务列表',
+    path: 'todo',
+  }, {
+    name: '分配随访任务(分步式)',
+    // 条件查询患者列表 －> 设置条件，新建任务
+    path: 'todo',
+  }, {
+    name: '随访任务详情',
+    path: 'todo',
+  }, {
+    name: '短信随访页面',
+    path: 'todo',
+  }, {
+    name: '电话随访页面',
+    path: 'todo',
+  }],
+},, {
+  name: '随访结果统计',
+  icon: 'user',
+  path: 'patient',
+  children: [{
+    name: '饼图',
+    path: 'todo',
+  }, {
+    name: '折线图',
+    path: 'todo',
+  }],
+},, {
+  name: '系统管理',
+  icon: 'user',
+  path: 'systom',
+  children: [{
+    name: '随访人员管理',
+    path: 'list',
+    children: [{
+      name: '人员列表－分配权限',
+      path: 'todo',
+    },{
+      name: '新增人员',
+      path: 'todo',
+    }]
+  }, {
+    name: '模版管理',
+    path: 'info',
+    children: [{
+      name: '短信模版',
+      path: 'todo',
+    },{
+      name: '问卷模版',
+      path: 'todo',
+    }]
+  }, {
+    name: '病种管理',
+    path: 'diagnoseList',
+    children: [{
+      name: '列表',
+      path: 'todo',
+    },{
+      name: '新增',
+      path: 'todo',
+    }]
+  }, {
+    name: '科室管理',
+    path: 'diagnoseInfo',
+    children: [{
+      name: '列表',
+      path: 'todo',
+    },{
+      name: '新增',
+      path: 'todo',
+    }]
   }],
 }];
 

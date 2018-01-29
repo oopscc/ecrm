@@ -131,6 +131,64 @@ export async function queryDiagnoses(params) {
   });
 }
 
+/*
+data
+  name
+  patientCode
+  currentPage
+  pageSize
+  total
+  rows
+      id
+      String
+      ●
+      诊断信息id
+      patientCode
+      String
+      ●
+      病案号
+      name
+      String
+      ●
+      病人姓名
+      diagnoseTimeStr
+      String
+      ●
+      诊断时间 yyyy-MM-dd
+      diagnoseDept
+      String
+      ●
+      诊断科别
+      admissionNumber
+      Int
+      ●
+      患者住院次数
+      admissionTimeStr
+      String
+      ●
+      患者入院时间 yyyy-MM-dd
+      admissionDept
+      String
+      ●
+      入院科别
+      diagnoseName
+      String
+
+      主要诊断
+      treatmentDoctor
+      String
+      ●
+      主治医师
+      outTimeStr
+      String
+      ●
+      患者出院时间 yyyy-MM-dd
+      outDept
+      String
+      ●
+      出院科别
+*/ 
+
 export async function addDiagnose(params) {
   return request('/patient/addDiagnoseInfo.do', {
     method: 'POST',
@@ -139,6 +197,8 @@ export async function addDiagnose(params) {
     },
   });
 }
+
+
 
 export async function getDiagnose(params) {
   return req('/patient/getDiagnoseInfo.do', params);
