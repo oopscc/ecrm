@@ -106,18 +106,6 @@ export const getRouterData = (app) => {
     '/list/table-list': {
       component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
     },
-    '/patient/list': {
-      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/List')),
-    },
-    '/patient/info': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/Info')),
-    },
-    '/patient/diagnoseList': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/diagnoseList')),
-    },
-    '/patient/diagnoseInfo': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Patient/diagnoseInfo')),
-    },
     '/list/card-list': {
       component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),
     },
@@ -172,6 +160,78 @@ export const getRouterData = (app) => {
     // '/user/:id': {
     //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
     // },
+    '/patient/list': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/List')),
+    },
+    '/patient/info': {
+      component: dynamicWrapper(app, [], () => import('../routes/Patient/Info')),
+    },
+    '/patient/diagnoseList': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/diagnoseList')),
+    },
+    '/patient/diagnoseInfo': {
+      component: dynamicWrapper(app, [], () => import('../routes/Patient/diagnoseInfo')),
+    },
+
+    '/patient/flupList': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/flupList')),
+    },
+    '/patient/flupInfo': {
+      component: dynamicWrapper(app, [], () => import('../routes/Patient/flupInfo')),
+    },
+    '/patient/willFlup': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/willFlup')),
+    },
+    '/patient/fluped': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/fluped')),
+    },
+    '/task/list': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/list')),
+    },
+    '/task/creat': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/creat')),
+    },
+    '/task/detail': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/detail')),
+    },
+    '/task/sms': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/sms')),
+    },
+    '/task/call': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/call')),
+    },
+    '/count/pie': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/count/pie')),
+    },
+    '/count/line': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/count/line')),
+    },
+    '/system/user/list': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/user/List')),
+    },
+    '/system/user/info': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/user/Info')),
+    },
+    '/system/diagnoseList/list': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/diagnoseList/List')),
+    },
+    '/system/diagnoseList/info': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/diagnoseList/Info')),
+    },
+    '/system/dept/list': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/dept/List')),
+    },
+    '/system/dept/info': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/dept/Info')),
+    },
+    '/system/tpl/smsTpl': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/tpl/smsTpl')),
+    },
+    '/system/tpl/questionTpl': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/system/tpl/questTpl')),
+    },
+
+
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

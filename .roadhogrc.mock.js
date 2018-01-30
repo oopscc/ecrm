@@ -7,9 +7,12 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
-import { getPatients } from './mock/patient';
+import { getPatients, getDiagnoses } from './mock/patient';
 
-
+const success = { 
+  result: 0,
+  message: 'Ok' 
+}
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
 
@@ -135,15 +138,18 @@ const proxy = {
       "path": "/base/category/list"
     });
   },
+  'POST /patient/addPatient.do': (req, res) => {res.send(success)},
+  'POST /patient/addDiagnose.do': (req, res) => {res.send(success)},
+  'POST /patient/edit*.do': (req, res) => {res.send(success)},
   'POST /patient/allPatientList.do': getPatients,
-  // 'POST /patient/addPatient.do': (req, res) => {
-  //   res.send({ 
-  //     result: 0,
-  //     message: 'Ok' 
-  //   });
-  // },
+  'POST /patient/queryDiagnoses.do': getDiagnoses,
+  // 'POST /patient/allPatientList.do': getPatients,
+  // 'POST /patient/allPatientList.do': getPatients,
+  // 'POST /patient/allPatientList.do': getPatients,
+  // 'POST /patient/allPatientList.do': getPatients,
+  // 'POST /patient/allPatientList.do': getPatients,
   // 'GET /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
-  'POST /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
+  // 'POST /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
 };
 
 export default noProxy ? {} : delay(proxy, 1000);

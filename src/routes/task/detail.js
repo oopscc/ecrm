@@ -6,7 +6,7 @@ import {
   Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import styles from './diagnoseInfo.less';
+import styles from './detail.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -29,9 +29,6 @@ export default class BasicForms extends PureComponent {
     if (!patientCode) {
       return
     }
-    // this.setState({
-    //   patientId: patientCode
-    // });
     dispatch({
       type: 'patient/get',
       payload: {

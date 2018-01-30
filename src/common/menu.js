@@ -47,11 +47,17 @@ const menuData = [{
     name: '住院信息',
     path: 'diagnoseInfo',
   }, {
+    name: '随访历史记录列表',
+    path: 'flupList',
+  }, {
+    name: '随访信息',
+    path: 'flupInfo',
+  }, {
     name: '待随访患者',
-    path: 'todo',
+    path: 'willFlup',
   }, {
     name: '已随访患者',
-    path: 'todo',
+    path: 'fluped',
   }],
 }, {
   name: '详情页',
@@ -115,75 +121,76 @@ const menuData = [{
   path: 'task',
   children: [{
     name: '随访任务列表',
-    path: 'todo',
+    path: 'list',
   }, {
     name: '分配随访任务(分步式)',
     // 条件查询患者列表 －> 设置条件，新建任务
-    path: 'todo',
+    path: 'creat',
   }, {
     name: '随访任务详情',
-    path: 'todo',
+    path: 'detail',
   }, {
     name: '短信随访页面',
-    path: 'todo',
+    path: 'sms',
   }, {
     name: '电话随访页面',
-    path: 'todo',
+    // 短信历史，问卷历史，随访历史
+    path: 'call',
   }],
-},, {
+},{
   name: '随访结果统计',
   icon: 'user',
-  path: 'patient',
+  path: 'count',
   children: [{
     name: '饼图',
-    path: 'todo',
+    path: 'pie',
   }, {
     name: '折线图',
-    path: 'todo',
+    path: 'line',
   }],
 },, {
   name: '系统管理',
   icon: 'user',
-  path: 'systom',
+  path: 'system',
   children: [{
     name: '随访人员管理',
-    path: 'list',
+    path: 'user',
     children: [{
       name: '人员列表－分配权限',
-      path: 'todo',
+      path: 'list',
     },{
       name: '新增人员',
-      path: 'todo',
+      path: 'info',
     }]
   }, {
     name: '模版管理',
-    path: 'info',
+    path: 'Tpl',
     children: [{
-      name: '短信模版',
-      path: 'todo',
+      name: '短信模版列表',
+      path: 'smsTpl',
     },{
-      name: '问卷模版',
-      path: 'todo',
+      name: '问卷模版列表',
+      path: 'questionTpl',
     }]
   }, {
     name: '病种管理',
     path: 'diagnoseList',
     children: [{
       name: '列表',
-      path: 'todo',
+      path: 'list',
     },{
       name: '新增',
-      path: 'todo',
+      path: 'info',
     }]
   }, {
     name: '科室管理',
-    path: 'diagnoseInfo',
+    path: 'dept',
     children: [{
       name: '列表',
-      path: 'todo',
+      path: 'list',
     },{
       name: '新增',
-      path: 'todo',
+      path: 'info',
     }]
   }],
 }];
