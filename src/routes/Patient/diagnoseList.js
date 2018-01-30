@@ -17,7 +17,8 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
-
+// 序号， 第几次住院， 入院时间， 入院科别， 主要诊断， 主治医师， 出院时间， 出院科别，操作（编辑）
+// 获取患者住院列表
 const columns = [
   {
     title: '病案号',

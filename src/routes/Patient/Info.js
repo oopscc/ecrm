@@ -13,6 +13,10 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
+
+// 分布式demo
+// 自定义增加item
+// 分布式数据结构， 1，基本信息 2，诊断信息 3，手术信息
 @connect(({ loading }) => ({
   submitting: loading.effects['patient/add'],
 }))
