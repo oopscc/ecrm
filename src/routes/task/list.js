@@ -9,6 +9,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
 
 import styles from './list.less';
+import { Link } from 'react-router-dom';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -20,80 +21,40 @@ const status = ['关闭', '运行中', '已上线', '异常'];
 
 const columns = [
   {
-    title: '病案号',
+    title: '序号',
     dataIndex: 'patientCode',
     key: 'patientCode',
     width: 100,
     fixed: 'left'
   },{
-    title: '姓名',
+    title: '任务名称',
     dataIndex: 'name',
     key: 'name',
     width: 100,
     fixed: 'left'
   },{
-    title: '性别',
+    title: '患者数量',
     dataIndex: 'sex',
     key: 'sex',
     width: 80,
     render: val => val ? <span>女</span> : <span>男</span>
   },{
-    title: '联系电话',
+    title: '预计完成时间',
     dataIndex: 'mobile',
     key: 'mobile',
-    width: 120
+    width: 120,
+    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
-    title: '病种',
+    title: '任务状态',
     dataIndex: 'diseaseName',
     key: 'diseaseName',
     width: 120
   },{
-    title: '确诊时间',
-    dataIndex: 'diagnoseTime',
-    key: 'diagnoseTime',
-    width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '原发性诊断名称',
-    dataIndex: 'diagnoseName',
-    key: 'diagnoseName',
-    width: 150
-  },{
-    title: '原发性病理诊断名称',
-    dataIndex: 'pathologyName',
-    key: 'pathologyName',
-    width: 150
-  },{
-    title: '治疗方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 100
-  },{
-    title: '主治医师',
-    dataIndex: 'treatmentDoctor',
-    key: 'treatmentDoctor',
-    width: 120
-  },{
-    title: '随访时间',
-    dataIndex: 'callTime',
-    key: 'callTime',
-    width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '随访结果',
-    dataIndex: 'callResult',
-    key: 'callResult',
-    width: 100,
-    fixed: 'right'
-  },{
     title: '操作',
     key: 'operation',
     width: 100,
-    fixed: 'right',
-    render: (text, record) => {
-      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
-    }
+    render: (text, record) => <Link to={`/patient/questInfo?patientCode=${record.patientCode}`}>{'查看详情'}</Link>
+
   }]
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;

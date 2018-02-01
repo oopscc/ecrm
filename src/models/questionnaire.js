@@ -6,7 +6,7 @@ import {
 
 
 export default {
-  namespace: 'sms',
+  namespace: 'quest',
 
   state: {
     data: {

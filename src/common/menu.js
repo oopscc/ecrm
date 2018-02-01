@@ -53,6 +53,9 @@ const menuData = [{
     name: '随访信息',
     path: 'flupInfo',
   }, {
+    name: '患者历史问卷',
+    path: 'questList',
+  }, {
     name: '待随访患者',
     path: 'willFlup',
   }, {

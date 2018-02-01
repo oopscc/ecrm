@@ -195,6 +195,9 @@ export const getRouterData = (app) => {
     '/patient/flupInfo': {
       component: dynamicWrapper(app, [], () => import('../routes/Patient/flupInfo')),
     },
+    '/patient/questList': {
+      component: dynamicWrapper(app, [], () => import('../routes/Patient/questList')),
+    },
     '/patient/willFlup': {
       component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/willFlup')),
     },

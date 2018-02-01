@@ -13,6 +13,9 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
+// 等于患者历史随访记录
+// 序号，病案号，姓名，随访时间，主要诊断，随访结果，随访方式，随访人员，练习电话，操作（修改，删除，新增）
+
 @connect(({ loading }) => ({
   submitting: loading.effects['patient/add'],
 }))

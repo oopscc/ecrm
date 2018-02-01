@@ -150,6 +150,22 @@ export async function editDiagnose(params) {
   return req('/patient/editDiagnoseInfo.do', params);
 }
 
+// 患者随访历史
+export async function queryFlupList(params) {
+  return req('/callRecord/patientCallRecord.do', params);
+}
+
+export async function addFlup(params) {
+  return req('/callRecord/addCallRecord.do', params);
+}
+
+export async function getFlup(params) {
+  return req('/callRecord/getCallRecordInfo.do', params);
+}
+
+export async function editFlup(params) {
+  return req('/callRecord/editCallRecord.do', params);
+}
 
 // 待随访患者 
  

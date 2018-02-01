@@ -44,9 +44,9 @@ export default class BasicForms extends PureComponent {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    let type = 'patient/add';
+    let type = 'patient/addFlup';
     if (this.state.patient) {
-      type = 'patient/edit';
+      type = 'patient/editFlup';
     }
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -91,6 +91,17 @@ export default class BasicForms extends PureComponent {
         sm: { span: 10, offset: 7 },
       },
     };
+    // 联系电话，随访时间，随访结果，转移部位，转移时间，随访方式，随访人员
+    // patientCode
+/*name
+mobile
+callTimeStr
+callResult
+changePart
+changeTimeStr
+callMode
+callPerson*/
+
     return (
       <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
         <Card bordered={false}>

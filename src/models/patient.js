@@ -6,7 +6,12 @@ import {
   queryDiagnoses,
   addDiagnose,
   getDiagnose,
-  editDiagnose
+  editDiagnose,
+  queryFlupList,
+  addFlup,
+  getFlup,
+  editFlup,
+
 } from '../services/api';
 import { routerRedux } from 'dva/router';
 import { message } from 'antd';
@@ -24,6 +29,10 @@ export default {
       pagination: {}
     },
     diagnoseInfo: {
+    },
+    flup: {
+      list: [],
+      pagination: {}
     }
   },
 
@@ -72,6 +81,28 @@ export default {
       });
       if (callback) callback(response);
     },
+    // 患者随访历史纪录
+    *fetchFlupList({ payload }, { call, put }) {
+      const response = yield call(queryFlupList, payload);
+      yield put({
+        type: 'saveFlup',
+        payload: response,
+      });
+    },
+    *addFlup({ payload, callback }, { call, put }) {
+      const response = yield call(addFlup, payload);
+      console.log(response)
+      yield put(routerRedux.push('/patient/diagnoseInfo/result'));
+      if (callback) callback();
+    },
+    *editFlup({ payload, callback }, { call, put }) {
+      const response = yield call(editFlup, payload);
+      if (callback) callback();
+    },
+    *getFlup({ payload, callback }, { call, put }) {
+      const response = yield call(getFlup, payload);
+      if (callback) callback(response);
+    },
 
   },
 
@@ -108,6 +139,19 @@ export default {
         diagnosesInfo: {
           ...state.diagnosesInfo,
           ...action.payload.data
+        },
+      };
+    },
+    saveFlup(state, action) {
+      return {
+        ...state,
+        flup: {
+          list: action.payload.data.rows,
+          pagination: {
+             pageSize: action.payload.data.pageSize,
+             currentPage: action.payload.data.currentPage,
+             total: action.payload.data.total
+          }
         },
       };
     },

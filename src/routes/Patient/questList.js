@@ -7,108 +7,46 @@ const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import { Link } from 'react-router-dom';
 
-import styles from './willFlup.less';
+import styles from './questList.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
-// 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访阶段，短信状态，操作（电话，短信）
-// 待随访患者总数， 今日已随访人数， 已随访总人数， 我的待随访任务
+// 序号，填写时间，操作，查看）
+/*
+id
+fillInTimeStr
+*/
 const columns = [
   {
-    title: '病案号',
+    title: '序号',
     dataIndex: 'patientCode',
     key: 'patientCode',
-    width: 100,
-    fixed: 'left'
+    width: 60,
+    // fixed: 'left'
   },{
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '性别',
-    dataIndex: 'sex',
-    key: 'sex',
-    width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
-  },{
-    title: '联系电话',
-    dataIndex: 'mobile',
-    key: 'mobile',
-    width: 120
-  },{
-    title: '病种',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
-    width: 120
-  },{
-    title: '确诊时间',
-    dataIndex: 'diagnoseTime',
-    key: 'diagnoseTime',
-    width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '原发性诊断名称',
-    dataIndex: 'diagnoseName',
-    key: 'diagnoseName',
-    width: 150
-  },{
-    title: '原发性病理诊断名称',
-    dataIndex: 'pathologyName',
-    key: 'pathologyName',
-    width: 150
-  },{
-    title: '治疗方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 100
-  },{
-    title: '主治医师',
-    dataIndex: 'treatmentDoctor',
-    key: 'treatmentDoctor',
-    width: 120
-  },{
-    title: '随访时间',
+    title: '填写时间',
     dataIndex: 'callTime',
     key: 'callTime',
-    width: 150,
+    width: 80,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '随访结果',
-    dataIndex: 'callResult',
-    key: 'callResult',
-    width: 100,
-    fixed: 'right'
   },{
     title: '操作',
     key: 'operation',
     width: 100,
-    fixed: 'right',
-    render: (text, record) => {
-      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
-    }
+    // fixed: 'right',
+    render: (text, record) => <Link to={`/patient/questInfo?patientCode=${record.patientCode}`}>{'查看'}</Link>
   }]
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
-      window.location.hash = `/patient/info?patientCode=${record.patientCode}`;
-      // console.log(record);
-      // dispatch(routerRedux.push({
-      //   pathname: '/patient/add',
-      //   query: {
-      //     page: 2,
-      //   },
-      // }))
+      window.location.hash = `/patient/flupInfo?patientCode=${record.patientCode}`;
     } else if (e.key === '2') {
       window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    }else if (e.key === '3') {
-      alert('问卷');
     }
   }
 const CreateForm = Form.create()((props) => {
@@ -290,13 +228,8 @@ export default class TableList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="随访阶段">
-              {getFieldDecorator('callStage')(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
             <FormItem label="病种名称">
-              {getFieldDecorator('diseaseId')(
+              {getFieldDecorator('diseaseName')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
@@ -444,7 +377,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1650 }}
+              scroll={{ x: 1070 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

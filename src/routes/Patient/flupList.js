@@ -21,40 +21,40 @@ const columns = [
     title: '病案号',
     dataIndex: 'patientCode',
     key: 'patientCode',
-    width: 100,
-    fixed: 'left'
+    width: 60,
+    // fixed: 'left'
   },{
     title: '随访时间',
     dataIndex: 'callTime',
     key: 'callTime',
-    width: 150,
+    width: 80,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '主要诊断',
     dataIndex: 'diagnoseName',
     key: 'diagnoseName',
-    width: 150
+    width: 80
   },{
     title: '随访结果',
     dataIndex: 'callResult',
     key: 'callResult',
-    width: 100,
+    width: 80,
     fixed: 'right'
   },{
     title: '随访方式',
     dataIndex: 'cureModeStr',
     key: 'cureModeStr',
-    width: 100
+    width: 80
   },{
     title: '随访人员',
     dataIndex: 'treatmentDoctor',
     key: 'treatmentDoctor',
-    width: 120
+    width: 80
   },{
     title: '联系电话',
     dataIndex: 'mobile',
     key: 'mobile',
-    width: 120
+    width: 80
   },{
     title: '操作',
     key: 'operation',
@@ -117,7 +117,12 @@ export default class TableList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, location } = this.props;
+    let self = this;
+    let patientCode = qs.parse(location.search).patientCode;
+    if (!patientCode) {
+      return
+    }
     dispatch({
       type: 'patient/fetch',
       payload: {
@@ -401,7 +406,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1650 }}
+              scroll={{ x: 1070 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

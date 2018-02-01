@@ -8,23 +8,23 @@ const req = (url, prrams) => request('url', {
   },
 });
 
-// 患者随访历史记录列表
-export async function queryCallRecords(params) {
-  return req('/callRecord/patientCallRecord.do', params);
-}
+// 患者随访历史记录列表，转移
+// export async function queryCallRecords(params) {
+//   return req('/callRecord/patientCallRecord.do', params);
+// }
 
 
-export async function addCallRecord(params) {
-  return req('/callRecord/addCallRecord.do', params);
-}
+// export async function addCallRecord(params) {
+//   return req('/callRecord/addCallRecord.do', params);
+// }
 
-export async function getCallRecord(params) {
-  return req('/callRecord/getCallRecordInfo.do', params);
-}
+// export async function getCallRecord(params) {
+//   return req('/callRecord/getCallRecordInfo.do', params);
+// }
 
-export async function editCallRecord(params) {
-  return req('/callRecord/editCallRecord.do', params);
-}
+// export async function editCallRecord(params) {
+//   return req('/callRecord/editCallRecord.do', params);
+// }
 
 
 export async function getWaitCallCount(params) {

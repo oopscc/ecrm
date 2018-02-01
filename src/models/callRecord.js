@@ -1,8 +1,8 @@
 import {
-  queryCallRecords,
-  addCallRecord,
-  getCallRecord,
-  editCallRecord,
+  // queryCallRecords,
+  // addCallRecord,
+  // getCallRecord,
+  // editCallRecord,
   getWaitCallCount,
   getWillCallNum,
   getWillCallList,
@@ -15,10 +15,10 @@ export default {
   namespace: 'callRecord',
 
   state: {
-    data: {
-      list: [],
-      pagination: {}
-    },
+    // data: {
+    //   list: [],
+    //   pagination: {}
+    // },
     callList: {
       list: [],
       pagination: {}
@@ -38,26 +38,26 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryCallRecords, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addCallRecord, payload);
-      if (callback) callback();
-    },
-    *edit({ payload, callback }, { call, put }) {
-      const response = yield call(editCallRecord, payload);
-      if (callback) callback();
-    },
+    // *fetch({ payload }, { call, put }) {
+    //   const response = yield call(queryCallRecords, payload);
+    //   yield put({
+    //     type: 'save',
+    //     payload: response,
+    //   });
+    // },
+    // *add({ payload, callback }, { call, put }) {
+    //   const response = yield call(addCallRecord, payload);
+    //   if (callback) callback();
+    // },
+    // *edit({ payload, callback }, { call, put }) {
+    //   const response = yield call(editCallRecord, payload);
+    //   if (callback) callback();
+    // },
 
-    *get({ payload, callback }, { call, put }) {
-      const response = yield call(getCallRecord, payload);
-      if (callback) callback(response);
-    },
+    // *get({ payload, callback }, { call, put }) {
+    //   const response = yield call(getCallRecord, payload);
+    //   if (callback) callback(response);
+    // },
 
 
     *fetchWillCalls({ payload }, { call, put }) {
@@ -105,19 +105,19 @@ export default {
   },
 
   reducers: {
-    save(state, action) {
-      return {
-        ...state,
-        data: {
-          list: action.payload.data.rows,
-          pagination: {
-             pageSize: action.payload.data.pageSize,
-             currentPage: action.payload.data.currentPage,
-             total: action.payload.data.total
-          }
-        },
-      };
-    },
+    // save(state, action) {
+    //   return {
+    //     ...state,
+    //     data: {
+    //       list: action.payload.data.rows,
+    //       pagination: {
+    //          pageSize: action.payload.data.pageSize,
+    //          currentPage: action.payload.data.currentPage,
+    //          total: action.payload.data.total
+    //       }
+    //     },
+    //   };
+    // },
     saveCallList(state, action) {
       return {
         ...state,
