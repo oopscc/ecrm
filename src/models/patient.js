@@ -8,6 +8,8 @@ import {
   getDiagnose,
   editDiagnose
 } from '../services/api';
+import { routerRedux } from 'dva/router';
+import { message } from 'antd';
 
 export default {
   namespace: 'patient',
@@ -20,6 +22,8 @@ export default {
     diagnosesData: {
       list: [],
       pagination: {}
+    },
+    diagnoseInfo: {
     }
   },
 
@@ -52,6 +56,8 @@ export default {
     },
     *addDiagnose({ payload, callback }, { call, put }) {
       const response = yield call(addDiagnose, payload);
+      console.log(response)
+      yield put(routerRedux.push('/patient/diagnoseInfo/result'));
       if (callback) callback();
     },
     *editDiagnose({ payload, callback }, { call, put }) {
@@ -60,6 +66,10 @@ export default {
     },
     *getDiagnose({ payload, callback }, { call, put }) {
       const response = yield call(getDiagnose, payload);
+      yield put({
+        type: 'saveDiagnoseInfo',
+        payload: response,
+      });
       if (callback) callback(response);
     },
 
@@ -79,7 +89,7 @@ export default {
         },
       };
     },
-    saveDiagnose(state, action) {
+    saveDiagnoses(state, action) {
       return {
         ...state,
         diagnosesData: {
@@ -89,6 +99,15 @@ export default {
              currentPage: action.payload.data.currentPage,
              total: action.payload.data.total
           }
+        },
+      };
+    },
+    saveDiagnoseInfo(state, action) {
+      return {
+        ...state,
+        diagnosesInfo: {
+          ...state.diagnosesInfo,
+          ...action.payload.data
         },
       };
     },

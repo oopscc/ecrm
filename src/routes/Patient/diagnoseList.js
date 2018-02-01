@@ -21,23 +21,11 @@ const status = ['关闭', '运行中', '已上线', '异常'];
 // 获取患者住院列表
 const columns = [
   {
-    title: '病案号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-    width: 100,
-    fixed: 'left'
-  },{
     title: '诊断时间',
     dataIndex: 'diagnoseTime',
     key: 'diagnoseTime',
     width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
+    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '诊断科别',
     dataIndex: 'diagnoseDept',
@@ -70,7 +58,7 @@ const columns = [
     key: 'treatmentDoctor',
     width: 120
   },{
-    title: '主治时间',
+    title: '出院时间',
     dataIndex: 'outTime',
     key: 'outTime',
     width: 150,
@@ -85,24 +73,9 @@ const columns = [
     key: 'operation',
     width: 100,
     fixed: 'right',
-    render: (text, record) => <Link to={`/patient/info?patientCode=${record.patientCode}`}>{'查看'}</Link>
-
-      // <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        // menuOptions={[{ key: '1', name: '查看' }]} />
+    render: (text, record) => <Link to={`/patient/diagnoseInfo?patientCode=${record.patientCode}`}>{'查看'}</Link>
   }]
-const handleOptionClick = (record, e) => {
-    // const { dispatch } = this.props;
-    if (e.key === '1') {
-      window.location.hash = `/patient/info?patientCode=${record.patientCode}`;
-      // console.log(record);
-      // dispatch(routerRedux.push({
-      //   pathname: '/patient/add',
-      //   query: {
-      //     page: 2,
-      //   },
-      // }))
-    }
-  }
+
 const CreateForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
@@ -144,6 +117,8 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    patientCode: '',
+    name: ''
   };
 
   componentDidMount() {
@@ -152,6 +127,10 @@ export default class TableList extends PureComponent {
     if (!patientCode) {
       return
     }
+    this.setState({
+      patientCode,
+      name
+    })
     dispatch({
       type: 'patient/fetchDiagnose',
       payload: {
@@ -392,9 +371,8 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { patient: { data }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
-
+    const { patient: { diagnosesData }, loading } = this.props;
+    const { selectedRows, modalVisible, patientCode, name } = this.state;
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
         <Menu.Item key="remove">删除</Menu.Item>
@@ -411,13 +389,16 @@ export default class TableList extends PureComponent {
       <PageHeaderLayout title="住院信息管理">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <Alert message={`患者病案号：patient.patientCode 患者姓名：patient.name`} type="info" />
+            <Alert message={'患者病案号：' + patientCode + '  患者姓名：' + name} type="info" />
+            <Button icon="plus" type="primary" href="/#/patient/diagnoseInfo">
+                新建
+            </Button>
             <StandardTable
               loading={loading}
-              data={data}
+              data={diagnosesData}
               columns={columns}
               size="small"
-              scroll={{ x: 1450 }}
+              scroll={{ x: 1250 }}
               onChange={this.handleStandardTableChange}
             />
           </div>

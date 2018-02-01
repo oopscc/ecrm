@@ -15,6 +15,9 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
+// 序号，任务名称，患者数量，预计完成时间，任务状态，查看详情
+// 任务详情 ： 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访时间，随访结果，随访方式
+
 const columns = [
   {
     title: '病案号',

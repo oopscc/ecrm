@@ -10,7 +10,7 @@ import { format, delay } from 'roadhog-api-doc';
 import { getPatients, getDiagnoses } from './mock/patient';
 
 const success = { 
-  result: 0,
+  status: 'ok',
   message: 'Ok' 
 }
 // 是否禁用代理
@@ -139,10 +139,10 @@ const proxy = {
     });
   },
   'POST /patient/addPatient.do': (req, res) => {res.send(success)},
-  'POST /patient/addDiagnose.do': (req, res) => {res.send(success)},
+  'POST /patient/addDiagnoseInfo.do': (req, res) => {res.send(success)},
   'POST /patient/edit*.do': (req, res) => {res.send(success)},
   'POST /patient/allPatientList.do': getPatients,
-  'POST /patient/queryDiagnoses.do': getDiagnoses,
+  'POST /patient/diagnosePageQuery.do': getDiagnoses,
   // 'POST /patient/allPatientList.do': getPatients,
   // 'POST /patient/allPatientList.do': getPatients,
   // 'POST /patient/allPatientList.do': getPatients,

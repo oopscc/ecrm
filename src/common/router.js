@@ -169,9 +169,25 @@ export const getRouterData = (app) => {
     '/patient/diagnoseList': {
       component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/diagnoseList')),
     },
+    // '/patient/diagnoseInfo': {
+    //   component: dynamicWrapper(app, [], () => import('../routes/Patient/diagnoseInfo')),
+    // },
     '/patient/diagnoseInfo': {
-      component: dynamicWrapper(app, [], () => import('../routes/Patient/diagnoseInfo')),
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm')),
     },
+    '/patient/diagnoseInfo/info': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step1')),
+    },
+    '/patient/diagnoseInfo/diagnoseRecords': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step2')),
+    },
+    '/patient/diagnoseInfo/operationRecords': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step3')),
+    },
+    '/patient/diagnoseInfo/result': {
+      component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step4')),
+    },
+
 
     '/patient/flupList': {
       component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/flupList')),
