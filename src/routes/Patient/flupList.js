@@ -16,7 +16,6 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 // 序号，随访时间，主要诊断，随访结果，随访方式，随访人员，练习电话，操作（修改，删除，新增）
-// 随访问卷 序号，随访时间，操作（查看详情）
 const columns = [
   {
     title: '病案号',
@@ -25,59 +24,16 @@ const columns = [
     width: 100,
     fixed: 'left'
   },{
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '性别',
-    dataIndex: 'sex',
-    key: 'sex',
-    width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
-  },{
-    title: '联系电话',
-    dataIndex: 'mobile',
-    key: 'mobile',
-    width: 120
-  },{
-    title: '病种',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
-    width: 120
-  },{
-    title: '确诊时间',
-    dataIndex: 'diagnoseTime',
-    key: 'diagnoseTime',
-    width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '原发性诊断名称',
-    dataIndex: 'diagnoseName',
-    key: 'diagnoseName',
-    width: 150
-  },{
-    title: '原发性病理诊断名称',
-    dataIndex: 'pathologyName',
-    key: 'pathologyName',
-    width: 150
-  },{
-    title: '治疗方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 100
-  },{
-    title: '主治医师',
-    dataIndex: 'treatmentDoctor',
-    key: 'treatmentDoctor',
-    width: 120
-  },{
     title: '随访时间',
     dataIndex: 'callTime',
     key: 'callTime',
     width: 150,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+  },{
+    title: '主要诊断',
+    dataIndex: 'diagnoseName',
+    key: 'diagnoseName',
+    width: 150
   },{
     title: '随访结果',
     dataIndex: 'callResult',
@@ -85,30 +41,36 @@ const columns = [
     width: 100,
     fixed: 'right'
   },{
+    title: '随访方式',
+    dataIndex: 'cureModeStr',
+    key: 'cureModeStr',
+    width: 100
+  },{
+    title: '随访人员',
+    dataIndex: 'treatmentDoctor',
+    key: 'treatmentDoctor',
+    width: 120
+  },{
+    title: '联系电话',
+    dataIndex: 'mobile',
+    key: 'mobile',
+    width: 120
+  },{
     title: '操作',
     key: 'operation',
     width: 100,
     fixed: 'right',
     render: (text, record) => {
       return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
+        menuOptions={[{ key: '1', name: '修改' }, { key: '2', name: '删除' }]} />
     }
   }]
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
-      window.location.hash = `/patient/info?patientCode=${record.patientCode}`;
-      // console.log(record);
-      // dispatch(routerRedux.push({
-      //   pathname: '/patient/add',
-      //   query: {
-      //     page: 2,
-      //   },
-      // }))
+      window.location.hash = `/patient/flupInfo?patientCode=${record.patientCode}`;
     } else if (e.key === '2') {
       window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    }else if (e.key === '3') {
-      alert('问卷');
     }
   }
 const CreateForm = Form.create()((props) => {
