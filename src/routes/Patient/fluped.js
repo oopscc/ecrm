@@ -16,84 +16,84 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 // 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访时间，随访结果，随访方式
-
 const columns = [
-  {
-    title: '病案号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '性别',
-    dataIndex: 'sex',
-    key: 'sex',
-    width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
-  },{
-    title: '联系电话',
-    dataIndex: 'mobile',
-    key: 'mobile',
-    width: 120
-  },{
-    title: '病种',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
-    width: 120
-  },{
-    title: '确诊时间',
-    dataIndex: 'diagnoseTime',
-    key: 'diagnoseTime',
-    width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '原发性诊断名称',
-    dataIndex: 'diagnoseName',
-    key: 'diagnoseName',
-    width: 150
-  },{
-    title: '原发性病理诊断名称',
-    dataIndex: 'pathologyName',
-    key: 'pathologyName',
-    width: 150
-  },{
-    title: '治疗方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 100
-  },{
-    title: '主治医师',
-    dataIndex: 'treatmentDoctor',
-    key: 'treatmentDoctor',
-    width: 120
-  },{
-    title: '随访时间',
-    dataIndex: 'callTime',
-    key: 'callTime',
-    width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '随访结果',
-    dataIndex: 'callResult',
-    key: 'callResult',
-    width: 100,
-    fixed: 'right'
-  },{
-    title: '操作',
-    key: 'operation',
-    width: 100,
-    fixed: 'right',
-    render: (text, record) => {
-      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
-    }
-  }]
+{
+  title: '序号',
+  dataIndex: 'callId',
+  key: 'callId',
+  width: 100,
+  fixed: 'left'
+},{
+  title: '病案号',
+  dataIndex: 'patientCode',
+  key: 'patientCode',
+  width: 100,
+  fixed: 'left'
+},{
+  title: '姓名',
+  dataIndex: 'name',
+  key: 'name',
+  width: 100,
+  fixed: 'left'
+},{
+  title: '性别',
+  dataIndex: 'sex',
+  key: 'sex',
+  width: 80,
+  render: val => val ? <span>女</span> : <span>男</span>
+},{
+  title: '联系电话',
+  dataIndex: 'mobile',
+  key: 'mobile',
+  width: 120
+},{
+  title: '病种',
+  dataIndex: 'diseaseName',
+  key: 'diseaseName',
+  width: 120
+},{
+  title: '确诊时间',
+  dataIndex: 'diagnoseTime',
+  key: 'diagnoseTime',
+  width: 150,
+  render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+},{
+  title: '原发性诊断名称',
+  dataIndex: 'diagnoseName',
+  key: 'diagnoseName',
+  width: 150
+},{
+  title: '原发性病理诊断名称',
+  dataIndex: 'pathologyName',
+  key: 'pathologyName',
+  width: 150
+},{
+  title: '治疗方式',
+  dataIndex: 'cureModeStr',
+  key: 'cureModeStr',
+  width: 100
+},{
+  title: '主治医师',
+  dataIndex: 'treatmentDoctor',
+  key: 'treatmentDoctor',
+  width: 120
+},{
+  title: '随访时间',
+  dataIndex: 'callTime',
+  key: 'callTime',
+  width: 150,
+},{
+  title: '随访结果',
+  dataIndex: 'callResult',
+  key: 'callResult',
+  width: 100,
+},{
+  title: '随访方式',
+  dataIndex: 'callModeStr',
+  key: 'callModeStr',
+  width: 100,
+}];
+
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
@@ -141,9 +141,9 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
-@connect(({ patient, loading }) => ({
-  patient,
-  loading: loading.models.patient,
+@connect(({ callRecord, loading }) => ({
+  callRecord,
+  loading: loading.models.callRecord,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -157,7 +157,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'patient/fetch',
+      type: 'callRecord/fetchCalls',
       payload: {
         currentPage: 1,
         pageSize: 10
@@ -186,7 +186,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'patient/fetch',
+      type: 'callRecord/fetchCalls',
       payload: params,
     });
   }
@@ -198,7 +198,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'patient/fetch',
+      type: 'callRecord/fetchCalls',
       payload: {},
     });
   }
@@ -394,7 +394,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { patient: { data }, loading } = this.props;
+    const { callRecord: { callList: data }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
 
     const menu = (

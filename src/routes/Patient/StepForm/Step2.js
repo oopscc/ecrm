@@ -17,21 +17,45 @@ const formItemLayout = {
   },
 };
 // 诊断类型，是否设置为原发诊断，诊断名称，诊断疾病编码，诊断分期，操作
+/*
+  diagnoseMode
+primaryFlag
+diagnoseName
+diagnoseCode
+pathologyName
+pathologyCode
+admissionState
+pathologyGist
+diagnoseStages
+diagnoseDesc
+tumourPart
+icdoCode
+outCase
+ */
 const tableData = [{
   key: '1',
-  workId: '00001',
-  name: 'John Brown',
-  department: 'New York No. 1 Lake Park',
+  diagnoseMode: 1,
+  primaryFlag: 1,
+  diagnoseName: '诊断名称',
+  diagnoseCode: '诊断疾病编码',
+  admissionState: '入院病情',
+  diagnoseStages: '诊断分期'  
 }, {
   key: '2',
-  workId: '00002',
-  name: 'Jim Green',
-  department: 'London No. 1 Lake Park',
+  diagnoseMode: 2,
+  primaryFlag: 2,
+  diagnoseName: '诊断名称',
+  diagnoseCode: '诊断疾病编码',
+  admissionState: '入院病情',
+  diagnoseStages: '诊断分期'  
 }, {
   key: '3',
-  workId: '00003',
-  name: 'Joe Black',
-  department: 'Sidney No. 1 Lake Park',
+  diagnoseMode: 3,
+  primaryFlag: 3,
+  diagnoseName: '诊断名称',
+  diagnoseCode: '诊断疾病编码',
+  admissionState: '入院病情',
+  diagnoseStages: '诊断分期'
 }];
 
 @Form.create()
@@ -57,7 +81,7 @@ class Step1 extends React.PureComponent {
       <div>
         <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
           <Card title="成员管理" className={styles.card} bordered={false}>
-            {getFieldDecorator('members', {
+            {getFieldDecorator('diagnoseRecords', {
               initialValue: tableData,
             })(<TableForm />)}
           </Card>
@@ -90,6 +114,7 @@ class Step1 extends React.PureComponent {
   }
 }
 
-export default connect(({ form }) => ({
-  data: form.step,
-}))(Step1);
+export default connect(({ patient }) => ({
+  patient: patient.diagnoseInfo
+}))(Step2);
+

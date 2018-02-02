@@ -18,42 +18,50 @@ const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 // 序号，任务名称，患者数量，预计完成时间，任务状态，查看详情
 // 任务详情 ： 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访时间，随访结果，随访方式
+// // 序号，病案号，姓名，随访时间，主要诊断，随访结果，随访方式，随访人员，练习电话，操作（修改，删除，新增）
 
+/*
+taskId
+taskName
+patientNum
+estimateTime
+taskState
+ */
 const columns = [
   {
     title: '序号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
+    dataIndex: 'taskId',
+    key: 'taskId',
     width: 100,
     fixed: 'left'
   },{
     title: '任务名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'taskName',
+    key: 'taskName',
     width: 100,
     fixed: 'left'
   },{
     title: '患者数量',
-    dataIndex: 'sex',
-    key: 'sex',
+    dataIndex: 'patientNum',
+    key: 'patientNum',
     width: 80,
     render: val => val ? <span>女</span> : <span>男</span>
   },{
     title: '预计完成时间',
-    dataIndex: 'mobile',
-    key: 'mobile',
+    dataIndex: 'estimateTime',
+    key: 'estimateTime',
     width: 120,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '任务状态',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
+    dataIndex: 'taskState',
+    key: 'taskState',
     width: 120
   },{
     title: '操作',
     key: 'operation',
     width: 100,
-    render: (text, record) => <Link to={`/patient/questInfo?patientCode=${record.patientCode}`}>{'查看详情'}</Link>
+    render: (text, record) => <Link to={`/task/info?taskId=${record.taskId}`}>{'查看详情'}</Link>
 
   }]
 const handleOptionClick = (record, e) => {
@@ -103,9 +111,9 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
-@connect(({ patient, loading }) => ({
-  patient,
-  loading: loading.models.patient,
+@connect(({ task, loading }) => ({
+  task,
+  loading: loading.models.task,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -119,7 +127,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'patient/fetch',
+      type: 'task/fetch',
       payload: {
         currentPage: 1,
         pageSize: 10
@@ -204,7 +212,7 @@ export default class TableList extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
-    const { dispatch, form,  patient} = this.props;
+    const { dispatch, form,  task} = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
@@ -220,7 +228,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'patient/fetch',
+        type: 'task/fetch',
         payload: values,
       });
     });
@@ -356,7 +364,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { patient: { data }, loading } = this.props;
+    const { task: { tasks }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
 
     const menu = (

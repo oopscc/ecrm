@@ -54,6 +54,6 @@ class Step3 extends React.PureComponent {
   }
 }
 
-export default connect(({ form }) => ({
-  data: form.step,
+export default connect(({ patient }) => ({
+  patient: patient.diagnoseInfo
 }))(Step3);

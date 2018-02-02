@@ -21,6 +21,10 @@ export default {
       goingNum: 0,
       list: [],
       pagination: {}
+    },
+    patientList: {
+      list: [],
+      pagination: {}
     }
   },
 
@@ -38,6 +42,10 @@ export default {
     },
     *getTask({ payload, callback }, { call, put }) {
       const response = yield call(getTask, payload);
+      yield put({
+        type: 'savePatientList',
+        payload: response,
+      });
       if (callback) callback();
     },
     *delete({ payload, callback }, { call, put }) {
@@ -85,6 +93,19 @@ export default {
         },
       };
     },
+    savePatientList(state, action) {
+      return {
+        ...state,
+        patientList: {
+          list: action.payload.data.rows,
+          pagination: {
+             pageSize: action.payload.data.pageSize,
+             currentPage: action.payload.data.currentPage,
+             total: action.payload.data.total
+          }
+        }
+      };
+    }
   },
 };
 

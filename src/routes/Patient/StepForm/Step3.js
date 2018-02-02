@@ -16,27 +16,52 @@ const formItemLayout = {
 };
 
 // 治疗方案，手术日期， 手术名称，cm3编码，手术者，一助，二助, 操作
+/*
+  operationScheme
+  operationDate
+  operationName
+  cm3Code
+  operativeDoctor
+  oneAid
+  twoAid
+  anesthesiaMode
+  anesthesiaDoctor
+  incisionGrade
+  incisionRecover
+ */
 const tableData = [{
   key: '1',
-  workId: '00001',
-  name: 'John Brown',
-  department: 'New York No. 1 Lake Park',
+  operationScheme: '123',
+  operationDate: '2017-01-01',
+  operationName: '手术名称',
+  cm3Code: 'cm3编码',
+  operativeDoctor: '手术者',
+  anesthesiaMode: '麻醉方案',
+  anesthesiaDoctor: '麻醉医生'
 }, {
   key: '2',
-  workId: '00002',
-  name: 'Jim Green',
-  department: 'London No. 1 Lake Park',
+  operationScheme: '123',
+  operationDate: '2017-01-01',
+  operationName: '手术名称',
+  cm3Code: 'cm3编码',
+  operativeDoctor: '手术者',
+  anesthesiaMode: '麻醉方案',
+  anesthesiaDoctor: '麻醉医生'
 }, {
   key: '3',
-  workId: '00003',
-  name: 'Joe Black',
-  department: 'Sidney No. 1 Lake Park',
+  operationScheme: '123',
+  operationDate: '2017-01-01',
+  operationName: '手术名称',
+  cm3Code: 'cm3编码',
+  operativeDoctor: '手术者',
+  anesthesiaMode: '麻醉方案',
+  anesthesiaDoctor: '麻醉医生'
 }];
 
 @Form.create()
 class Step2 extends React.PureComponent {
   render() {
-    const { form, data, dispatch, submitting } = this.props;
+    const { form, patient, dispatch, submitting } = this.props;
     const { getFieldDecorator, validateFields } = form;
     const onPrev = () => {
       dispatch(routerRedux.push('/patient/diagnoseInfo'));
@@ -52,7 +77,7 @@ class Step2 extends React.PureComponent {
           dispatch({
             type: 'patient/addDiagnose',
             payload: {
-              ...data,
+              ...patient,
               ...values,
             },
           });
@@ -62,7 +87,7 @@ class Step2 extends React.PureComponent {
     return (
       <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
         <Card title="成员管理" className={styles.card} bordered={false}>
-          {getFieldDecorator('members', {
+          {getFieldDecorator('operationRecords', {
             initialValue: tableData,
           })(<TableForm />)}
         </Card>
@@ -86,7 +111,7 @@ class Step2 extends React.PureComponent {
   }
 }
 
-export default connect(({ form, loading }) => ({
-  submitting: loading.effects['form/submitStepForm'],
-  data: form.step,
-}))(Step2);
+export default connect(({ patient, loading }) => ({
+  submitting: loading.effects['patient/addDiagnose'],
+  patient: patient.diagnoseInfo
+}))(Step3);

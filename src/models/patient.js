@@ -65,12 +65,12 @@ export default {
     },
     *addDiagnose({ payload, callback }, { call, put }) {
       const response = yield call(addDiagnose, payload);
-      console.log(response)
       yield put(routerRedux.push('/patient/diagnoseInfo/result'));
       if (callback) callback();
     },
     *editDiagnose({ payload, callback }, { call, put }) {
       const response = yield call(editDiagnose, payload);
+      yield put(routerRedux.push('/patient/diagnoseInfo/result'));
       if (callback) callback();
     },
     *getDiagnose({ payload, callback }, { call, put }) {

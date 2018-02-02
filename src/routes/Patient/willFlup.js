@@ -7,18 +7,41 @@ const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import { Link } from 'react-router-dom';
 
 import styles from './willFlup.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 // 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访阶段，短信状态，操作（电话，短信）
 // 待随访患者总数， 今日已随访人数， 已随访总人数， 我的待随访任务
+/*
+callId
+patientCode
+name
+sex
+mobile
+diseaseName
+diagnoseTime
+diagnoseName
+pathologyName
+cureModeStr
+treatmentDoctor
+callStageStr
+smsStateStr
+ */
 const columns = [
   {
+    title: '序号',
+    dataIndex: 'callId',
+    key: 'callId',
+    width: 100,
+    fixed: 'left'
+  },{
     title: '病案号',
     dataIndex: 'patientCode',
     key: 'patientCode',
@@ -73,25 +96,23 @@ const columns = [
     key: 'treatmentDoctor',
     width: 120
   },{
-    title: '随访时间',
-    dataIndex: 'callTime',
-    key: 'callTime',
+    title: '随访阶段',
+    dataIndex: 'callStageStr',
+    key: 'callStageStr',
     width: 150,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
-    title: '随访结果',
-    dataIndex: 'callResult',
-    key: 'callResult',
+    title: '短信状态',
+    dataIndex: 'callStageStr',
+    key: 'callStageStr',
     width: 100,
-    fixed: 'right'
   },{
     title: '操作',
     key: 'operation',
     width: 100,
     fixed: 'right',
     render: (text, record) => {
-      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
+      <Link to={`/callRecord/call?patientCode=${record.patientCode}`}>{'电话'}</Link>
+      <Link to={`/callRecord/sms?patientCode=${record.patientCode}`}>{'短信'}</Link>
     }
   }]
 const handleOptionClick = (record, e) => {
@@ -141,9 +162,9 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
-@connect(({ patient, loading }) => ({
-  patient,
-  loading: loading.models.patient,
+@connect(({ callRecord, loading,  }) => ({
+  callRecord,
+  loading: loading.models.callRecord,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -152,12 +173,26 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    isAdmin: 0,
+    callConut: 0,
+    todayCallNum: 0,
+    calledNum: 0,
+    callTaskNum: 0
   };
 
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'patient/fetch',
+      type: 'callRecord/getWillNum',
+      callback:(data) {
+        this.setState({
+          ...this.state,
+          ...data
+        })
+      }
+    });
+    dispatch({
+      type: 'callRecord/fetchWillCalls',
       payload: {
         currentPage: 1,
         pageSize: 10
@@ -186,7 +221,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'patient/fetch',
+      type: 'patient/fetchWillCalls',
       payload: params,
     });
   }
@@ -198,7 +233,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'patient/fetch',
+      type: 'patient/fetchWillCalls',
       payload: {},
     });
   }
@@ -324,6 +359,7 @@ export default class TableList extends PureComponent {
 
   renderAdvancedForm() {
     const { getFieldDecorator } = this.props.form;
+
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -397,10 +433,11 @@ export default class TableList extends PureComponent {
   renderForm() {
     return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
+// 待随访患者总数， 今日已随访人数， 已随访总人数， 我的待随访任务
 
   render() {
-    const { patient: { data }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { callRecord: { willCallList }, loading } = this.props;
+    const { selectedRows, modalVisible, callConut, todayCallNum, calledNum, callTaskNum } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -414,8 +451,32 @@ export default class TableList extends PureComponent {
       handleModalVisible: this.handleModalVisible,
     };
 
+    const Info = ({ title, value, bordered }) => (
+      <div className={styles.headerInfo}>
+        <span>{title}</span>
+        <p>{value}</p>
+        {bordered && <em />}
+      </div>
+    );
+
     return (
       <PageHeaderLayout title="查询表格">
+        <Card bordered={false}>
+          <Row>
+            <Col sm={6} xs={24}>
+              <Info title="待随访患者总数" value="{callConut}" bordered />
+            </Col>
+            <Col sm={6} xs={24}>
+              <Info title="今日已随访人数" value="{todayCallNum}" bordered />
+            </Col>
+            <Col sm={6} xs={24}>
+              <Info title="已随访总人数" value="{calledNum}" />
+            </Col>
+            <Col sm={6} xs={24}>
+              <Info title="我的待随访任务" value="{callTaskNum}" />
+            </Col>
+          </Row>
+        </Card>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>

@@ -8,7 +8,30 @@ import styles from '../style.less';
 
 const { Step } = Steps;
 
+@connect(({ patient, loading }) => ({
+  patient,
+  loading: loading.models.patient,
+}))
 export default class StepForm extends PureComponent {
+  componentDidMount() {
+    const { dispatch, location } = this.props;
+    // let self = this;
+    let patientCode = qs.parse(location.search).patientCode;
+    if (!patientCode) {
+      return
+    }
+    dispatch({
+      type: 'patient/getDiagnose',
+      payload: {
+        patientCode
+      },
+      // callback(data) {
+      //   self.setState({
+      //     patient: data.data
+      //   });
+      // }
+    });
+  }
   getCurrentStep() {
     const { location } = this.props;
     const { pathname } = location;
@@ -22,7 +45,7 @@ export default class StepForm extends PureComponent {
     }
   }
   render() {
-    const { match, routerData } = this.props;
+    const { patient: { diagnoseInfo: info }, loading, match, routerData } = this.props;
     return (
       <PageHeaderLayout title="分步表单" content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
         <Card bordered={false}>

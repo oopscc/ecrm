@@ -121,7 +121,7 @@ export default {
     saveCallList(state, action) {
       return {
         ...state,
-        diagnosesData: {
+        callList: {
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,
@@ -134,7 +134,7 @@ export default {
     saveTodayCallList(state, action) {
       return {
         ...state,
-        diagnosesData: {
+        todayCallList: {
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,
@@ -147,7 +147,7 @@ export default {
     saveWillCallList(state, action) {
       return {
         ...state,
-        diagnosesData: {
+        willCallList: {
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,
@@ -160,7 +160,7 @@ export default {
     saveWaitCallList(state, action) {
       return {
         ...state,
-        diagnosesData: {
+        waitCallList: {
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,

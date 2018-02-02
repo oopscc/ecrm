@@ -29,19 +29,16 @@ export default class BasicForms extends PureComponent {
     if (!patientCode) {
       return
     }
-    // this.setState({
-    //   patientId: patientCode
-    // });
     dispatch({
-      type: 'patient/get',
+      type: 'patient/getDiagnose',
       payload: {
         patientCode
       },
-      callback(data) {
-        self.setState({
-          patient: data.data
-        });
-      }
+      // callback(data) {
+      //   self.setState({
+      //     patient: data.data
+      //   });
+      // }
     });
   }
 

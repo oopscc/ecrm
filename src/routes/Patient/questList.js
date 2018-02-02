@@ -24,14 +24,14 @@ fillInTimeStr
 const columns = [
   {
     title: '序号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
+    dataIndex: 'id',
+    key: 'id',
     width: 60,
     // fixed: 'left'
   },{
     title: '填写时间',
-    dataIndex: 'callTime',
-    key: 'callTime',
+    dataIndex: 'fillInTimeStr',
+    key: 'fillInTimeStr',
     width: 80,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
@@ -79,9 +79,10 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
-@connect(({ patient, loading }) => ({
+@connect(({ patient, loading, quest }) => ({
   patient,
-  loading: loading.models.patient,
+  quest,
+  loading: loading.models.quest,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -95,7 +96,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'patient/fetch',
+      type: 'quest/fetch',
       payload: {
         currentPage: 1,
         pageSize: 10
@@ -332,7 +333,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { patient: { data }, loading } = this.props;
+    const { quest: { data }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
 
     const menu = (
