@@ -1,11 +1,7 @@
-import { query as queryUsers, queryCurrent,
-  addUser,
-  editUser,
-  getUser,
-} from '../services/user';
+import { query as queryUsers, queryCurrent } from '../services/user';
 
 export default {
-  namespace: 'user',
+  namespace: 'system',
 
   state: {
     list: [],
@@ -27,20 +23,6 @@ export default {
         payload: response,
       });
     },
-    
-    *getUser({ payload, callback }, { call, put }) {
-      const response = yield call(getUser, payload);
-      if (callback) callback(response);
-    },
-    *addUser({ payload, callback }, { call, put }) {
-      const response = yield call(addUser, payload);
-      if (callback) callback(response);
-    },
-    *editUser({ payload, callback }, { call, put }) {
-      const response = yield call(editUser, payload);
-      if (callback) callback(response);
-    },
-
   },
 
   reducers: {

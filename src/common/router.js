@@ -239,10 +239,10 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['patient'], () => import('../routes/count/line')),
     },
     '/system/user/list': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/system/user/List')),
+      component: dynamicWrapper(app, ['user'], () => import('../routes/system/user/List')),
     },
     '/system/user/info': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/system/user/Info')),
+      component: dynamicWrapper(app, ['user'], () => import('../routes/system/user/Info')),
     },
     '/system/diagnoseList/list': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/system/diagnoseList/List')),
