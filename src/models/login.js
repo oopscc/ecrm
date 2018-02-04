@@ -18,8 +18,10 @@ export default {
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.result == '0') {
+        console.log(1);
         reloadAuthorized();
+        console.log(2);
         yield put(routerRedux.push('/'));
       }
     },
@@ -47,10 +49,13 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
+      if (!payload.currentAuthority) {
+        payload.currentAuthority = 'admin';
+      }
       setAuthority(payload.currentAuthority);
       return {
         ...state,
-        status: payload.status,
+        status: payload.result,
         type: payload.type,
       };
     },

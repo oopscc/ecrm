@@ -73,7 +73,7 @@ const columns = [
     key: 'operation',
     width: 100,
     fixed: 'right',
-    render: (text, record) => <Link to={`/patient/diagnoseInfo?patientCode=${record.patientCode}`}>{'查看'}</Link>
+    render: (text, record) => <Link to={`/patient/diagnoseInfo?id=${record.id}`}>{'查看'}</Link>
   }]
 
 const CreateForm = Form.create()((props) => {
@@ -144,7 +144,7 @@ export default class TableList extends PureComponent {
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch } = this.props;
-    const { formValues } = this.state;
+    const { formValues, patientCode, name } = this.state;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
@@ -155,6 +155,8 @@ export default class TableList extends PureComponent {
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
+      patientCode,
+      name,
       ...formValues,
       ...filters,
     };
@@ -163,7 +165,7 @@ export default class TableList extends PureComponent {
     }
 
     dispatch({
-      type: 'patient/fetch',
+      type: 'patient/fetchDiagnose',
       payload: params,
     });
   }
@@ -371,7 +373,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { patient: { diagnosesData }, loading } = this.props;
+    const { patient: { diagnosesData }, loading, location } = this.props;
     const { selectedRows, modalVisible, patientCode, name } = this.state;
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -390,7 +392,7 @@ export default class TableList extends PureComponent {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <Alert message={'患者病案号：' + patientCode + '  患者姓名：' + name} type="info" />
-            <Button icon="plus" type="primary" href="/#/patient/diagnoseInfo">
+            <Button icon="plus" type="primary" href={"/#/patient/diagnoseInfo" + location.search}>
                 新建
             </Button>
             <StandardTable

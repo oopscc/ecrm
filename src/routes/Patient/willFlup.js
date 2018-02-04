@@ -39,19 +39,19 @@ const columns = [
     title: '序号',
     dataIndex: 'callId',
     key: 'callId',
-    width: 100,
+    width: 80,
     fixed: 'left'
   },{
     title: '病案号',
     dataIndex: 'patientCode',
     key: 'patientCode',
-    width: 100,
+    width: 80,
     fixed: 'left'
   },{
     title: '姓名',
     dataIndex: 'name',
     key: 'name',
-    width: 100,
+    width: 80,
     fixed: 'left'
   },{
     title: '性别',
@@ -63,58 +63,59 @@ const columns = [
     title: '联系电话',
     dataIndex: 'mobile',
     key: 'mobile',
-    width: 120
+    width: 80
   },{
     title: '病种',
     dataIndex: 'diseaseName',
     key: 'diseaseName',
-    width: 120
+    width: 100
   },{
     title: '确诊时间',
     dataIndex: 'diagnoseTime',
     key: 'diagnoseTime',
-    width: 150,
+    width: 100,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '原发性诊断名称',
     dataIndex: 'diagnoseName',
     key: 'diagnoseName',
-    width: 150
+    width: 100
   },{
     title: '原发性病理诊断名称',
     dataIndex: 'pathologyName',
     key: 'pathologyName',
-    width: 150
+    width: 100
   },{
     title: '治疗方式',
     dataIndex: 'cureModeStr',
     key: 'cureModeStr',
-    width: 100
+    width: 80
   },{
     title: '主治医师',
     dataIndex: 'treatmentDoctor',
     key: 'treatmentDoctor',
-    width: 120
+    width: 80
   },{
     title: '随访阶段',
     dataIndex: 'callStageStr',
     key: 'callStageStr',
-    width: 150,
+    width: 80,
   },{
     title: '短信状态',
-    dataIndex: 'callStageStr',
-    key: 'callStageStr',
-    width: 100,
+    dataIndex: 'smsStageStr',
+    key: 'smsStageStr',
+    width: 80,
   },{
     title: '操作',
     key: 'operation',
     width: 100,
     fixed: 'right',
-    render: (text, record) => {
-      <Link to={`/callRecord/call?patientCode=${record.patientCode}`}>{'电话'}</Link>
-      <Link to={`/callRecord/sms?patientCode=${record.patientCode}`}>{'短信'}</Link>
-    }
-  }]
+    render: (text, record) => <Link to={`/task/call?patientCode=${record.patientCode}&id=${record.id}`}>{'电话'}</Link>
+  }];
+  /*<div>
+    <Link to={`/callRecord/call?patientCode=${record.patientCode}`}>{'电话'}</Link>
+    <Link to={`/callRecord/sms?patientCode=${record.patientCode}`}>{'短信'}</Link>
+  </div>*/
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
@@ -182,12 +183,13 @@ export default class TableList extends PureComponent {
 
   componentDidMount() {
     const { dispatch } = this.props;
+    let self = this;
     dispatch({
       type: 'callRecord/getWillNum',
-      callback:(data) {
-        this.setState({
+      callback: data => {
+        self.setState({
           ...this.state,
-          ...data
+          ...data.data
         })
       }
     });
@@ -436,7 +438,7 @@ export default class TableList extends PureComponent {
 // 待随访患者总数， 今日已随访人数， 已随访总人数， 我的待随访任务
 
   render() {
-    const { callRecord: { willCallList }, loading } = this.props;
+    const { callRecord: { willCallList: data}, loading } = this.props;
     const { selectedRows, modalVisible, callConut, todayCallNum, calledNum, callTaskNum } = this.state;
 
     const menu = (
@@ -464,16 +466,16 @@ export default class TableList extends PureComponent {
         <Card bordered={false}>
           <Row>
             <Col sm={6} xs={24}>
-              <Info title="待随访患者总数" value="{callConut}" bordered />
+              <Info title="待随访患者总数" value={callConut} bordered />
             </Col>
             <Col sm={6} xs={24}>
-              <Info title="今日已随访人数" value="{todayCallNum}" bordered />
+              <Info title="今日已随访人数" value={todayCallNum} bordered />
             </Col>
             <Col sm={6} xs={24}>
-              <Info title="已随访总人数" value="{calledNum}" />
+              <Info title="已随访总人数" value={calledNum} bordered />
             </Col>
             <Col sm={6} xs={24}>
-              <Info title="我的待随访任务" value="{callTaskNum}" />
+              <Info title="我的待随访任务" value={callTaskNum}  />
             </Col>
           </Row>
         </Card>
@@ -505,7 +507,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1650 }}
+              scroll={{ x: 1350 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

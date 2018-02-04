@@ -4,7 +4,9 @@ import { Form, Input, Button, Alert, Divider, Card } from 'antd';
 import { routerRedux } from 'dva/router';
 import { digitUppercase } from '../../../utils/utils';
 import styles from './style.less';
-import TableForm from './TableForm';
+import OperationRecords from './OperationRecords';
+import qs from 'query-string';
+import moment from 'moment';
 
 const formItemLayout = {
   labelCol: {
@@ -34,7 +36,7 @@ const tableData = [{
   operationScheme: '123',
   operationDate: '2017-01-01',
   operationName: '手术名称',
-  cm3Code: 'cm3编码',
+  cm3Code: 1,
   operativeDoctor: '手术者',
   anesthesiaMode: '麻醉方案',
   anesthesiaDoctor: '麻醉医生'
@@ -43,7 +45,7 @@ const tableData = [{
   operationScheme: '123',
   operationDate: '2017-01-01',
   operationName: '手术名称',
-  cm3Code: 'cm3编码',
+  cm3Code: 1,
   operativeDoctor: '手术者',
   anesthesiaMode: '麻醉方案',
   anesthesiaDoctor: '麻醉医生'
@@ -52,14 +54,15 @@ const tableData = [{
   operationScheme: '123',
   operationDate: '2017-01-01',
   operationName: '手术名称',
-  cm3Code: 'cm3编码',
+  cm3Code: 1,
   operativeDoctor: '手术者',
   anesthesiaMode: '麻醉方案',
   anesthesiaDoctor: '麻醉医生'
 }];
 
 @Form.create()
-class Step2 extends React.PureComponent {
+class Step3 extends React.PureComponent {
+
   render() {
     const { form, patient, dispatch, submitting } = this.props;
     const { getFieldDecorator, validateFields } = form;
@@ -72,10 +75,15 @@ class Step2 extends React.PureComponent {
         if (!err) {
           dispatch({
             type: 'patient/saveDiagnoseInfo',
-            payload: values,
+            payload: {
+              data: {
+                ...values,
+              }
+            },
           });
+          let type = patient.id ? 'patient/editDiagnose' : 'patient/addDiagnose';
           dispatch({
-            type: 'patient/addDiagnose',
+            type,
             payload: {
               ...patient,
               ...values,
@@ -84,12 +92,20 @@ class Step2 extends React.PureComponent {
         }
       });
     };
+    const onChange = data => {
+        dispatch({
+          type: 'patient/saveDiagnoseInfo',
+          payload: {
+            operationRecords: data
+          },
+        });
+    }
     return (
       <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
-        <Card title="成员管理" className={styles.card} bordered={false}>
+        <Card title="手术信息" className={styles.card} bordered={false}>
           {getFieldDecorator('operationRecords', {
             initialValue: tableData,
-          })(<TableForm />)}
+          })(<OperationRecords />)}
         </Card>
         <Form.Item
           style={{ marginBottom: 8 }}

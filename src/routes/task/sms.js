@@ -13,54 +13,79 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
-@connect(({ loading }) => ({
-  submitting: loading.effects['patient/add'],
+const listTem = [{
+      id: 0,
+      smsName: '短信模版0',
+      smsContent: '短信内容1000'
+    },{
+      id: 1,
+      smsName: '短信模版1',
+      smsContent: '短信内容2000'
+    },{
+      id: 2,
+      smsName: '短信模版2',
+      smsContent: '短信内容3000'
+    }]
+@connect(({ loading, sms}) => ({
+  sms,
+  submitting: loading.effects['sms/send'],
 }))
 @Form.create()
 export default class BasicForms extends PureComponent {
   state = {
-    patient: false,
+    // taskId: '',
+    smsId: '0',
+    smsContent: '',
+    sendTimeStr: '',
+    callIdArray: []
   };
 
   componentDidMount() {
     const { dispatch, location } = this.props;
     let self = this;
-    let patientCode = qs.parse(location.search).patientCode;
-    if (!patientCode) {
+    let {callId} = qs.parse(location.search);
+    if (!callId) {
       return
     }
+    this.setState({callIdArray: callId});
     dispatch({
-      type: 'patient/get',
+      type: 'sms/fetch',
       payload: {
-        patientCode
+        
       },
-      callback(data) {
-        self.setState({
-          patient: data.data
-        });
+      callback: data => {
+        let smsList = data.smsArray || [];
+        if(smsList.length > 0) {
+          this.setState({
+            smsId: smsList[0].id,
+            smsContent: smsList[0].smsContent
+          });
+        }
       }
     });
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
-    let type = 'patient/add';
-    if (this.state.patient) {
-      type = 'patient/edit';
-    }
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const fieldsValue = {
           ...values,
-          'birthdayStr': values['birthdayStr'].format('YYYY-MM-DD'),
-          'diagnoseTimeStr': values['diagnoseTimeStr'].format('YYYY-MM-DD'),
-          'deathTimeStr': values['deathTimeStr'].format('YYYY-MM-DD')
+          'sendStartDate': values.sendDate ? values.sendDate[0].format('YYYY-MM-DD') : '',
+          'sendEndDate': values.sendDate ? values.sendDate[1].format('YYYY-MM-DD') : '' ,
+          'sendStartTime': values.sendTime ? values.sendTime[0].format('hh:mm:ss') : '',
+          'sendEndTime': values.sendTime ? values.sendTime[1].format('hh:mm:ss'): ''
         };
         this.props.dispatch({
-          type,
-          payload: fieldsValue,
+          type: 'sms/send',
+          payload: {
+            ...fieldsValue,
+            ...this.state
+          },
           callback() {
-            window.location.hash = '/patient/list';
+            // 给一个确认页面，还是直接跳转
+            alert('发送成功');
+            // window.location.hash = '/patient/list';
           }
         });
       }
@@ -69,10 +94,19 @@ export default class BasicForms extends PureComponent {
   handleReset = () => {
     this.props.form.resetFields();
   }
+  onTplChange = (smsId) => {
+    const { sms: {data: {list}} } = this.props;
+    const smsTpl = listTem.filter(sms => sms.id == smsId);
+    this.setState({
+      smsId,
+      smsContent:  smsTpl[0] ? smsTpl[0].smsContent : ''
+    })
+  }
   render() {
-    const { submitting, form } = this.props;
+    const { submitting, form, sms: {data: {list}} } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const { patient } = this.state;
+    
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -98,223 +132,64 @@ export default class BasicForms extends PureComponent {
             onSubmit={this.handleSubmit}
             hideRequiredMark = {false}
             style={{ marginTop: 8 }}
-          >
-            <FormItem
-              {...formItemLayout}
-              label='病案号'
-            >
-              {getFieldDecorator('patientCode', {
-                initialValue: patient ? patient.patientCode : '',
-                rules: [{
-                  required: true, message: '请输入病案号',
-                }],
-              })(
-                <Input placeholder="病案号"  disabled={!!patient}/>
-              )}
-            </FormItem>
-
-            <FormItem
-              {...formItemLayout}
-              label="病人姓名"
-            >
-              {getFieldDecorator('name', {
-                initialValue: patient ? patient.name : '',
-                rules: [{
-                  required: true, message: '请输入病人姓名',
-                }],
-              })(
-                <Input placeholder="病人姓名" disabled={!!patient}/>
-              )}
-            </FormItem>
-
-            <FormItem
-              {...formItemLayout}
-              label="病人性别"
-            >
-              <div>
-                {getFieldDecorator('sex', {
-                  initialValue: patient && patient.sex ? patient.sex.toString() : '0',
-                })(
-                  <Radio.Group>
-                    <Radio value="0">女</Radio>
-                    <Radio value="1">男</Radio>
-                  </Radio.Group>
-                )}
-              </div>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="电话号码"
-            >
-              {getFieldDecorator('mobile', {
-                initialValue: patient.mobile,
-                // rules: [{ required: true, message: 'Please input your phone number!' }],
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-
-            <FormItem
-              {...formItemLayout}
-              label="出生日期"
-            >
-              {getFieldDecorator('birthdayStr', {
-                initialValue: patient && patient.birthdayStr ? moment(patient.birthdayStr, 'YYYY-MM-DD') : ''
-              })(
-                  <DatePicker />
-              )}
-            </FormItem>
-
-
-            <FormItem
-              {...formItemLayout}
-              label="国籍"
-            >
-              {getFieldDecorator('nationality', {
-                initialValue: patient.nationality,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="地区"
-            >
-              {getFieldDecorator('region', {
-                initialValue: patient.region,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="民族"
-            >
-              {getFieldDecorator('nation', {
-                initialValue: patient.nation,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="婚姻状态"
-            >
-              <div>
-                {getFieldDecorator('marriage', {
-                  initialValue: patient && patient.marriage ? patient.marriage.toString() : '0',
-                })(
-                  <Radio.Group>
-                    <Radio value="0">未婚</Radio>
-                    <Radio value="1">已婚</Radio>
-                  </Radio.Group>
-                )}
-              </div>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="身份证号"
-            >
-              {getFieldDecorator('idNumber', {
-                initialValue: patient.idNumber,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="家庭住址"
-            >
-              {getFieldDecorator('homeAddress', {
-                initialValue: patient.homeAddress,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="籍贯"
-            >
-              {getFieldDecorator('hometown', {
-                initialValue: patient.hometown,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="最近门诊时间"
-            >
-              {getFieldDecorator('diagnoseTimeStr', {
-                initialValue: patient && patient.diagnoseTimeStr ? moment(patient.diagnoseTimeStr, 'YYYY-MM-DD') : ''
-              })(
-                <DatePicker />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="是否可以随访"
-            >
-              <div>
-                {getFieldDecorator('canCall', {
-                  initialValue: patient && patient.canCall ? patient.canCall.toString() : '',
-                  rules: [{ required: true, message: '请选择是否可以随访' }],
-                })(
-                  <Radio.Group>
-                    <Radio value="0">不可以</Radio>
-                    <Radio value="1">可以</Radio>
-                  </Radio.Group>
-                )}
-              </div>
-            </FormItem>
+          > 
             <FormItem {...formItemLayout}
-              label="生存状态">
-              {getFieldDecorator('patientState', {
-                initialValue: patient ? patient.patientState.toString() : '',
-                rules: [{ required: true, message: '请选择生存状态' }],
+              label="短信模版名称">
+              {getFieldDecorator('smsId', {
+                // initialValue: this.state.smsId,
+                rules: [{ required: true, message: '请选择短信模版' }],
               })(
                 <Select
                   mode="radio"
-                  placeholder="请选择生存状态"
+                  placeholder="请选择短信模版"
+                  onChange={this.onTplChange}
                   style={{
                     margin: '8px 0'
                   }}
                 >
-                  <Option value="0">死亡</Option>
-                  <Option value="1">生存</Option>
-                  <Option value="2">毁灭</Option>
+                  {listTem.map((tpl) =>
+                    <Option key={tpl.id} value={tpl.id}>{tpl.smsName}</Option>
+                  )}
                 </Select>
               )}
             </FormItem>
+
             <FormItem
               {...formItemLayout}
-              label="死亡时间"
+              label="短信内容"
             >
-              {getFieldDecorator('deathTimeStr', {
-                initialValue: patient.deathTimeStr ? moment(patient.deathTimeStr, 'YYYY-MM-DD') : ''
-                // initialValue: moment(patient.deathTimeStr, 'YYYY-MM-DD'),
-              })(
-                <DatePicker />
-              )}
-            </FormItem>
-           
-            <FormItem
-              {...formItemLayout}
-              label="死亡原因"
-            >
-              {getFieldDecorator('deathDesc', {
-                initialValue: patient.deathDesc,
-                rules: [{
-                  // required: true, message: '死亡原因 deathDesc',
-                }],
+              {getFieldDecorator('smsContent', {
+                initialValue: this.state.smsContent,
               })(
                 <TextArea style={{ minHeight: 32 }} placeholder="请输入死亡原因" rows={4} />
               )}
             </FormItem>
 
+            <FormItem
+              {...formItemLayout}
+              label='发送日期'
+            >
+              {getFieldDecorator('sendDate', {
+                
+              })(
+                <RangePicker />
+              )}
+            </FormItem>
+
+            <FormItem
+              {...formItemLayout}
+              label='发送时间'
+            >
+              {getFieldDecorator('sendTime', {
+                initialValue: '',
+              })(
+                <RangePicker />
+              )}
+            </FormItem>
+
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>
-                提交
+                发送
               </Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
             </FormItem>

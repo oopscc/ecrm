@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const req = (url, prrams) => request('url', {
+const req = (url, params) => request(url, {
   method: 'POST',
   body: {
     ...params
@@ -28,26 +28,31 @@ const req = (url, prrams) => request('url', {
 
 
 export async function getWaitCallCount(params) {
-  return req('/callRecord/waitCallCount.do', params);
+  return req('/hospitalCRM/callRecord/waitCallCount.do', params);
 }
 
 export async function getWillCallNum(params) {
-  return req('/callRecord/willCallNum.do', params);
+  return req('/hospitalCRM/callRecord/willCallNum.do', params);
 }
 // 待随访患者
 export async function getWillCallList(params) {
-  return req('/callRecord/willCallPageQuery.do', params);
+  return req('/hospitalCRM/callRecord/willCallPageQuery.do', params);
 }
 // 今日已随访患者
 export async function getTodayCallList(params) {
-  return req('/callRecord/todayCallPageQuery.do', params);
+  return req('/hospitalCRM/callRecord/todayCallPageQuery.do', params);
 }
 // 总已随访患者
 export async function getCallList(params) {
-  return req('/callRecord/calledPageQuery.do', params);
+  return req('/hospitalCRM/callRecord/calledPageQuery.do', params);
+}
+
+// TODO 获得电话随访的各种信息
+export async function getCallData(params) {
+  return req('/hospitalCRM/callRecord/getPhonePageData.do', params);
 }
 
 // 保存随访记录
 export async function saveCallRes(params) {
-  return req('/callRecord/savePhoneCallResult.do', params);
+  return req('/hospitalCRM/callRecord/savePhoneCallResult.do', params);
 }

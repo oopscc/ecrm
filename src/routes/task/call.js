@@ -1,78 +1,277 @@
-import React, { PureComponent } from 'react';
-import moment from 'moment';
+import React, { Component } from 'react';
 import { connect } from 'dva';
-import qs from 'query-string'
-import {
-  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
-} from 'antd';
+import { Form, Card, Badge, Table, Divider, Input, Button } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import DescriptionList from '../../components/DescriptionList';
 import styles from './call.less';
-
+import qs from 'query-string'
 const FormItem = Form.Item;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
+const { Description } = DescriptionList;
 const { TextArea } = Input;
 
-@connect(({ loading }) => ({
-  submitting: loading.effects['patient/add'],
+const progressColumns = [{
+  title: '时间',
+  dataIndex: 'time',
+  key: 'time',
+}, {
+  title: '当前进度',
+  dataIndex: 'rate',
+  key: 'rate',
+}, {
+  title: '状态',
+  dataIndex: 'status',
+  key: 'status',
+  render: text => (
+    text === 'success' ? <Badge status="success" text="成功" /> : <Badge status="processing" text="进行中" />
+  ),
+}, {
+  title: '操作员ID',
+  dataIndex: 'operator',
+  key: 'operator',
+}, {
+  title: '耗时',
+  dataIndex: 'cost',
+  key: 'cost',
+}];
+
+@connect(({ callRecord, profile, loading }) => ({
+  callRecord,
+  profile,
+  loading: loading.effects['callRecord/getCallData'],
+  submitting: loading.effects['callRecord/save']
 }))
 @Form.create()
-export default class BasicForms extends PureComponent {
-  state = {
-    patient: false,
-  };
-
+export default class BasicProfile extends Component {
+  state = {};
   componentDidMount() {
     const { dispatch, location } = this.props;
     let self = this;
-    let patientCode = qs.parse(location.search).patientCode;
-    if (!patientCode) {
-      return
-    }
+    let {patientCode, id} = qs.parse(location.search);
+    this.setState({patientCode, id});
     dispatch({
-      type: 'patient/get',
+      type: 'callRecord/getCallData',
       payload: {
         patientCode
       },
-      callback(data) {
+      callback: data => {
         self.setState({
-          patient: data.data
-        });
+          ...data.data
+        })
       }
+    });
+    dispatch({
+      type: 'profile/fetchBasic',
     });
   }
 
   handleSubmit = (e) => {
     e.preventDefault();
-    let type = 'patient/add';
-    if (this.state.patient) {
-      type = 'patient/edit';
-    }
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const fieldsValue = {
           ...values,
-          'birthdayStr': values['birthdayStr'].format('YYYY-MM-DD'),
-          'diagnoseTimeStr': values['diagnoseTimeStr'].format('YYYY-MM-DD'),
-          'deathTimeStr': values['deathTimeStr'].format('YYYY-MM-DD')
+          id: this.state.id
         };
         this.props.dispatch({
-          type,
+          type: 'callRecord/save',
           payload: fieldsValue,
           callback() {
-            window.location.hash = '/patient/list';
+            // 返回
+            window.location.hash = '/patient/willFlup';
           }
         });
       }
     });
   }
-  handleReset = () => {
-    this.props.form.resetFields();
-  }
+
   render() {
-    const { submitting, form } = this.props;
+    const { profile, loading, submitting } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { patient } = this.state;
+    const patient = this.state;
+    const {callRecordArray: calls, diagnoseArray: diagnosesData, questionnaireArray: questData, smsInfoArray: smsData} = this.state;
+    const { basicGoods, basicProgress } = profile;
+    let goodsData = [];
+    if (basicGoods.length) {
+      let num = 0;
+      let amount = 0;
+      basicGoods.forEach((item) => {
+        num += Number(item.num);
+        amount += Number(item.amount);
+      });
+      goodsData = basicGoods.concat({
+        id: '总计',
+        num,
+        amount,
+      });
+    }
+    const renderContent = (value, row, index) => {
+      const obj = {
+        children: value,
+        props: {},
+      };
+      if (index === basicGoods.length) {
+        obj.props.colSpan = 0;
+      }
+      return obj;
+    };
+    const goodsColumns = [{
+      title: '商品编号',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, row, index) => {
+        if (index < basicGoods.length) {
+          return <a href="">{text}</a>;
+        }
+        return {
+          children: <span style={{ fontWeight: 600 }}>总计</span>,
+          props: {
+            colSpan: 4,
+          },
+        };
+      },
+    }, {
+      title: '商品名称',
+      dataIndex: 'name',
+      key: 'name',
+      render: renderContent,
+    }, {
+      title: '商品条码',
+      dataIndex: 'barcode',
+      key: 'barcode',
+      render: renderContent,
+    }, {
+      title: '单价',
+      dataIndex: 'price',
+      key: 'price',
+      align: 'right',
+      render: renderContent,
+    }, {
+      title: '数量（件）',
+      dataIndex: 'num',
+      key: 'num',
+      align: 'right',
+      render: (text, row, index) => {
+        if (index < basicGoods.length) {
+          return text;
+        }
+        return <span style={{ fontWeight: 600 }}>{text}</span>;
+      },
+    }, {
+      title: '金额',
+      dataIndex: 'amount',
+      key: 'amount',
+      align: 'right',
+      render: (text, row, index) => {
+        if (index < basicGoods.length) {
+          return text;
+        }
+        return <span style={{ fontWeight: 600 }}>{text}</span>;
+      },
+    }];
+    // const call 
+    const callColumns = [
+      {
+        title: '随访时间',
+        dataIndex: 'callTime',
+        key: 'callTime',
+        width: 60,
+      },{
+        title: '主要诊断',
+        dataIndex: 'diagnoseName',
+        key: 'diagnoseName',
+        width: 60,
+      },{
+        title: '随访结果',
+        dataIndex: 'callResult',
+        key: 'callResult',
+        width: 60,
+      },{
+        title: '随访方式',
+        dataIndex: 'callMode',
+        key: 'callMode',
+        width: 60,
+      },{
+        title: '随访人员',
+        dataIndex: 'callPerson',
+        key: 'callPerson',
+        width: 60,
+      },{
+        title: '联系电话',
+        dataIndex: 'mobile',
+        key: 'mobile',
+        width: 60,
+      }];
+    const diagnoseColumns = [
+      {
+        title: '入院日期',
+        dataIndex: 'admissionTime',
+        key: 'admissionTime',
+        width: 60,
+      },{
+        title: '出院日期',
+        dataIndex: 'outTime',
+        key: 'outTime',
+        width: 60,
+      },{
+        title: '出院科室',
+        dataIndex: 'outDept',
+        key: 'outDept',
+        width: 60,
+      },{
+        title: '主要诊断',
+        dataIndex: 'callMode',
+        key: 'callMode',
+        width: 60,
+      },{
+        title: '主治医师',
+        dataIndex: 'treatmentDoctor',
+        key: 'treatmentDoctor',
+        width: 60,
+      },{
+        title: '治疗方式',
+        dataIndex: 'cureModeStr',
+        key: 'cureModeStr',
+        width: 60,
+      }];
+    const questColumns = [
+      {
+        title: '问卷名称',
+        dataIndex: 'questionnaireName',
+        key: 'questionnaireName',
+        width: 60,
+      },{
+        title: '填写时间',
+        dataIndex: 'fillInTime',
+        key: 'fillInTime',
+        width: 60,
+      }];
+    const smsColumns = [
+      {
+        title: '发送时间',
+        dataIndex: 'sendTime',
+        key: 'sendTime',
+        width: 60,
+      },{
+        title: '随访模版名称',
+        dataIndex: 'smsTitle',
+        key: 'smsTitle',
+        width: 60,
+      },{
+        title: '随访内容',
+        dataIndex: 'smsContent',
+        key: 'smsContent',
+        width: 60,
+      },{
+        title: '反馈内容',
+        dataIndex: 'replyContent',
+        key: 'replyContent',
+        width: 60,
+      },{
+        title: '反馈状态',
+        dataIndex: 'replyState',
+        key: 'replyState',
+        width: 60,
+      }];
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -84,16 +283,27 @@ export default class BasicForms extends PureComponent {
         md: { span: 10 },
       },
     };
-
     const submitFormLayout = {
       wrapperCol: {
         xs: { span: 24, offset: 0 },
         sm: { span: 10, offset: 7 },
       },
     };
+    /*
+    */
     return (
-      <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
-        <Card bordered={false}>
+      <PageHeaderLayout title="基础详情页">
+        <Card bordered={false}>          
+          <DescriptionList size="large" title="用户信息" style={{ marginBottom: 32 }}>
+            <Description term="病案号">{patient.patientCode}</Description>
+            <Description term="患者姓名">{patient.name}</Description>
+            <Description term="性别">{patient.sex}</Description>
+            <Description term="年龄">{patient.age}</Description>
+            <Description term="身份证">{patient.idNumber}</Description>
+            <Description term="最近诊断日期">{patient.latelyDiagnoseDate}</Description>
+            <Description term="家庭住址">{patient.homeAddress}</Description>
+          </DescriptionList>
+          <Divider style={{ marginBottom: 32 }} />
           <Form
             onSubmit={this.handleSubmit}
             hideRequiredMark = {false}
@@ -101,224 +311,114 @@ export default class BasicForms extends PureComponent {
           >
             <FormItem
               {...formItemLayout}
-              label='病案号'
-            >
-              {getFieldDecorator('patientCode', {
-                initialValue: patient ? patient.patientCode : '',
-                rules: [{
-                  required: true, message: '请输入病案号',
-                }],
-              })(
-                <Input placeholder="病案号"  disabled={!!patient}/>
-              )}
-            </FormItem>
-
-            <FormItem
-              {...formItemLayout}
-              label="病人姓名"
-            >
-              {getFieldDecorator('name', {
-                initialValue: patient ? patient.name : '',
-                rules: [{
-                  required: true, message: '请输入病人姓名',
-                }],
-              })(
-                <Input placeholder="病人姓名" disabled={!!patient}/>
-              )}
-            </FormItem>
-
-            <FormItem
-              {...formItemLayout}
-              label="病人性别"
-            >
-              <div>
-                {getFieldDecorator('sex', {
-                  initialValue: patient && patient.sex ? patient.sex.toString() : '0',
-                })(
-                  <Radio.Group>
-                    <Radio value="0">女</Radio>
-                    <Radio value="1">男</Radio>
-                  </Radio.Group>
-                )}
-              </div>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="电话号码"
+              label='联系电话'
             >
               {getFieldDecorator('mobile', {
-                initialValue: patient.mobile,
-                // rules: [{ required: true, message: 'Please input your phone number!' }],
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-
-            <FormItem
-              {...formItemLayout}
-              label="出生日期"
-            >
-              {getFieldDecorator('birthdayStr', {
-                initialValue: patient && patient.birthdayStr ? moment(patient.birthdayStr, 'YYYY-MM-DD') : ''
-              })(
-                  <DatePicker />
-              )}
-            </FormItem>
-
-
-            <FormItem
-              {...formItemLayout}
-              label="国籍"
-            >
-              {getFieldDecorator('nationality', {
-                initialValue: patient.nationality,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="地区"
-            >
-              {getFieldDecorator('region', {
-                initialValue: patient.region,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="民族"
-            >
-              {getFieldDecorator('nation', {
-                initialValue: patient.nation,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="婚姻状态"
-            >
-              <div>
-                {getFieldDecorator('marriage', {
-                  initialValue: patient && patient.marriage ? patient.marriage.toString() : '0',
-                })(
-                  <Radio.Group>
-                    <Radio value="0">未婚</Radio>
-                    <Radio value="1">已婚</Radio>
-                  </Radio.Group>
-                )}
-              </div>
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="身份证号"
-            >
-              {getFieldDecorator('idNumber', {
-                initialValue: patient.idNumber,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="家庭住址"
-            >
-              {getFieldDecorator('homeAddress', {
-                initialValue: patient.homeAddress,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="籍贯"
-            >
-              {getFieldDecorator('hometown', {
-                initialValue: patient.hometown,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="最近门诊时间"
-            >
-              {getFieldDecorator('diagnoseTimeStr', {
-                initialValue: patient && patient.diagnoseTimeStr ? moment(patient.diagnoseTimeStr, 'YYYY-MM-DD') : ''
-              })(
-                <DatePicker />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="是否可以随访"
-            >
-              <div>
-                {getFieldDecorator('canCall', {
-                  initialValue: patient && patient.canCall ? patient.canCall.toString() : '',
-                  rules: [{ required: true, message: '请选择是否可以随访' }],
-                })(
-                  <Radio.Group>
-                    <Radio value="0">不可以</Radio>
-                    <Radio value="1">可以</Radio>
-                  </Radio.Group>
-                )}
-              </div>
-            </FormItem>
-            <FormItem {...formItemLayout}
-              label="生存状态">
-              {getFieldDecorator('patientState', {
-                initialValue: patient ? patient.patientState.toString() : '',
-                rules: [{ required: true, message: '请选择生存状态' }],
-              })(
-                <Select
-                  mode="radio"
-                  placeholder="请选择生存状态"
-                  style={{
-                    margin: '8px 0'
-                  }}
-                >
-                  <Option value="0">死亡</Option>
-                  <Option value="1">生存</Option>
-                  <Option value="2">毁灭</Option>
-                </Select>
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="死亡时间"
-            >
-              {getFieldDecorator('deathTimeStr', {
-                initialValue: patient.deathTimeStr ? moment(patient.deathTimeStr, 'YYYY-MM-DD') : ''
-                // initialValue: moment(patient.deathTimeStr, 'YYYY-MM-DD'),
-              })(
-                <DatePicker />
-              )}
-            </FormItem>
-           
-            <FormItem
-              {...formItemLayout}
-              label="死亡原因"
-            >
-              {getFieldDecorator('deathDesc', {
-                initialValue: patient.deathDesc,
+                initialValue: '110',
                 rules: [{
-                  // required: true, message: '死亡原因 deathDesc',
+                  required: true, message: '请输入患者联系电话',
                 }],
               })(
-                <TextArea style={{ minHeight: 32 }} placeholder="请输入死亡原因" rows={4} />
+                <Input placeholder="联系电话"  disabled={true}/>
               )}
             </FormItem>
-
+            <FormItem
+              {...formItemLayout}
+              label='显示号码'
+            >
+              {getFieldDecorator('showNo', {
+                initialValue: patient ? patient.showNo : '',
+                rules: [{
+                  required: true, message: '请输入显示号码',
+                }],
+              })(
+                <Input placeholder="显示号码" />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label='主叫号码'
+            >
+              {getFieldDecorator('callNo', {
+                initialValue: patient ? patient.callNo : '',
+                rules: [{
+                  required: true, message: '请选择主叫号码',
+                }],
+              })(
+                <Input placeholder="主叫号码" />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label='随访结果'
+            >
+              {getFieldDecorator('callResult', {
+                initialValue: '',
+                rules: [{
+                  required: true, message: '请选择随访结果',
+                }],
+              })(
+                <Input placeholder="随访结果" />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label='备注'
+            >
+              {getFieldDecorator('remark', {
+                initialValue: '',
+                rules: [{
+                  // required: true, message: '请输入病案号',
+                }],
+              })(
+                <TextArea style={{ minHeight: 32 }} placeholder="" rows={4} />
+              )}
+            </FormItem>
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>
-                提交
+                保存
               </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
             </FormItem>
           </Form>
+          <Divider style={{ marginBottom: 32 }} />          
+          <div className={styles.title}>随访历史信息</div>
+          <Table
+            style={{ marginBottom: 24 }}
+            pagination={false}
+            loading={loading}
+            dataSource={calls}
+            columns={callColumns}
+            rowKey="id"
+          />
+          <Divider style={{ marginBottom: 32 }} />
+          <div className={styles.title}>主要诊断信息</div>
+          <Table
+            style={{ marginBottom: 16 }}
+            pagination={false}
+            loading={loading}
+            dataSource={diagnosesData}
+            columns={diagnoseColumns}
+          />
+          <Divider style={{ marginBottom: 32 }} />
+          <div className={styles.title}>历史问卷信息</div>
+          <Table
+            style={{ marginBottom: 24 }}
+            pagination={false}
+            loading={loading}
+            dataSource={questData}
+            columns={questColumns}
+            rowKey="id"
+          />
+          <Divider style={{ marginBottom: 32 }} />
+          <div className={styles.title}>历史短信信息</div>
+          <Table
+            style={{ marginBottom: 24 }}
+            pagination={false}
+            loading={loading}
+            dataSource={smsData}
+            columns={smsColumns}
+            rowKey="id"
+          />
         </Card>
       </PageHeaderLayout>
     );

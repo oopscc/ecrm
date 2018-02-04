@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import {
-  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip, Divider
+  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip, Divider,
 } from 'antd';
 import qs from 'query-string';
 import { routerRedux } from 'dva/router';
@@ -25,24 +25,8 @@ const formItemLayout = {
 class Step1 extends React.PureComponent {
   componentDidMount() {
     const { dispatch, location } = this.props;
-    let {id, patientCode, name }= qs.parse(location.search);
-    if (patientCode) {
-      dispatch({
-        type: 'patient/saveDiagnoseInfo',
-        payload: {
-          data: {patientCode, name}
-        }
-      });
-    }
-    if (!id) {
-      return
-    }
-    dispatch({
-      type: 'patient/getDiagnose',
-      payload: {
-        id
-      }
-    });
+    // let {id, patientCode, name }= qs.parse(location.search);
+    
   }
   render() {
     const { patient, dispatch, data, form } = this.props;
@@ -51,20 +35,26 @@ class Step1 extends React.PureComponent {
       validateFields((err, values) => {
         values = {
           ...values,
-          diagnoseTimeStr: values.diagnoseTimeStr ? values.diagnoseTimeStr.format('YYYY-MM-DD') : '',
-          admissionTimeStr: values.admissionTimeStr ? values.admissionTimeStr.format('YYYY-MM-DD'): '',
+          diagnoseStartTimeStr: values.diagnoseTimeStr ? values.diagnoseTimeStr[0].format('YYYY-MM-DD') : '',
+          diagnoseEndTimeStr: values.diagnoseTimeStr ? values.diagnoseTimeStr[1].format('YYYY-MM-DD') : '',
+          admissionStartTimeStr: values.admissionTimeStr ? values.admissionTimeStr[0].format('YYYY-MM-DD'): '',
+          admissionEndTimeStr: values.admissionTimeStr ? values.admissionTimeStr[1].format('YYYY-MM-DD'): '',
+          outStartTimeStr: values.diagnoseTimeStr ? values.outTimeStr[0].format('YYYY-MM-DD') : '',
+          outEndTimeStr: values.diagnoseTimeStr ? values.outTimeStr[1].format('YYYY-MM-DD') : '',
+          taskStartTimeStr: values.taskStartTimeStr ? values.taskStartTimeStr.format('YYYY-MM-DD') : '',
         };
         if (!err) {
           dispatch({
-            type: 'patient/saveDiagnoseInfo',
+            type: 'task/search',
             payload: {
               data: values
             },
           });
-          dispatch(routerRedux.push('/patient/diagnoseInfo/diagnoseRecords'));
+          dispatch(routerRedux.push('/task/taskAdd/create'));
         }
       });
-    };      
+    };   
+
     return (
       <div>
         <Card bordered={false}>
@@ -78,38 +68,62 @@ class Step1 extends React.PureComponent {
               label='病案号'
             >
               {getFieldDecorator('patientCode', {
-                initialValue: patient ? patient.patientCode : '',
                 rules: [{
                   required: true, message: '请输入病案号',
                 }],
               })(
-                <Input placeholder="病案号"  disabled={!!patient.patientCode}/>
+                <TextArea placeholder="可输入多个病案号批量查询，使用，隔开"/>
               )}
             </FormItem>
 
             <FormItem
               {...formItemLayout}
-              label="病人姓名"
+              label="性别"
             >
-              {getFieldDecorator('name', {
-                initialValue: patient ? patient.name : '',
+              <div>
+                {getFieldDecorator('sex', {
+
+                })(
+                  <Radio.Group>
+                    <Radio value="0">女</Radio>
+                    <Radio value="1">男</Radio>
+                  </Radio.Group>
+                )}
+              </div>
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="病种"
+            >
+              {getFieldDecorator('diseaseName', {
                 rules: [{
-                  required: true, message: '请输入病人姓名',
+                  required: true, message: '请选择病种',
                 }],
               })(
-                <Input placeholder="病人姓名" disabled={!!patient.name}/>
+                <Input placeholder="病种"/>
               )}
             </FormItem>
-
             <FormItem
               {...formItemLayout}
-              label="患者第几次住院"
+              label="年龄"
             >
-              {getFieldDecorator('admissionNumber', {
-                initialValue: patient ? patient.admissionNumber : '',
-                // rules: [{ required: true, message: 'Please input your phone number!' }],
+              {getFieldDecorator('age', {
+                rules: [{
+                  required: true, message: '请输入病人年龄',
+                }],
               })(
-                <Input style={{ width: '100%' }} />
+                <Input placeholder="年龄"/>
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="原发性诊断名称"
+            >
+              {getFieldDecorator('diagnoseName', {
+                rules: [{
+                }],
+              })(
+                <Input placeholder="diagnoseName" />
               )}
             </FormItem>
             <FormItem
@@ -117,53 +131,52 @@ class Step1 extends React.PureComponent {
               label="诊断时间"
             >
               {getFieldDecorator('diagnoseTimeStr', {
-                initialValue: patient && patient.diagnoseTimeStr ? moment(patient.diagnoseTimeStr, 'YYYY-MM-DD') : ''
+
               })(
-                  <DatePicker />
+                  <RangePicker />
               )}
             </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="诊断科别"
-            >
-              {getFieldDecorator('diagnoseDept', {
-                initialValue: patient.diagnoseDept,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              label="主治医师"
-            >
-              {getFieldDecorator('treatmentDoctor', {
-                initialValue: patient.treatmentDoctor,
-              })(
-                <Input style={{ width: '100%' }} />
-              )}
-            </FormItem>
+            
             <FormItem
               {...formItemLayout}
               label="入院时间"
             >
               {getFieldDecorator('admissionTimeStr', {
-                initialValue: patient && patient.admissionTimeStr ? moment(patient.admissionTimeStr, 'YYYY-MM-DD') : ''
+
               })(
-                  <DatePicker />
+                  <RangePicker />
               )}
             </FormItem>
-
             <FormItem
               {...formItemLayout}
-              label="入院科别"
+              label="出院时间"
             >
-              {getFieldDecorator('admissionDept', {
-                initialValue: patient.admissionDept,
+              {getFieldDecorator('outTimeStr', {
+
+              })(
+                  <RangePicker />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="出院科别"
+            >
+              {getFieldDecorator('outDept', {
+
               })(
                 <Input style={{ width: '100%' }} />
               )}
             </FormItem>
-            
+            <FormItem
+              {...formItemLayout}
+              label="随访任务起始日期"
+            >
+              {getFieldDecorator('taskStartTimeStr', {
+
+              })(
+                  <DatePicker />
+              )}
+            </FormItem>
              <Button type="primary" onClick={onValidateForm}>
               下一步
             </Button>
@@ -182,6 +195,6 @@ class Step1 extends React.PureComponent {
   }
 }
 
-export default connect(({ patient }) => ({
-  patient: patient.diagnoseInfo,
+export default connect(({ task }) => ({
+
 }))(Step1);

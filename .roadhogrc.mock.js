@@ -138,18 +138,16 @@ const proxy = {
       "path": "/base/category/list"
     });
   },
-  'POST /patient/addPatient.do': (req, res) => {res.send(success)},
-  'POST /patient/addDiagnoseInfo.do': (req, res) => {res.send(success)},
-  'POST /patient/edit*.do': (req, res) => {res.send(success)},
-  'POST /patient/allPatientList.do': getPatients,
-  'POST /patient/diagnosePageQuery.do': getDiagnoses,
+  // 'POST /patient/addPatient.do': (req, res) => {res.send(success)},
+  // 'POST /patient/addDiagnoseInfo.do': (req, res) => {res.send(success)},
+  // 'POST /patient/edit*.do': (req, res) => {res.send(success)},
   // 'POST /patient/allPatientList.do': getPatients,
-  // 'POST /patient/allPatientList.do': getPatients,
-  // 'POST /patient/allPatientList.do': getPatients,
-  // 'POST /patient/allPatientList.do': getPatients,
-  // 'POST /patient/allPatientList.do': getPatients,
+  // 'POST /patient/diagnosePageQuery.do': getDiagnoses,
   // 'GET /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
   // 'POST /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
+  'GET /hospitalCRM/(.*)': 'http://your.server.com:8080/hospitalCRM/',
+  'POST /hospitalCRM/(.*)': 'http://your.server.com:8080/hospitalCRM/',
+  // 'POST /(.*)': 'http://your.server.com:8080/hospitalCRM/',
 };
 
 export default noProxy ? {} : delay(proxy, 1000);

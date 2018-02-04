@@ -29,10 +29,9 @@ export default class StepForm extends PureComponent {
     const { pathname } = location;
     const pathList = pathname.split('/');
     switch (pathList[pathList.length - 1]) {
-      case 'info': return 0;
-      case 'diagnoseRecords': return 1;
-      case 'operationRecords': return 2;
-      case 'result': return 3;
+      case 'search': return 0;
+      case 'create': return 1;
+      case 'result': return 2;
       default: return 0;
     }
   }
@@ -43,9 +42,8 @@ export default class StepForm extends PureComponent {
         <Card bordered={false}>
           <div>
             <Steps current={this.getCurrentStep()} className={styles.steps}>
-              <Step title="填写住院信息" />
-              <Step title="填写诊断信息" />
-              <Step title="填写手术信息" />
+              <Step title="选择待随访患者" />
+              <Step title="生成任务" />
               <Step title="完成" />
             </Steps>
             <Switch>
@@ -59,7 +57,7 @@ export default class StepForm extends PureComponent {
                   />
                 ))
               }
-              <Redirect exact from="/patient/diagnoseInfo" to={'/patient/diagnoseInfo/info' + location.search} />
+              <Redirect exact from="/task/taskAdd" to={'/task/taskAdd/search'} />
               <Route render={NotFound} />
             </Switch>
           </div>

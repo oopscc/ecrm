@@ -33,19 +33,16 @@ const columns = [
     dataIndex: 'taskId',
     key: 'taskId',
     width: 100,
-    fixed: 'left'
   },{
     title: '任务名称',
     dataIndex: 'taskName',
     key: 'taskName',
     width: 100,
-    fixed: 'left'
   },{
     title: '患者数量',
     dataIndex: 'patientNum',
     key: 'patientNum',
     width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
   },{
     title: '预计完成时间',
     dataIndex: 'estimateTime',
@@ -61,7 +58,7 @@ const columns = [
     title: '操作',
     key: 'operation',
     width: 100,
-    render: (text, record) => <Link to={`/task/info?taskId=${record.taskId}`}>{'查看详情'}</Link>
+    render: (text, record) => <Link to={`/task/detail?taskId=${record.taskId}`}>{'查看详情'}</Link>
 
   }]
 const handleOptionClick = (record, e) => {
@@ -217,10 +214,9 @@ export default class TableList extends PureComponent {
       if (err) return;
       const values = {
         ...fieldsValue,
-        pageSize: patient.data.pagination.pageSize,
-        currentPage: patient.data.pagination.current,
-        beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
-        endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD'): '',
+        pageSize: task.tasks.pagination.pageSize,
+        currentPage: task.tasks.pagination.current,
+
       };
 
       this.setState({
@@ -255,21 +251,27 @@ export default class TableList extends PureComponent {
   }
 
   renderSimpleForm() {
+
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="病种名称">
-              {getFieldDecorator('diseaseName')(
+            <FormItem label="随访人员">
+              {getFieldDecorator('callUserId')(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+            <FormItem label="任务状态">
+              {getFieldDecorator('taskState')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="确诊时间">
-              {getFieldDecorator('diagnoseTime')(
-                <RangePicker />
+            <FormItem label="任务名称">
+              {getFieldDecorator('taskName')(
+                <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
@@ -364,7 +366,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { task: { tasks }, loading } = this.props;
+    const { task: { tasks: data }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
 
     const menu = (
@@ -387,8 +389,8 @@ export default class TableList extends PureComponent {
               {this.renderForm()}
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" href="/#/patient/add">
-                新建
+              <Button icon="plus" type="primary" href="/#/task/taskAdd">
+                新增
               </Button>
               {
                 selectedRows.length > 0 && (
@@ -409,7 +411,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1650 }}
+              scroll={{ x: 1050 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

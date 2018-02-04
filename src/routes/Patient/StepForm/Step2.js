@@ -4,6 +4,8 @@ import { Form, Input, Button, Select, Divider, Card } from 'antd';
 import { routerRedux } from 'dva/router';
 import styles from './style.less';
 import TableForm from './TableForm';
+import qs from 'query-string';
+import moment from 'moment';
 
 
 const { Option } = Select;
@@ -38,7 +40,7 @@ const tableData = [{
   primaryFlag: 1,
   diagnoseName: '诊断名称',
   diagnoseCode: '诊断疾病编码',
-  admissionState: '入院病情',
+  admissionState: 1,
   diagnoseStages: '诊断分期'  
 }, {
   key: '2',
@@ -46,7 +48,7 @@ const tableData = [{
   primaryFlag: 2,
   diagnoseName: '诊断名称',
   diagnoseCode: '诊断疾病编码',
-  admissionState: '入院病情',
+  admissionState: 2,
   diagnoseStages: '诊断分期'  
 }, {
   key: '3',
@@ -54,14 +56,15 @@ const tableData = [{
   primaryFlag: 3,
   diagnoseName: '诊断名称',
   diagnoseCode: '诊断疾病编码',
-  admissionState: '入院病情',
+  admissionState: 3,
   diagnoseStages: '诊断分期'
 }];
 
 @Form.create()
-class Step1 extends React.PureComponent {
+class Step2 extends React.PureComponent {
   render() {
-    const { form, dispatch, data } = this.props;
+    const { form, dispatch, data, patient } = this.props;
+    console.log({patient});
     const { getFieldDecorator, validateFields } = form;
     const onPrev = () => {
       dispatch(routerRedux.push('/patient/diagnoseInfo'));
@@ -77,13 +80,23 @@ class Step1 extends React.PureComponent {
         }
       });
     };
+    const onChange = data => {
+        dispatch({
+          type: 'patient/saveDiagnoseInfo',
+          payload: {
+            data: {
+              diagnoseRecords: data
+            }
+          },
+        });
+    }
     return (
       <div>
         <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
-          <Card title="成员管理" className={styles.card} bordered={false}>
+          <Card title="诊断信息" className={styles.card} bordered={false}>
             {getFieldDecorator('diagnoseRecords', {
               initialValue: tableData,
-            })(<TableForm />)}
+            })(<TableForm onChange={onChange} />)}
           </Card>
           <Form.Item
             style={{ marginBottom: 8 }}

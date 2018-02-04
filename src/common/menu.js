@@ -128,7 +128,7 @@ const menuData = [{
   }, {
     name: '分配随访任务(分步式)',
     // 条件查询患者列表 －> 设置条件，新建任务
-    path: 'creat',
+    path: 'taskAdd',
   }, {
     name: '随访任务详情',
     path: 'detail',

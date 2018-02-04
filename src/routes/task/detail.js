@@ -7,6 +7,7 @@ const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import qs from 'query-string'
 
 import styles from './list.less';
 import { Link } from 'react-router-dom';
@@ -16,46 +17,18 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
-// 序号，任务名称，患者数量，预计完成时间，任务状态，查看详情
-// 任务详情 ： 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访时间，随访结果，随访方式
-// // 序号，病案号，姓名，随访时间，主要诊断，随访结果，随访方式，随访人员，练习电话，操作（修改，删除，新增）
-
-/*
-patientCode
-name
-sex
-mobile
-diseaseName
-diagnoseTime
-diagnoseName
-treatmentDoctor
-callTime
-callResult
-smsState
-callModeStr
-
- */
 
 const columns = [
-  // {
-  //   title: '序号',
-  //   dataIndex: 'callId',
-  //   key: 'callId',
-  //   width: 100,
-  //   fixed: 'left'
-  // },
   {
     title: '病案号',
     dataIndex: 'patientCode',
     key: 'patientCode',
-    width: 100,
-    fixed: 'left'
+    width: 80,
   },{
     title: '姓名',
     dataIndex: 'name',
     key: 'name',
-    width: 100,
-    fixed: 'left'
+    width: 80,
   },{
     title: '性别',
     dataIndex: 'sex',
@@ -66,23 +39,23 @@ const columns = [
     title: '联系电话',
     dataIndex: 'mobile',
     key: 'mobile',
-    width: 120
+    width: 100
   },{
     title: '病种',
     dataIndex: 'diseaseName',
     key: 'diseaseName',
-    width: 120
+    width: 100
   },{
     title: '确诊时间',
     dataIndex: 'diagnoseTime',
     key: 'diagnoseTime',
-    width: 150,
+    width: 100,
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '原发性诊断名称',
     dataIndex: 'diagnoseName',
     key: 'diagnoseName',
-    width: 150
+    width: 100
   },{
     title: '治疗方式',
     dataIndex: 'cureModeStr',
@@ -92,60 +65,36 @@ const columns = [
     title: '主治医师',
     dataIndex: 'treatmentDoctor',
     key: 'treatmentDoctor',
-    width: 120
+    width: 100
   },{
-    title: '随访阶段',
-    dataIndex: 'callStageStr',
-    key: 'callStageStr',
-    width: 150,
+    title: '随访时间',
+    dataIndex: 'callTime',
+    key: 'callTime',
+    width: 100,
+    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+  },{
+    title: '随访结果',
+    dataIndex: 'callResult',
+    key: 'callResult',
+    width: 100
+  },{
+    title: '随访方式',
+    dataIndex: 'callModeStr',
+    key: 'callModeStr',
+    width: 100
   },{
     title: '操作',
     key: 'operation',
     width: 100,
     fixed: 'right',
     render: (text, record) => {
-      <Link to={`/callRecord/call?patientCode=${record.patientCode}`}>{'修改'}</Link>
-      <Link to={`/callRecord/sms?patientCode=${record.patientCode}`}>{'删除'}</Link>
+      <div>
+        <Link to={`/callRecord/call?patientCode=${record.patientCode}`}>{'电话'}</Link>
+        <Link to={`/callRecord/sms?patientCode=${record.patientCode}`}>{'短信'}</Link>
+      </div>
     }
   }]
 
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '任务名称',
-    dataIndex: 'name',
-    key: 'name',
-    width: 100,
-    fixed: 'left'
-  },{
-    title: '患者数量',
-    dataIndex: 'patientNum',
-    key: 'patientNum',
-    width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
-  },{
-    title: '预计完成时间',
-    dataIndex: 'estimateTime',
-    key: 'estimateTime',
-    width: 120,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '任务状态',
-    dataIndex: 'taskState',
-    key: 'taskState',
-    width: 120
-  },{
-    title: '操作',
-    key: 'operation',
-    width: 100,
-    render: (text, record) => <Link to={`/task/info?taskId=${record.taskId}`}>{'查看详情'}</Link>
-
-  }]
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
@@ -204,13 +153,30 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    taskId: ''
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, location } = this.props;
+    let {taskId} = qs.parse(location.search);
+    if (!taskId) {
+      return
+    }
+    this.setState({
+      taskId
+    })
     dispatch({
-      type: 'task/fetch',
+      type: 'task/getTask',
       payload: {
+        taskId,
+        currentPage: 1,
+        pageSize: 10
+      }
+    });
+    dispatch({
+      type: 'task/getTaskPatients',
+      payload: {
+        taskId,
         currentPage: 1,
         pageSize: 10
       }
@@ -300,9 +266,7 @@ export default class TableList extends PureComponent {
       const values = {
         ...fieldsValue,
         pageSize: patient.data.pagination.pageSize,
-        currentPage: patient.data.pagination.current,
-        beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
-        endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD'): '',
+        currentPage: patient.data.pagination.current
       };
 
       this.setState({
@@ -310,7 +274,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'task/fetch',
+        type: 'task/getTaskPatients',
         payload: values,
       });
     });
@@ -341,21 +305,28 @@ export default class TableList extends PureComponent {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="病种名称">
-              {getFieldDecorator('diseaseName')(
+          <Col md={6} sm={24}>
+            <FormItem label="患者姓名">
+              {getFieldDecorator('patientName')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="确诊时间">
-              {getFieldDecorator('diagnoseTime')(
-                <RangePicker />
+          <Col md={6} sm={24}>
+            <FormItem label="病案号">
+              {getFieldDecorator('patientCode')(
+                <Input placeholder="请输入" />
               )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
+            <FormItem label="随访状态">
+              {getFieldDecorator('callState')(
+                <Input placeholder="请输入" />
+              )}
+            </FormItem>
+          </Col>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
@@ -446,9 +417,9 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { task: { tasks }, loading } = this.props;
+    const { task: { patientList: data, taskInfo }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
-
+    console.log(this.props.task);
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
         <Menu.Item key="remove">删除</Menu.Item>
@@ -461,8 +432,29 @@ export default class TableList extends PureComponent {
       handleModalVisible: this.handleModalVisible,
     };
 
+    const Info = ({ title, value, bordered }) => (
+      <div className={styles.headerInfo}>
+        <span>{title}</span>
+        <p>{value}</p>
+        {bordered && <em />}
+      </div>
+    );
+
     return (
       <PageHeaderLayout title="查询表格">
+        <Card>
+          <div>
+              <Info title="随访任务" value={taskInfo.taskName} bordered />
+              <Info title="随访人员" value={taskInfo.userName} bordered />
+              <Info title="预计完成时间" value={taskInfo.estimateTime} bordered />
+              <Info title="患者数量" value={taskInfo.patientNum} bordered />
+          </div>
+          <div>
+              任务统计: 
+              <Info title="已完成" value={taskInfo.completedNum} bordered />
+              <Info title="未完成" value={taskInfo.undoneNum} bordered />
+          </div>
+        </Card>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
@@ -491,7 +483,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1650 }}
+              scroll={{ x: 1250 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

@@ -136,8 +136,8 @@ export default {
     saveDiagnoseInfo(state, action) {
       return {
         ...state,
-        diagnosesInfo: {
-          ...state.diagnosesInfo,
+        diagnoseInfo: {
+          ...state.diagnoseInfo,
           ...action.payload.data
         },
       };

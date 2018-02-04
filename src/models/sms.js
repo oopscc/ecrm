@@ -11,21 +11,20 @@ export default {
   state: {
     data: {
       list: [],
-      pagination: {}
     },
     tplList: {
       list: [],
-      pagination: {}
     }
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetch({ payload, callback }, { call, put }) {
       const response = yield call(getSmsList, payload);
       yield put({
         type: 'save',
         payload: response,
       });
+      if (callback) callback(response);
     },
     *send({ payload, callback }, { call, put }) {
       const response = yield call(sendSms, payload);
@@ -46,12 +45,7 @@ export default {
       return {
         ...state,
         data: {
-          list: action.payload.data.rows,
-          pagination: {
-             pageSize: action.payload.data.pageSize,
-             currentPage: action.payload.data.currentPage,
-             total: action.payload.data.total
-          }
+          list: action.payload.data.smsArray,
         },
       };
     },
@@ -59,12 +53,7 @@ export default {
       return {
         ...state,
         tplList: {
-          list: action.payload.data.rows,
-          pagination: {
-             pageSize: action.payload.data.pageSize,
-             currentPage: action.payload.data.currentPage,
-             total: action.payload.data.total
-          }
+          list: action.payload.data.smsArray,
         },
       };
     },

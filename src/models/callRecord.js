@@ -8,7 +8,8 @@ import {
   getWillCallList,
   getTodayCallList,
   getCallList,
-  saveCallRes
+  saveCallRes,
+  getCallData
 } from '../services/callRecord';
 
 export default {
@@ -88,14 +89,18 @@ export default {
         payload: response,
       });
     },
-
+    // 
+    *getCallData({ payload, callback }, { call, put }) {
+      const response = yield call(getCallData, payload);
+      if (callback) callback(response);
+    },
     *save({ payload, callback }, { call, put }) {
       const response = yield call(saveCallRes, payload);
-      if (callback) callback();
+      if (callback) callback(response);
     },
     *getWillNum({ payload, callback }, { call, put }) {
       const response = yield call(getWillCallNum, payload);
-      if (callback) callback();
+      if (callback) callback(response);
     },
     *getWaitNum({ payload, callback }, { call, put }) {
       const response = yield call(getWaitCallCount, payload);

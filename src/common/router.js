@@ -210,11 +210,24 @@ export const getRouterData = (app) => {
     '/task/creat': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/task/creat')),
     },
+    '/task/taskAdd': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/StepForm')),
+    },
+    '/task/taskAdd/search': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/StepForm/Step1')),
+    },
+    '/task/taskAdd/create': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/StepForm/Step2')),
+    },
+    '/task/taskAdd/result': {
+      component: dynamicWrapper(app, ['task'], () => import('../routes/task/StepForm/Step3')),
+    },
+
     '/task/detail': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/task/detail')),
     },
     '/task/sms': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/task/sms')),
+      component: dynamicWrapper(app, ['sms'], () => import('../routes/task/sms')),
     },
     '/task/call': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/task/call')),

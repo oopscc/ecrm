@@ -130,55 +130,55 @@ export default class TableForm extends PureComponent {
   }
   render() {
     const columns = [{
-      title: '诊断类型',
-      dataIndex: 'diagnoseMode',
-      key: 'diagnoseMode',
-      width: '15%',
-      render: (text, record) => {
-        if (record.editable) {
-          return (
-            <Input
-              value={text}
-              autoFocus
-              onChange={e => this.handleFieldChange(e, 'diagnoseMode', record.key)}
-              onBlur={e => this.saveRow(e, record.key)}
-              onKeyPress={e => this.handleKeyPress(e, record.key)}
-              placeholder="诊断类型"
-            />
-          );
-        }
-        return text;
-      },
-    }, {
-      title: '是否设置为原发诊断',
-      dataIndex: 'primaryFlag',
-      key: 'primaryFlag',
+      title: '手术类型',
+      dataIndex: 'operationScheme',
+      key: 'operationScheme',
       width: '10%',
       render: (text, record) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={e => this.handleFieldChange(e, 'primaryFlag', record.key)}
+              autoFocus
+              onChange={e => this.handleFieldChange(e, 'operationScheme', record.key)}
               onBlur={e => this.saveRow(e, record.key)}
               onKeyPress={e => this.handleKeyPress(e, record.key)}
-              placeholder="是否设置为原发诊断"
+              placeholder="成员姓名"
             />
           );
         }
         return text;
       },
     }, {
-      title: '诊断名称',
-      dataIndex: 'diagnoseName',
-      key: 'diagnoseName',
+      title: '手术日期',
+      dataIndex: 'operationDate',
+      key: 'operationDate',
       width: '15%',
       render: (text, record) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={e => this.handleFieldChange(e, 'diagnoseName', record.key)}
+              onChange={e => this.handleFieldChange(e, 'operationDate', record.key)}
+              onBlur={e => this.saveRow(e, record.key)}
+              onKeyPress={e => this.handleKeyPress(e, record.key)}
+              placeholder="工号"
+            />
+          );
+        }
+        return text;
+      },
+    }, {
+      title: '手术名称',
+      dataIndex: 'operationName',
+      key: 'operationName',
+      width: '15%',
+      render: (text, record) => {
+        if (record.editable) {
+          return (
+            <Input
+              value={text}
+              onChange={e => this.handleFieldChange(e, 'operationName', record.key)}
               onBlur={e => this.saveRow(e, record.key)}
               onKeyPress={e => this.handleKeyPress(e, record.key)}
               placeholder="所属部门"
@@ -188,16 +188,16 @@ export default class TableForm extends PureComponent {
         return text;
       },
     },{
-      title: '诊断疾病编码',
-      dataIndex: 'diagnoseCode',
-      key: 'diagnoseCode',
+      title: 'cm3编码',
+      dataIndex: 'cm3Code',
+      key: 'cm3Code',
       width: '15%',
       render: (text, record) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={e => this.handleFieldChange(e, 'diagnoseCode', record.key)}
+              onChange={e => this.handleFieldChange(e, 'cm3Code', record.key)}
               onBlur={e => this.saveRow(e, record.key)}
               onKeyPress={e => this.handleKeyPress(e, record.key)}
               placeholder="所属部门"
@@ -207,16 +207,16 @@ export default class TableForm extends PureComponent {
         return text;
       },
     }, {
-      title: '入院病情',
-      dataIndex: 'admissionState',
-      key: 'admissionState',
+      title: '手术医生',
+      dataIndex: 'operativeDoctor',
+      key: 'operativeDoctor',
       width: '15%',
       render: (text, record) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={e => this.handleFieldChange(e, 'admissionState', record.key)}
+              onChange={e => this.handleFieldChange(e, 'operativeDoctor', record.key)}
               onBlur={e => this.saveRow(e, record.key)}
               onKeyPress={e => this.handleKeyPress(e, record.key)}
               placeholder="所属部门"
@@ -226,16 +226,16 @@ export default class TableForm extends PureComponent {
         return text;
       },
     }, {
-      title: '诊断分期',
-      dataIndex: 'diagnoseStages',
-      key: 'diagnoseStages',
+      title: '麻醉医生',
+      dataIndex: 'anesthesiaDoctor',
+      key: 'anesthesiaDoctor',
       width: '10%',
       render: (text, record) => {
         if (record.editable) {
           return (
             <Input
               value={text}
-              onChange={e => this.handleFieldChange(e, 'diagnoseStages', record.key)}
+              onChange={e => this.handleFieldChange(e, 'anesthesiaDoctor', record.key)}
               onBlur={e => this.saveRow(e, record.key)}
               onKeyPress={e => this.handleKeyPress(e, record.key)}
               placeholder="所属部门"
@@ -300,7 +300,7 @@ export default class TableForm extends PureComponent {
           onClick={this.newMember}
           icon="plus"
         >
-          新增诊断
+          新增手术
         </Button>
       </div>
     );

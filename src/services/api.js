@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const req = (url, prrams) => request('url', {
+const req = (url, params) => request(url, {
     method: 'POST',
     body: {
       ...params
@@ -67,12 +67,12 @@ export async function queryFakeList(params) {
   return request(`/api/fake_list?${stringify(params)}`);
 }
 
-export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
-    method: 'POST',
-    body: params,
-  });
-}
+// export async function fakeAccountLogin(params) {
+//   return request('/api/login/account', {
+//     method: 'POST',
+//     body: params,
+//   });
+// }
 
 export async function fakeRegister(params) {
   return request('/api/register', {
@@ -86,8 +86,15 @@ export async function queryNotices() {
 }
 
 
+export async function fakeAccountLogin(params) {
+  return request('/hospitalCRM/user/login.do', {
+    method: 'POST',
+    body: params,
+  });
+}
+
 export async function queryPatients(params) {
-  return request('/patient/allPatientList.do', {
+  return request('/hospitalCRM/patient/allPatientList.do', {
     method: 'POST',
     body: {
       ...params
@@ -96,7 +103,7 @@ export async function queryPatients(params) {
 }
 
 export async function addPatient(params) {
-  return request('/patient/addPatient.do', {
+  return request('/hospitalCRM/patient/addPatient.do', {
     method: 'POST',
     body: {
       ...params
@@ -105,7 +112,7 @@ export async function addPatient(params) {
 }
 
 export async function editPatient(params) {
-  return request('/patient/editPatient.do', {
+  return request('/hospitalCRM/patient/editPatient.do', {
     method: 'POST',
     body: {
       ...params
@@ -114,7 +121,7 @@ export async function editPatient(params) {
 }
 
 export async function getPatient(params) {
-  return request('/patient/patientInfo.do', {
+  return request('/hospitalCRM/patient/patientInfo.do', {
     method: 'POST',
     body: {
       ...params
@@ -124,7 +131,7 @@ export async function getPatient(params) {
 
 // 住院信息
 export async function queryDiagnoses(params) {
-  return request('/patient/diagnosePageQuery.do', {
+  return request('/hospitalCRM/patient/diagnosePageQuery.do', {
     method: 'POST',
     body: {
       ...params
@@ -134,7 +141,7 @@ export async function queryDiagnoses(params) {
 
 // 增加诊断信息
 export async function addDiagnose(params) {
-  return request('/patient/addDiagnoseInfo.do', {
+  return request('/hospitalCRM/patient/addDiagnoseInfo.do', {
     method: 'POST',
     body: {
       ...params
@@ -143,39 +150,33 @@ export async function addDiagnose(params) {
 }
 
 export async function getDiagnose(params) {
-  return req('/patient/getDiagnoseInfo.do', params);
+  return req('/hospitalCRM/patient/getDiagnoseInfo.do', params);
 }
 
 export async function editDiagnose(params) {
-  return req('/patient/editDiagnoseInfo.do', params);
+  return req('/hospitalCRM/patient/editDiagnoseInfo.do', params);
 }
 
 // 患者随访历史
 export async function queryFlupList(params) {
-  return req('/callRecord/patientCallRecord.do', params);
+  return req('/hospitalCRM/callRecord/patientCallRecord.do', params);
 }
 
 export async function addFlup(params) {
-  return req('/callRecord/addCallRecord.do', params);
+  return req('/hospitalCRM/callRecord/addCallRecord.do', params);
 }
 
 export async function getFlup(params) {
-  return req('/callRecord/getCallRecordInfo.do', params);
+  return req('/hospitalCRM/callRecord/getCallRecordInfo.do', params);
 }
 
 export async function editFlup(params) {
-  return req('/callRecord/editCallRecord.do', params);
+  return req('/hospitalCRM/callRecord/editCallRecord.do', params);
 }
 
 // 待随访患者 
  
 // 已随访患者
-
-
-// TODO 获得电话随访的各种信息
-export async function getCallData(params) {
-  return req('/patient/getPhonePageData.do', params);
-}
 
 
 
