@@ -22,5 +22,8 @@ export async function editUser(params) {
   return req('/hospitalCRM/user/editUser.do', params);
 }
 export async function getUser(params) {
-  return req('/hospitalCRM/user/userInfo', params);
+  return req('/hospitalCRM/user/userInfo.do', params);
+}
+export async function fetchUsers(params) {
+  return req('/hospitalCRM/user/userList.do', params);
 }

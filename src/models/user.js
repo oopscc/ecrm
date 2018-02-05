@@ -2,6 +2,7 @@ import { query as queryUsers, queryCurrent,
   addUser,
   editUser,
   getUser,
+  fetchUsers,
 } from '../services/user';
 
 export default {
@@ -10,6 +11,10 @@ export default {
   state: {
     list: [],
     currentUser: {},
+    users: {
+      list: [],
+      pagination: {pageSize: 10, current: 0}
+    },
   },
 
   effects: {
@@ -27,7 +32,6 @@ export default {
         payload: response,
       });
     },
-    
     *getUser({ payload, callback }, { call, put }) {
       const response = yield call(getUser, payload);
       if (callback) callback(response);
@@ -40,7 +44,13 @@ export default {
       const response = yield call(editUser, payload);
       if (callback) callback(response);
     },
-
+    *fetchUsers({ payload, callback }, { call, put }) {
+      const response = yield call(fetchUsers, payload);
+      yield put({
+        type: 'saveUsers',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -62,6 +72,19 @@ export default {
         currentUser: {
           ...state.currentUser,
           notifyCount: action.payload,
+        },
+      };
+    },
+    saveUsers(state, action) {
+      return {
+        ...state,
+        users: {
+          list: action.payload.data.rows,
+          pagination: {
+             pageSize: action.payload.data.pageSize,
+             currentPage: action.payload.data.currentPage,
+             total: action.payload.data.total
+          }
         },
       };
     },
