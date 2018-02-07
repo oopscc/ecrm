@@ -186,6 +186,16 @@ const menuData = [{
       path: 'info',
     }]
   }, {
+    name: '疾病管理',
+    path: 'icd-10',
+    children: [{
+      name: '列表',
+      path: 'list',
+    },{
+      name: '新增',
+      path: 'info',
+    }]
+  },{
     name: '科室管理',
     path: 'dept',
     children: [{

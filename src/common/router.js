@@ -245,16 +245,22 @@ export const getRouterData = (app) => {
       component: dynamicWrapper(app, ['user'], () => import('../routes/system/user/Info')),
     },
     '/system/diagnoseList/list': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/system/diagnoseList/List')),
+      component: dynamicWrapper(app, ['system'], () => import('../routes/system/diagnoseList/List')),
     },
     '/system/diagnoseList/info': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/system/diagnoseList/Info')),
+      component: dynamicWrapper(app, ['system'], () => import('../routes/system/diagnoseList/Info')),
+    },
+    '/system/icd-10/list': {
+      component: dynamicWrapper(app, ['system'], () => import('../routes/system/icd-10/List')),
+    },
+    '/system/icd-10/info': {
+      component: dynamicWrapper(app, ['system'], () => import('../routes/system/icd-10/Info')),
     },
     '/system/dept/list': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/system/dept/List')),
+      component: dynamicWrapper(app, ['system'], () => import('../routes/system/dept/List')),
     },
     '/system/dept/info': {
-      component: dynamicWrapper(app, ['task'], () => import('../routes/system/dept/Info')),
+      component: dynamicWrapper(app, ['system'], () => import('../routes/system/dept/Info')),
     },
     '/system/tpl/smsTpl': {
       component: dynamicWrapper(app, ['task'], () => import('../routes/system/tpl/smsTpl')),
