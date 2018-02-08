@@ -37,47 +37,30 @@ export default {
     },
 
     effects: {
-        * fetch(_, {
-            call,
-            put
-        }) {
+        *fetch(_, { call, put }) {
             const response = yield call(queryUsers);
             yield put({
                 type: 'save',
                 payload: response,
             });
         },
-        * fetchCurrent(_, {
-            call,
-            put
-        }) {
+        *fetchCurrent(_, { call, put }) {
             const response = yield call(queryCurrent);
             yield put({
                 type: 'saveCurrentUser',
                 payload: response,
             });
         },
-
         /*==============system depts=================*/
 
-        * fetchDepts({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *fetchDepts({ payload }, { call, put }) {
             const response = yield call(fetchDepts, payload);
             yield put({
                 type: 'saveDepts',
                 payload: response,
             });
         },
-        * addDept({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *addDept({ payload }, { call, put }) {
             const response = yield call(addDept, payload);
             yield put({
                 type: 'addDept',
@@ -85,105 +68,50 @@ export default {
             });
             if (callback) callback();
         },
-        * editDept({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *editDept({ payload }, { call, put }) {
             const response = yield call(editDept, payload);
         },
-        * deleteDept({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *deleteDept({ payload }, { call, put }) {
             yield call(deleteDept, payload);
         },
         /*==============system diseases=================*/
 
-        * fetchDiseases({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *fetchDiseases({ payload }, { call, put }) {
             const response = yield call(fetchDiseases, payload);
             yield put({
                 type: 'saveDiseases',
                 payload: response,
             });
         },
-        * addDisease({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *addDisease({ payload }, { call, put }) {
             const response = yield call(addDisease, payload);
             if (callback) callback();
         },
-        * editDisease({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *editDisease({ payload }, { call, put }) {
             const response = yield call(editDisease, payload);
         },
-        * deleteDisease({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *deleteDisease({ payload }, { call, put }) {
             yield call(deleteDisease, payload);
         },
         /*==============system icd-10=================*/
 
-        * fetchICDs({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *fetchICDs({ payload }, { call, put }) {
             const response = yield call(fetchICDs, payload);
             yield put({
                 type: 'saveICDs',
                 payload: response,
             });
         },
-        * getICD({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *getICD({ payload }, { call, put }) {
             const response = yield call(getICD, payload);
         },
-        * addICD({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *addICD({ payload }, { call, put }) {
             const response = yield call(addICD, payload);
         },
-        * editICD({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *editICD({ payload }, { call, put }) {
             const response = yield call(editICD, payload);
         },
-        * deleteICD({
-            payload
-        }, {
-            call,
-            put
-        }) {
+        *deleteICD({ payload }, { call, put }) {
             yield call(deleteICD, payload);
         },
     },
@@ -229,6 +157,19 @@ export default {
                 depts: {
                     ...state.depts,
                     list: [action.payload.data, ...state.depts.list],
+                },
+            };
+        },
+        saveDiseases(state, action) {
+            return {
+                ...state,
+                diseases: {
+                    list: action.payload.data.rows,
+                    pagination: {
+                        pageSize: action.payload.data.pageSize,
+                        currentPage: action.payload.data.currentPage,
+                        total: action.payload.data.total
+                    }
                 },
             };
         },

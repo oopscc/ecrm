@@ -33,6 +33,7 @@ const {
 import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import DropOption from '../../../components/DropOption';
+import Icds from './list_icd';
 
 import styles from './List.less';
 
@@ -73,25 +74,18 @@ const columns = [{
     title: '操作',
     key: 'operation',
     render: (text, record) => {
-        return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '删除' }]} />
+        return <DropOption onMenuClick={e => handleOptionClick(record, e)}
+            menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '删除' }]} />
     }
 }]
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
-        window.location.hash = `/patient/info?patientCode=${record.patientCode}`;
-        // console.log(record);
-        // dispatch(routerRedux.push({
-        //   pathname: '/patient/add',
-        //   query: {
-        //     page: 2,
-        //   },
-        // }))
+        window.location.hash = `/system/diagnoseList/info?id=${record.id}`;
     } else if (e.key === '2') {
-        window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
+        // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
     } else if (e.key === '3') {
-        alert('问卷');
+        // alert('问卷');
     }
 }
 const CreateForm = Form.create()((props) => {
@@ -101,31 +95,30 @@ const CreateForm = Form.create()((props) => {
         handleAdd,
         handleModalVisible
     } = props;
+    state = {
+        selectedRows: []
+    }
     const okHandle = () => {
-        form.validateFields((err, fieldsValue) => {
-            if (err) return;
-            handleAdd(fieldsValue);
-        });
+        handleAdd(this.state.selectedRows);
     };
+    const onSelectRow = (rows) => {
+        this.setState({
+            selectedRows: rows,
+        });
+    }
     return (
         <Modal
-			title="新建规则"
-			visible={modalVisible}
-			onOk={okHandle}
-			onCancel={() => handleModalVisible()}
-		>
-			<FormItem
-				labelCol={{ span: 5 }}
-				wrapperCol={{ span: 15 }}
-				label="描述"
-			>
-				{form.getFieldDecorator('desc', {
-					rules: [{ required: true, message: 'Please input some description...' }],
-				})(
-					<Input placeholder="请输入" />
-				)}
-			</FormItem>
-		</Modal>
+            title="新建规则"
+            visible={modalVisible}
+            onOk={okHandle}
+            onCancel={() => handleModalVisible()}
+        >
+            <Icds
+                onSelectRow={onSelectRow}
+            >
+
+            </Icds>
+        </Modal>
     );
 });
 
@@ -143,6 +136,7 @@ export default class TableList extends PureComponent {
         expandForm: false,
         selectedRows: [],
         formValues: {},
+        icds: [],
     };
 
     componentDidMount() {
@@ -167,7 +161,8 @@ export default class TableList extends PureComponent {
         } = this.state;
 
         const filters = Object.keys(filtersArg).reduce((obj, key) => {
-            const newObj = { ...obj
+            const newObj = {
+                ...obj
             };
             newObj[key] = getValue(filtersArg[key]);
             return newObj;
@@ -277,16 +272,10 @@ export default class TableList extends PureComponent {
         });
     }
 
-    handleAdd = (fields) => {
-        this.props.dispatch({
-            type: 'rule/add',
-            payload: {
-                description: fields.desc,
-            },
-        });
-
-        message.success('添加成功');
+    handleAdd = (icds) => {
+        const icdIds = Array.from(icds, item => item.id);
         this.setState({
+            icds: [...this.state.icds.filter(icd => !icdIds.includes(icd.id)), ...icds],
             modalVisible: false,
         });
     }
@@ -297,26 +286,26 @@ export default class TableList extends PureComponent {
         } = this.props.form;
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
-				<Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-					<Col md={8} sm={24}>
-						<FormItem label="病种名称">
-							{getFieldDecorator('diseaseName')(
-								<Input placeholder="请输入" />
-							)}
-						</FormItem>
-					</Col>
-					
-					<Col md={8} sm={24}>
-						<span className={styles.submitButtons}>
-							<Button type="primary" htmlType="submit">查询</Button>
-							<Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-							<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-								展开 <Icon type="down" />
-							</a>
-						</span>
-					</Col>
-				</Row>
-			</Form>
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    <Col md={8} sm={24}>
+                        <FormItem label="病种名称">
+                            {getFieldDecorator('diseaseName')(
+                                <Input placeholder="请输入" />
+                            )}
+                        </FormItem>
+                    </Col>
+
+                    <Col md={8} sm={24}>
+                        <span className={styles.submitButtons}>
+                            <Button type="primary" htmlType="submit">查询</Button>
+                            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
+                            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                                展开 <Icon type="down" />
+                            </a>
+                        </span>
+                    </Col>
+                </Row>
+            </Form>
         );
     }
 
@@ -326,71 +315,71 @@ export default class TableList extends PureComponent {
         } = this.props.form;
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
-				<Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-					<Col md={8} sm={24}>
-						<FormItem label="规则编号">
-							{getFieldDecorator('no')(
-								<Input placeholder="请输入" />
-							)}
-						</FormItem>
-					</Col>
-					<Col md={8} sm={24}>
-						<FormItem label="使用状态">
-							{getFieldDecorator('status')(
-								<Select placeholder="请选择" style={{ width: '100%' }}>
-									<Option value="0">关闭</Option>
-									<Option value="1">运行中</Option>
-								</Select>
-							)}
-						</FormItem>
-					</Col>
-					<Col md={8} sm={24}>
-						<FormItem label="调用次数">
-							{getFieldDecorator('number')(
-								<InputNumber style={{ width: '100%' }} />
-							)}
-						</FormItem>
-					</Col>
-				</Row>
-				<Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-					<Col md={8} sm={24}>
-						<FormItem label="更新日期">
-							{getFieldDecorator('date')(
-								<DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-							)}
-						</FormItem>
-					</Col>
-					<Col md={8} sm={24}>
-						<FormItem label="使用状态">
-							{getFieldDecorator('status3')(
-								<Select placeholder="请选择" style={{ width: '100%' }}>
-									<Option value="0">关闭</Option>
-									<Option value="1">运行中</Option>
-								</Select>
-							)}
-						</FormItem>
-					</Col>
-					<Col md={8} sm={24}>
-						<FormItem label="使用状态">
-							{getFieldDecorator('status4')(
-								<Select placeholder="请选择" style={{ width: '100%' }}>
-									<Option value="0">关闭</Option>
-									<Option value="1">运行中</Option>
-								</Select>
-							)}
-						</FormItem>
-					</Col>
-				</Row>
-				<div style={{ overflow: 'hidden' }}>
-					<span style={{ float: 'right', marginBottom: 24 }}>
-						<Button type="primary" htmlType="submit">查询</Button>
-						<Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-						<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-							收起 <Icon type="up" />
-						</a>
-					</span>
-				</div>
-			</Form>
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    <Col md={8} sm={24}>
+                        <FormItem label="规则编号">
+                            {getFieldDecorator('no')(
+                                <Input placeholder="请输入" />
+                            )}
+                        </FormItem>
+                    </Col>
+                    <Col md={8} sm={24}>
+                        <FormItem label="使用状态">
+                            {getFieldDecorator('status')(
+                                <Select placeholder="请选择" style={{ width: '100%' }}>
+                                    <Option value="0">关闭</Option>
+                                    <Option value="1">运行中</Option>
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
+                    <Col md={8} sm={24}>
+                        <FormItem label="调用次数">
+                            {getFieldDecorator('number')(
+                                <InputNumber style={{ width: '100%' }} />
+                            )}
+                        </FormItem>
+                    </Col>
+                </Row>
+                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+                    <Col md={8} sm={24}>
+                        <FormItem label="更新日期">
+                            {getFieldDecorator('date')(
+                                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
+                            )}
+                        </FormItem>
+                    </Col>
+                    <Col md={8} sm={24}>
+                        <FormItem label="使用状态">
+                            {getFieldDecorator('status3')(
+                                <Select placeholder="请选择" style={{ width: '100%' }}>
+                                    <Option value="0">关闭</Option>
+                                    <Option value="1">运行中</Option>
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
+                    <Col md={8} sm={24}>
+                        <FormItem label="使用状态">
+                            {getFieldDecorator('status4')(
+                                <Select placeholder="请选择" style={{ width: '100%' }}>
+                                    <Option value="0">关闭</Option>
+                                    <Option value="1">运行中</Option>
+                                </Select>
+                            )}
+                        </FormItem>
+                    </Col>
+                </Row>
+                <div style={{ overflow: 'hidden' }}>
+                    <span style={{ float: 'right', marginBottom: 24 }}>
+                        <Button type="primary" htmlType="submit">查询</Button>
+                        <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
+                        <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
+                            收起 <Icon type="up" />
+                        </a>
+                    </span>
+                </div>
+            </Form>
         );
     }
 
@@ -412,9 +401,9 @@ export default class TableList extends PureComponent {
 
         const menu = (
             <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-				<Menu.Item key="remove">删除</Menu.Item>
-				<Menu.Item key="approval">批量审批</Menu.Item>
-			</Menu>
+                <Menu.Item key="remove">删除</Menu.Item>
+                <Menu.Item key="approval">批量审批</Menu.Item>
+            </Menu>
         );
 
         const parentMethods = {
@@ -424,45 +413,45 @@ export default class TableList extends PureComponent {
 
         return (
             <PageHeaderLayout title="查询表格">
-				<Card bordered={false}>
-					<div className={styles.tableList}>
-						<div className={styles.tableListForm}>
-							{this.renderForm()}
-						</div>
-						<div className={styles.tableListOperator}>
-							<Button icon="plus" type="primary" href="/#/system/diagnoseList/info">
-								新建
+                <Card bordered={false}>
+                    <div className={styles.tableList}>
+                        <div className={styles.tableListForm}>
+                            {this.renderForm()}
+                        </div>
+                        <div className={styles.tableListOperator}>
+                            <Button icon="plus" type="primary" href="/#/system/diagnoseList/info">
+                                新建
 							</Button>
-							{
-								selectedRows.length > 0 && (
-									<span>
-										<Button>批量操作</Button>
-										<Dropdown overlay={menu}>
-											<Button>
-												更多操作 <Icon type="down" />
-											</Button>
-										</Dropdown>
-									</span>
-								)
-							}
-						</div>
-						<StandardTable
-							selectedRows={selectedRows}
-							loading={loading}
-							data={data}
-							columns={columns}
-							size="small"
-							scroll={{ x: 1650 }}
-							onSelectRow={this.handleSelectRows}
-							onChange={this.handleStandardTableChange}
-						/>
-					</div>
-				</Card>
-				<CreateForm
-					{...parentMethods}
-					modalVisible={modalVisible}
-				/>
-			</PageHeaderLayout>
+                            {
+                                selectedRows.length > 0 && (
+                                    <span>
+                                        <Button>批量操作</Button>
+                                        <Dropdown overlay={menu}>
+                                            <Button>
+                                                更多操作 <Icon type="down" />
+                                            </Button>
+                                        </Dropdown>
+                                    </span>
+                                )
+                            }
+                        </div>
+                        <StandardTable
+                            selectedRows={selectedRows}
+                            loading={loading}
+                            data={data}
+                            columns={columns}
+                            size="small"
+                            scroll={{ x: 1650 }}
+                            onSelectRow={this.handleSelectRows}
+                            onChange={this.handleStandardTableChange}
+                        />
+                    </div>
+                </Card>
+                <CreateForm
+                    {...parentMethods}
+                    modalVisible={modalVisible}
+                />
+            </PageHeaderLayout>
         );
     }
 }
