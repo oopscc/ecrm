@@ -93,24 +93,21 @@ const CreateForm = Form.create()((props) => {
         modalVisible,
         form,
         handleAdd,
-        handleModalVisible
+        handleModalVisible,
+        handleSelectIcds,
     } = props;
-    state = {
-        selectedRows: []
-    }
-    const okHandle = () => {
-        handleAdd(this.state.selectedRows);
-    };
+    
+    // const okHandle = () => {
+    //     handleAdd(this.state.selectedRows);
+    // };
     const onSelectRow = (rows) => {
-        this.setState({
-            selectedRows: rows,
-        });
+        handleSelectIcds(rows);
     }
     return (
         <Modal
             title="新建规则"
             visible={modalVisible}
-            onOk={okHandle}
+            onOk={() => handleAdd()}
             onCancel={() => handleModalVisible()}
         >
             <Icds
@@ -135,6 +132,7 @@ export default class TableList extends PureComponent {
         modalVisible: false,
         expandForm: false,
         selectedRows: [],
+        seleceedIcds: [],
         formValues: {},
         icds: [],
     };
@@ -269,13 +267,20 @@ export default class TableList extends PureComponent {
     handleModalVisible = (flag) => {
         this.setState({
             modalVisible: !!flag,
+            seleceedIcds: []
         });
     }
+    handleSelectIcds = icds => {
+    	this.setState({
+    		seleceedIcds: icds
+    	});
+    }
 
-    handleAdd = (icds) => {
-        const icdIds = Array.from(icds, item => item.id);
+    handleAdd = () => {
+    	const selectedIcds = this.state.seleceedIcds;
+        const icdIds = Array.from(selectedIcds, item => item.id);
         this.setState({
-            icds: [...this.state.icds.filter(icd => !icdIds.includes(icd.id)), ...icds],
+            icds: [...this.state.icds.filter(icd => !icdIds.includes(icd.id)), ...selectedIcds],
             modalVisible: false,
         });
     }
@@ -389,9 +394,7 @@ export default class TableList extends PureComponent {
 
     render() {
         const {
-            patient: {
-                data
-            },
+            diseases: data,
             loading
         } = this.props;
         const {
@@ -409,6 +412,7 @@ export default class TableList extends PureComponent {
         const parentMethods = {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,
+            handleSelectIcds: this.handleSelectIcds,
         };
 
         return (
@@ -441,7 +445,7 @@ export default class TableList extends PureComponent {
                             data={data}
                             columns={columns}
                             size="small"
-                            scroll={{ x: 1650 }}
+                            scroll={{ x: 1250 }}
                             onSelectRow={this.handleSelectRows}
                             onChange={this.handleStandardTableChange}
                         />

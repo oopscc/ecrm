@@ -7,6 +7,7 @@ const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import qs from 'query-string'
 
 import styles from './fluped.less';
 

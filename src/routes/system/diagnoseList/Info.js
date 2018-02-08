@@ -34,6 +34,7 @@ import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import DropOption from '../../../components/DropOption';
 import Icds from './list_icd';
+import qs from 'query-string'
 
 import styles from './List.less';
 
@@ -47,35 +48,22 @@ const status = ['关闭', '运行中', '已上线', '异常'];
 
 const columns = [{
     title: '序号',
-    dataIndex: 'id',
-    key: 'id',
     width: '10%'
 }, {
-    title: '病种名称',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
+    title: '疾病编码',
+    dataIndex: 'illnessCode',
+    key: 'illnessCode',
     width: '15%'
 }, {
-    title: '编码列表',
-    dataIndex: 'codeList',
-    key: 'codeList',
-    width: '15%'
-}, {
-    title: '诊断列表',
-    dataIndex: 'illnessList',
-    key: 'illnessList',
-    width: '15%'
-}, {
-    title: '维护人员',
-    dataIndex: 'createPerson',
-    key: 'createPerson',
+    title: '疾病名称',
+    dataIndex: 'illnessName',
+    key: 'illnessName',
     width: '15%'
 }, {
     title: '操作',
     key: 'operation',
     render: (text, record) => {
-        return <DropOption onMenuClick={e => handleOptionClick(record, e)}
-            menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '删除' }]} />
+        return <div onClick={e => handleDelete(record, e)}>删除</div>
     }
 }]
 const handleOptionClick = (record, e) => {
@@ -93,36 +81,33 @@ const CreateForm = Form.create()((props) => {
         modalVisible,
         form,
         handleAdd,
-        handleModalVisible
+        handleModalVisible,
+        handleSelectIcds,
     } = props;
-    state = {
-        selectedRows: []
-    }
-    const okHandle = () => {
-        handleAdd(this.state.selectedRows);
-    };
+    
     const onSelectRow = (rows) => {
-        this.setState({
-            selectedRows: rows,
-        });
+        handleSelectIcds(rows);
     }
     return (
         <Modal
             title="新建规则"
             visible={modalVisible}
-            onOk={okHandle}
+            onOk={() => handleAdd()}
             onCancel={() => handleModalVisible()}
+            width={1000}
         >
             <Icds
                 onSelectRow={onSelectRow}
-            />
+            >
+
+            </Icds>
         </Modal>
     );
 });
 
 @connect(({
     system,
-    loading
+    loading,
 }) => ({
     diseases: system.diseases,
     loading: loading.models.system,
@@ -134,19 +119,36 @@ export default class TableList extends PureComponent {
         expandForm: false,
         selectedRows: [],
         formValues: {},
+        seleceedIcds: [],
+        icds: [],
+        id: '',
+        diseaseName: ''
     };
 
     componentDidMount() {
         const {
-            dispatch
+            dispatch,
+            location
         } = this.props;
+        let {id, diseaseName} = qs.parse(location.search);
+        if (!id) {
+          return
+        }
+        this.setState({
+            id, diseaseName
+        })
         dispatch({
-            type: 'system/fetchDiseases',
+            type: 'system/getDiseases',
             payload: {
-                currentPage: 1,
-                pageSize: 10
+                id
+            },
+            callback: data => {
+                this.setState({
+                    icds: data.data.illnessArr
+                })
             }
         });
+        
     }
 
     handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -242,30 +244,36 @@ export default class TableList extends PureComponent {
         const {
             dispatch,
             form,
-            patient
         } = this.props;
         form.validateFields((err, fieldsValue) => {
             if (err) return;
             const values = {
                 ...fieldsValue,
-                pageSize: diseases.pagination.pageSize,
-                currentPage: diseases.pagination.current
             };
-
-            this.setState({
-                formValues: values,
-            });
-
-            dispatch({
-                type: 'system/fetchDiseases',
-                payload: values,
-            });
+            if (!this.state.id) {
+                dispatch({
+                    type: 'system/addDiseases',
+                    payload: values,
+                });
+            } else {
+                dispatch({
+                    type: 'system/editDiseases',
+                    payload: {id, ...values},
+                });
+            }
+            
         });
     }
 
     handleModalVisible = (flag) => {
         this.setState({
             modalVisible: !!flag,
+            seleceedIcds: []
+        });
+    }
+    handleSelectIcds = icds => {
+        this.setState({
+            seleceedIcds: icds
         });
     }
 
@@ -275,6 +283,12 @@ export default class TableList extends PureComponent {
             icds: [...this.state.icds.filter(icd => !icdIds.includes(icd.id)), ...icds],
             modalVisible: false,
         });
+    }
+
+    handleDelete = icd => {
+        this.setState({
+            icds: [...this.state.icds.filter(item => item.id != icd.id)]
+        })
     }
 
     renderSimpleForm() {
@@ -291,14 +305,10 @@ export default class TableList extends PureComponent {
                             )}
                         </FormItem>
                     </Col>
-
                     <Col md={8} sm={24}>
                         <span className={styles.submitButtons}>
-                            <Button type="primary" htmlType="submit">查询</Button>
-                            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-                            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                                展开 <Icon type="down" />
-                            </a>
+                            <Button style={{ marginLeft: 8 }} onClick={() => this.handleModalVisible(true)}>添加</Button>
+                            <Button style={{ marginLeft: 8 }} type="primary" htmlType="submit">保存</Button>
                         </span>
                     </Col>
                 </Row>
@@ -386,14 +396,12 @@ export default class TableList extends PureComponent {
 
     render() {
         const {
-            patient: {
-                data
-            },
-            loading
+            loading,
         } = this.props;
         const {
             selectedRows,
-            modalVisible
+            modalVisible,
+            icds: data
         } = this.state;
 
         const menu = (
@@ -406,10 +414,34 @@ export default class TableList extends PureComponent {
         const parentMethods = {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,
+            handleSelectIcds: this.handleSelectIcds,
         };
 
+        const columns = [{
+            title: '序号',
+            width: '10%',
+            dataIndex: 'id',
+            key: 'id',
+        }, {
+            title: '疾病编码',
+            dataIndex: 'illnessCode',
+            key: 'illnessCode',
+            width: '15%'
+        }, {
+            title: '疾病名称',
+            dataIndex: 'illnessName',
+            key: 'illnessName',
+            width: '15%'
+        }, {
+            title: '操作',
+            key: 'operation',
+            render: (text, record) => {
+                return <div onClick={e => this.handleDelete(record, e)}>删除</div>
+            }
+        }]
+
         return (
-            <PageHeaderLayout title="查询表格">
+            <PageHeaderLayout title="添加病种">
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListForm}>
@@ -421,18 +453,10 @@ export default class TableList extends PureComponent {
                             data={data}
                             columns={columns}
                             size="small"
-                            scroll={{ x: 1650 }}
+                            scroll={{ x: 1250 }}
                             onSelectRow={this.handleSelectRows}
                             onChange={this.handleStandardTableChange}
                         />
-                        <div>
-                            <Button type="primary" onClick={this.onValidateForm} loading={submitting}>
-                                保存
-                            </Button>
-                            <Button onClick={this.on} style={{ marginLeft: 8 }}>
-                                添加
-                            </Button>
-                        </div>
                     </div>
 
                 </Card>

@@ -55,6 +55,10 @@ export async function deleteDisease(params) {
 export async function fetchDiseases(params) {
     return req('/hospitalCRM/diseaseKind/DiseasePageQuery.do', params);
 }
+export async function getDisease(params) {
+    return req('/hospitalCRM/diseaseKind/diseaseInfo.do', params);
+}
+
 
 /*==============system icd-10=================*/
 export async function addICD(params) {

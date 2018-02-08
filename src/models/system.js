@@ -9,6 +9,7 @@ import {
     addDisease,
     editDisease,
     deleteDisease,
+    getDisease,
     fetchICDs,
     addICD,
     editICD,
@@ -86,6 +87,10 @@ export default {
         *addDisease({ payload }, { call, put }) {
             const response = yield call(addDisease, payload);
             if (callback) callback();
+        },
+        *getDisease({ payload }, { call, put }) {
+            const response = yield call(getDisease, payload);
+            if (callback) callback(response);
         },
         *editDisease({ payload }, { call, put }) {
             const response = yield call(editDisease, payload);

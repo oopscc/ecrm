@@ -7,6 +7,7 @@ const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import qs from 'query-string'
 
 import styles from './flupList.less';
 
@@ -69,9 +70,9 @@ const columns = [
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
     if (e.key === '1') {
-      window.location.hash = `/patient/flupInfo?patientCode=${record.patientCode}`;
+      window.location.hash = `/patient/flupInfo?patientCode=${record.patientCode}&name=${record.name}`;
     } else if (e.key === '2') {
-      window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
+      // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
     }
   }
 const CreateForm = Form.create()((props) => {
@@ -385,7 +386,7 @@ export default class TableList extends PureComponent {
               {this.renderForm()}
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" href="/#/patient/add">
+              <Button icon="plus" type="primary" href="/#/patient/flupInfo">
                 新建
               </Button>
               {
