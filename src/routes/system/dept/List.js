@@ -392,10 +392,12 @@ export default class TableList extends PureComponent {
 
         const columns = [{
             title: '序号',
-            dataIndex: 'id',
-            key: 'id',
             width: '20%',
-        }, {
+            render: (text, record, index) => {
+                let {current, pageSize: size} = data.pagination;
+                return (current - 1) * size + +index + 1;
+            },
+        },{
             title: '科室名称',
             dataIndex: 'deptName',
             key: 'deptName',
