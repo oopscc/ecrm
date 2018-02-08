@@ -44,34 +44,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 
-const columns = [{
-    title: '序号',
-    dataIndex: 'id',
-    key: 'id',
-    width: '20%',
-}, {
-    title: '科室名称',
-    dataIndex: 'deptName',
-    key: 'deptName',
-    width: '35%',
-}, {
-    title: '操作',
-    key: 'operation',
-    render: (text, record) => {
-        return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-				menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '删除' }]} />
-    }
-}]
-const handleOptionClick = (record, e) => {
-    // const { dispatch } = this.props;
-    if (e.key === '1') {
-        // window.location.hash = `/system/user/info?userId=${record.id}`;
-    } else if (e.key === '2') {
-        // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    } else if (e.key === '3') {
-        // alert('问卷');
-    }
-}
+
 const CreateForm = Form.create()((props) => {
     const {
         modalVisible,
@@ -121,6 +94,7 @@ export default class TableList extends PureComponent {
         expandForm: false,
         selectedRows: [],
         formValues: {},
+        currentDeptId: '',
     };
 
     componentDidMount() {
@@ -252,20 +226,38 @@ export default class TableList extends PureComponent {
     handleModalVisible = (flag) => {
         this.setState({
             modalVisible: !!flag,
+            currentDeptId: ''
+        });
+    }
+
+    editDept = id => {
+        this.setState({
+            modalVisible: true,
+            currentDeptId: id
         });
     }
 
     handleAdd = (fields) => {
-        this.props.dispatch({
-            type: 'system/addDept',
-            payload: {
-                deptName: fields.deptName,
-            },
-        });
-
+        if(!this.state.currentDeptId) {
+            this.props.dispatch({
+                type: 'system/addDept',
+                payload: {
+                    deptName: fields.deptName,
+                },
+            });
+        } else {
+            this.props.dispatch({
+                type: 'system/editDept',
+                payload: {
+                    deptName: fields.deptName,
+                    id: this.state.currentDeptId
+                },
+            });
+        }
         message.success('添加成功');
         this.setState({
             modalVisible: false,
+            currentDeptId: ''
         });
     }
 
@@ -283,7 +275,7 @@ export default class TableList extends PureComponent {
 							)}
 						</FormItem>
 					</Col>
-					
+
 					<Col md={6} sm={24}>
 						<span className={styles.submitButtons}>
 							<Button type="primary" htmlType="submit">查询</Button>
@@ -397,6 +389,36 @@ export default class TableList extends PureComponent {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,
         };
+
+        const columns = [{
+            title: '序号',
+            dataIndex: 'id',
+            key: 'id',
+            width: '20%',
+        }, {
+            title: '科室名称',
+            dataIndex: 'deptName',
+            key: 'deptName',
+            width: '35%',
+        }, {
+            title: '操作',
+            key: 'operation',
+            render: (text, record) => {
+                return <DropOption onMenuClick={e => handleOptionClick(record, e)}
+                        menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '删除' }]} />
+            }
+        }]
+        const handleOptionClick = (record, e) => {
+            // const { dispatch } = this.props;
+            if (e.key === '1') {
+                this.editDept(record.id);
+                // window.location.hash = `/system/user/info?userId=${record.id}`;
+            } else if (e.key === '2') {
+                // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
+            } else if (e.key === '3') {
+                // alert('问卷');
+            }
+        }
 
         return (
             <PageHeaderLayout title="查询表格">
