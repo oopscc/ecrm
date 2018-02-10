@@ -8,6 +8,7 @@ import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
 import qs from 'query-string'
+import { Link } from 'react-router-dom';
 
 import styles from './flupList.less';
 
@@ -23,58 +24,46 @@ const columns = [
     title: '病案号',
     dataIndex: 'patientCode',
     key: 'patientCode',
-    width: 60,
-    // fixed: 'left'
+    width: '10%'
   },{
     title: '随访时间',
     dataIndex: 'callTime',
     key: 'callTime',
-    width: 80,
+    width: '10%',
     render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
   },{
     title: '主要诊断',
     dataIndex: 'diagnoseName',
     key: 'diagnoseName',
-    width: 80
+    width: '10%'
   },{
     title: '随访结果',
     dataIndex: 'callResult',
     key: 'callResult',
-    width: 80,
-    fixed: 'right'
+    width: '10%'
   },{
     title: '随访方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 80
+    dataIndex: 'callMode',
+    key: 'callMode',
+    width: '15%'
   },{
     title: '随访人员',
-    dataIndex: 'treatmentDoctor',
-    key: 'treatmentDoctor',
-    width: 80
+    dataIndex: 'callPerson',
+    key: 'callPerson',
+    width: '15%'
   },{
     title: '联系电话',
     dataIndex: 'mobile',
     key: 'mobile',
-    width: 80
+    width: '15%'
   },{
     title: '操作',
     key: 'operation',
-    width: 100,
+    width: 120,
     fixed: 'right',
-    render: (text, record) => {
-      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
-        menuOptions={[{ key: '1', name: '修改' }, { key: '2', name: '删除' }]} />
-    }
+    render: (text, record) => <Link to={`/patient/flupInfo?patientCode=${record.patientCode}&name=${record.name}&id=${record.id}`}>{'编辑'}</Link>
   }]
-const handleOptionClick = (record, e) => {
-    // const { dispatch } = this.props;
-    if (e.key === '1') {
-      window.location.hash = `/patient/flupInfo?patientCode=${record.patientCode}&name=${record.name}`;
-    } else if (e.key === '2') {
-      // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    }
-  }
+
 const CreateForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
@@ -116,20 +105,27 @@ export default class TableList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    patientCode: '',
+    name: ''
   };
 
   componentDidMount() {
     const { dispatch, location } = this.props;
     let self = this;
-    let patientCode = qs.parse(location.search).patientCode;
+    let {patientCode, name} = qs.parse(location.search);
     if (!patientCode) {
       return
     }
+    this.setState({
+      patientCode,
+      name
+    })
     dispatch({
       type: 'patient/fetchFlupList',
       payload: {
         currentPage: 1,
-        pageSize: 10
+        pageSize: 10,
+        patientCode
       }
     });
   }
@@ -364,7 +360,7 @@ export default class TableList extends PureComponent {
 
   render() {
     const { patient: { flup: data }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { selectedRows, modalVisible, patientCode, name } = this.state;
 
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -382,11 +378,9 @@ export default class TableList extends PureComponent {
       <PageHeaderLayout title="查询表格">
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>
-              {this.renderForm()}
-            </div>
+            
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" href="/#/patient/flupInfo">
+              <Button icon="plus" type="primary" href={`/#/patient/flupInfo?patientCode=${patientCode}&name=${name}`}>
                 新建
               </Button>
               {
@@ -408,7 +402,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1070 }}
+              scroll={{ x: 1050 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

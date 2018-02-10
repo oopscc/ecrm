@@ -16,6 +16,9 @@ import {
     deleteICD,
     getICD,
 } from '../services/user';
+import {
+    message
+} from 'antd';
 
 export default {
     namespace: 'system',
@@ -64,16 +67,28 @@ export default {
         *addDept({ payload }, { call, put }) {
             const response = yield call(addDept, payload);
             yield put({
-                type: 'addDept',
+                type: 'updateDept',
                 payload: response,
             });
-            if (callback) callback();
+                        message.success('添加成功');
         },
         *editDept({ payload }, { call, put }) {
             const response = yield call(editDept, payload);
+            yield put({
+                type: 'updateDept',
+                payload: response,
+            });
+                        message.success('修改成功');
+
         },
         *deleteDept({ payload }, { call, put }) {
             yield call(deleteDept, payload);
+            yield put({
+                type: 'deleteDeptById',
+                payload,
+            });
+                        message.success('删除成功');
+
         },
         /*==============system diseases=================*/
 
@@ -86,17 +101,21 @@ export default {
         },
         *addDisease({ payload }, { call, put }) {
             const response = yield call(addDisease, payload);
-            if (callback) callback();
+                                    message.success('添加成功');
+
         },
         *getDisease({ payload }, { call, put }) {
             const response = yield call(getDisease, payload);
-            if (callback) callback(response);
         },
         *editDisease({ payload }, { call, put }) {
             const response = yield call(editDisease, payload);
+            message.success('修改成功');
+
         },
         *deleteDisease({ payload }, { call, put }) {
             yield call(deleteDisease, payload);
+            message.success('删除成功');
+
         },
         /*==============system icd-10=================*/
 
@@ -156,12 +175,23 @@ export default {
                 },
             };
         },
-        addDept(state, action) {
+        updateDept(state, action) {
+            const {id} = action.payload.data;
             return {
                 ...state,
                 depts: {
                     ...state.depts,
-                    list: [action.payload.data, ...state.depts.list],
+                    list: [action.payload.data, ...state.depts.list.filter(item => item.id != id)],
+                },
+            };
+        },
+        deleteDeptById(state, action) {
+            const {id} = action.payload;
+            return {
+                ...state,
+                depts: {
+                    ...state.depts,
+                    list: [...state.depts.list.filter(item => item.id != id)],
                 },
             };
         },

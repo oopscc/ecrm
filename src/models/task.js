@@ -5,6 +5,7 @@ import {
   getTaskPatients,
   deleteTask
 } from '../services/task';
+import { getWaitCallCount as waitCallTask} from '../services/callRecord'
 
 export default {
   namespace: 'task',
@@ -13,12 +14,16 @@ export default {
     tasks: {
       notBeginNum: 0,
       goingNum: 0,
+      isAdmin: 0,
+      userName: '',
       list: [],
       pagination: {}
     },
     waitTasks: {
       notBeginNum: 0,
       goingNum: 0,
+      userName: '',
+      isAdmin: 0,
       list: [],
       pagination: {}
     },
@@ -26,12 +31,12 @@ export default {
 
     },
     patientList: {
+      isAdmin: 0,
       list: [],
       pagination: {}
     },
     taskNum: {
-      willCount: 10,
-      counted: 20 
+      waitCallCount: 10
     }
   },
 
@@ -43,10 +48,7 @@ export default {
         payload: response,
       });
     },
-    *saveTask({ payload, callback }, { call, put }) {
-      const response = yield call(saveTask, payload);
-      if (callback) callback();
-    },
+    
     *getTask({ payload, callback }, { call, put }) {
       const response = yield call(getTask, payload);
       yield put({
@@ -74,12 +76,19 @@ export default {
         payload: response,
       });
     },
+
+    //  查找待随访患者数量
     *search({ payload }, { call, put }) {
       const response = yield call(waitCallTask, payload);
       yield put({
         type: 'saveSearchRes',
         payload: response,
       });
+    },
+    // 保存随访任务
+    *saveTask({ payload, callback }, { call, put }) {
+      const response = yield call(saveTask, payload);
+      if (callback) callback();
     },
 
   },
@@ -89,8 +98,10 @@ export default {
       return {
         ...state,
         tasks: {
-          notBeginNum: action.payload.notBeginNum,
-          goingNum: action.payload.goingNum,
+          notBeginNum: action.payload.data.notBeginNum,
+          goingNum: action.payload.data.goingNum,
+          isAdmin: action.payload.data.isAdmin,
+          userName: action.payload.data.userName,
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,
@@ -104,8 +115,10 @@ export default {
       return {
         ...state,
         waitTasks: {
-          notBeginNum: action.payload.notBeginNum,
-          goingNum: action.payload.goingNum,
+          notBeginNum: action.payload.data.notBeginNum,
+          goingNum: action.payload.data.goingNum,
+          userName: action.payload.data.userName,
+          isAdmin: action.payload.data.isAdmin,
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,
@@ -127,6 +140,7 @@ export default {
       return {
         ...state,
         patientList: {
+          isAdmin: action.payload.data.isAdmin,
           list: action.payload.data.rows,
           pagination: {
              pageSize: action.payload.data.pageSize,
@@ -141,7 +155,7 @@ export default {
         ...state,
         taskNum: {
           ...state.taskNum,
-          // ...action.payload.data
+          ...action.payload.data
         }
       };
     },

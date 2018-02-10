@@ -17,122 +17,8 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
-// 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访阶段，短信状态，操作（电话，短信）
-// 待随访患者总数， 今日已随访人数， 已随访总人数， 我的待随访任务
-/*
-callId
-patientCode
-name
-sex
-mobile
-diseaseName
-diagnoseTime
-diagnoseName
-pathologyName
-cureModeStr
-treatmentDoctor
-callStageStr
-smsStateStr
- */
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'callId',
-    key: 'callId',
-    width: 80,
-    fixed: 'left'
-  },{
-    title: '病案号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
-    width: 80,
-    fixed: 'left'
-  },{
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-    width: 80,
-    fixed: 'left'
-  },{
-    title: '性别',
-    dataIndex: 'sex',
-    key: 'sex',
-    width: 80,
-    render: val => val ? <span>女</span> : <span>男</span>
-  },{
-    title: '联系电话',
-    dataIndex: 'mobile',
-    key: 'mobile',
-    width: 80
-  },{
-    title: '病种',
-    dataIndex: 'diseaseName',
-    key: 'diseaseName',
-    width: 100
-  },{
-    title: '确诊时间',
-    dataIndex: 'diagnoseTime',
-    key: 'diagnoseTime',
-    width: 100,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '原发性诊断名称',
-    dataIndex: 'diagnoseName',
-    key: 'diagnoseName',
-    width: 100
-  },{
-    title: '原发性病理诊断名称',
-    dataIndex: 'pathologyName',
-    key: 'pathologyName',
-    width: 100
-  },{
-    title: '治疗方式',
-    dataIndex: 'cureModeStr',
-    key: 'cureModeStr',
-    width: 80
-  },{
-    title: '主治医师',
-    dataIndex: 'treatmentDoctor',
-    key: 'treatmentDoctor',
-    width: 80
-  },{
-    title: '随访阶段',
-    dataIndex: 'callStageStr',
-    key: 'callStageStr',
-    width: 80,
-  },{
-    title: '短信状态',
-    dataIndex: 'smsStageStr',
-    key: 'smsStageStr',
-    width: 80,
-  },{
-    title: '操作',
-    key: 'operation',
-    width: 100,
-    fixed: 'right',
-    render: (text, record) => <Link to={`/task/call?patientCode=${record.patientCode}&id=${record.id}`}>{'电话'}</Link>
-  }];
-  /*<div>
-    <Link to={`/callRecord/call?patientCode=${record.patientCode}`}>{'电话'}</Link>
-    <Link to={`/callRecord/sms?patientCode=${record.patientCode}`}>{'短信'}</Link>
-  </div>*/
-const handleOptionClick = (record, e) => {
-    // const { dispatch } = this.props;
-    if (e.key === '1') {
-      window.location.hash = `/patient/info?patientCode=${record.patientCode}`;
-      // console.log(record);
-      // dispatch(routerRedux.push({
-      //   pathname: '/patient/add',
-      //   query: {
-      //     page: 2,
-      //   },
-      // }))
-    } else if (e.key === '2') {
-      window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    }else if (e.key === '3') {
-      alert('问卷');
-    }
-  }
+
+// 随访阶段，病种id（模糊查询）
 const CreateForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
@@ -279,23 +165,23 @@ export default class TableList extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
-    const { dispatch, form,  patient} = this.props;
+    const { dispatch, form,  callRecord} = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
         ...fieldsValue,
-        pageSize: patient.data.pagination.pageSize,
-        currentPage: patient.data.pagination.current,
+        pageSize: callRecord.willCallList.pagination.pageSize,
+        currentPage: callRecord.willCallList.pagination.currentPage,
         beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
         endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD'): '',
       };
-
+      console.log(values)
       this.setState({
         formValues: values,
       });
 
       dispatch({
-        type: 'patient/fetch',
+        type: 'callRecord/fetchWillCalls',
         payload: values,
       });
     });
@@ -332,6 +218,8 @@ export default class TableList extends PureComponent {
                 <Input placeholder="请输入" />
               )}
             </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
             <FormItem label="病种名称">
               {getFieldDecorator('diseaseId')(
                 <Input placeholder="请输入" />
@@ -345,7 +233,7 @@ export default class TableList extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
@@ -460,6 +348,93 @@ export default class TableList extends PureComponent {
         {bordered && <em />}
       </div>
     );
+
+    const columns = [
+    {
+      title: '序号',
+      width: 80,
+      fixed: 'left',
+      render: (text, record, index) => {
+          let {currentPage: current, pageSize: size} = data.pagination;
+          return (current - 1) * size + +index + 1;
+      },
+    },{
+      title: '病案号',
+      dataIndex: 'patientCode',
+      key: 'patientCode',
+      width: 80,
+      fixed: 'left'
+    },{
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
+      width: 80,
+      fixed: 'left'
+    },{
+      title: '性别',
+      dataIndex: 'sex',
+      key: 'sex',
+      width: 80,
+      render: val => val ? <span>女</span> : <span>男</span>
+    },{
+      title: '联系电话',
+      dataIndex: 'mobile',
+      key: 'mobile',
+      width: 100
+    },{
+      title: '病种',
+      dataIndex: 'diseaseName',
+      key: 'diseaseName',
+      width: 100
+    },{
+      title: '确诊时间',
+      dataIndex: 'diagnoseTime',
+      key: 'diagnoseTime',
+      width: 100,
+      render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+    },{
+      title: '原发性诊断名称',
+      dataIndex: 'diagnoseName',
+      key: 'diagnoseName',
+      width: 100
+    },{
+      title: '原发性病理诊断名称',
+      dataIndex: 'pathologyName',
+      key: 'pathologyName',
+      width: 100
+    },{
+      title: '治疗方式',
+      dataIndex: 'cureModeStr',
+      key: 'cureModeStr',
+      width: 80
+    },{
+      title: '主治医师',
+      dataIndex: 'treatmentDoctor',
+      key: 'treatmentDoctor',
+      width: 80
+    },{
+      title: '随访阶段',
+      dataIndex: 'callStageStr',
+      key: 'callStageStr',
+      width: 80,
+    },{
+      title: '短信状态',
+      dataIndex: 'smsStageStr',
+      key: 'smsStageStr',
+      width: 80,
+    },{
+      title: '操作',
+      key: 'operation',
+      width: 100,
+      fixed: 'right',
+      render: (text, record) => 
+      {
+        return <div>
+                  <Link style={{marginRight: 8}} to={`/task/call?patientCode=${record.patientCode}&id=${record.id}`}>{'电话'}</Link>
+                  <Link to={`/task/sms?patientCode=${record.patientCode}`}>{'短信'}</Link>
+               </div>
+      }
+    }];
 
     return (
       <PageHeaderLayout title="查询表格">

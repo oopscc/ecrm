@@ -64,6 +64,19 @@ export default function request(url, options) {
       }
       return response.json();
     })
+    .then(response => {
+       if(!response.result || response.result == 0) {
+          return response;
+       } else {
+          notification.error({
+            message: `请求错误 ${response.result}: ${response.message}`,
+          });
+          const error = new Error(errortext);
+          error.name = response.result;
+          throw error;
+       }
+       return response;
+    })
     .catch((e) => {
       const { dispatch } = store;
       const status = e.name;

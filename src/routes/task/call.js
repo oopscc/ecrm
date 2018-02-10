@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Card, Badge, Table, Divider, Input, Button } from 'antd';
+import { Form, Card, Badge, Table, Divider, Input, Button, Select } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from '../../components/DescriptionList';
 import styles from './call.less';
@@ -8,6 +8,7 @@ import qs from 'query-string'
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
 const { TextArea } = Input;
+const CallResult = [{id: '102002', value: '无人接听'},{id: '102007', value: '关机'},{id: '101001', value: '稳定'}];
 
 const progressColumns = [{
   title: '时间',
@@ -172,8 +173,8 @@ export default class BasicProfile extends Component {
     const callColumns = [
       {
         title: '随访时间',
-        dataIndex: 'callTime',
-        key: 'callTime',
+        dataIndex: 'callTimeStr',
+        key: 'callTimeStr',
         width: 60,
       },{
         title: '主要诊断',
@@ -219,8 +220,8 @@ export default class BasicProfile extends Component {
         width: 60,
       },{
         title: '主要诊断',
-        dataIndex: 'callMode',
-        key: 'callMode',
+        dataIndex: 'diagnoseName',
+        key: 'diagnoseName',
         width: 60,
       },{
         title: '主治医师',
@@ -300,7 +301,7 @@ export default class BasicProfile extends Component {
             <Description term="性别">{patient.sex}</Description>
             <Description term="年龄">{patient.age}</Description>
             <Description term="身份证">{patient.idNumber}</Description>
-            <Description term="最近诊断日期">{patient.latelyDiagnoseDate}</Description>
+            <Description term="最近诊断日期">{patient.latelyDiagnoseDateStr}</Description>
             <Description term="家庭住址">{patient.homeAddress}</Description>
           </DescriptionList>
           <Divider style={{ marginBottom: 32 }} />
@@ -327,12 +328,22 @@ export default class BasicProfile extends Component {
               label='显示号码'
             >
               {getFieldDecorator('showNo', {
-                initialValue: patient ? patient.showNo : '',
+                initialValue: '',
                 rules: [{
                   required: true, message: '请输入显示号码',
                 }],
               })(
-                <Input placeholder="显示号码" />
+                <Select
+                  mode="radio"
+                  placeholder="请输入显示号码"
+                  style={{
+                    margin: '8px 0'
+                  }}
+                >
+                  {patient && patient.showPhoneArray && patient.showPhoneArray.map(item => {
+                    return <Select.Option key={item.id} value={item.id}>{item.phone}</Select.Option>
+                  })}
+                </Select>
               )}
             </FormItem>
             <FormItem
@@ -340,12 +351,22 @@ export default class BasicProfile extends Component {
               label='主叫号码'
             >
               {getFieldDecorator('callNo', {
-                initialValue: patient ? patient.callNo : '',
+                initialValue: '',
                 rules: [{
                   required: true, message: '请选择主叫号码',
                 }],
               })(
-                <Input placeholder="主叫号码" />
+                <Select
+                  mode="radio"
+                  placeholder="请选择主叫号码"
+                  style={{
+                    margin: '8px 0'
+                  }}
+                >
+                  {patient && patient.callPhoneArray && patient.callPhoneArray.map(item => {
+                    return <Select.Option key={item.id} value={item.id}>{item.phone}</Select.Option>
+                  })}
+                </Select>
               )}
             </FormItem>
             <FormItem
@@ -358,7 +379,17 @@ export default class BasicProfile extends Component {
                   required: true, message: '请选择随访结果',
                 }],
               })(
-                <Input placeholder="随访结果" />
+                <Select
+                  mode="radio"
+                  placeholder="请选择随访结果"
+                  style={{
+                    margin: '8px 0'
+                  }}
+                >
+                  {CallResult.map(item => {
+                    return <Select.Option key={item.id} value={item.id}>{item.value}</Select.Option>
+                  })}
+                </Select>
               )}
             </FormItem>
             <FormItem

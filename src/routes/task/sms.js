@@ -3,7 +3,7 @@ import moment from 'moment';
 import { connect } from 'dva';
 import qs from 'query-string'
 import {
-  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
+  Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip, TimePicker
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './sms.less';
@@ -36,18 +36,17 @@ export default class BasicForms extends PureComponent {
     // taskId: '',
     smsId: '0',
     smsContent: '',
-    sendTimeStr: '',
     callIdArray: []
   };
 
   componentDidMount() {
     const { dispatch, location } = this.props;
     let self = this;
-    let {callId} = qs.parse(location.search);
-    if (!callId) {
+    let {id} = qs.parse(location.search);
+    if (!id) {
       return
     }
-    this.setState({callIdArray: callId});
+    this.setState({callIdArray: [id]});
     dispatch({
       type: 'sms/fetch',
       payload: {
@@ -69,12 +68,12 @@ export default class BasicForms extends PureComponent {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        const sendDate = values.sendDate ? values.sendDate.format('YYYY-MM-DD') : '';
+        const sendTime = values.sendTime.format('HH:mm:ss');
+        console.log({sendDate, sendTime})
         const fieldsValue = {
           ...values,
-          'sendStartDate': values.sendDate ? values.sendDate[0].format('YYYY-MM-DD') : '',
-          'sendEndDate': values.sendDate ? values.sendDate[1].format('YYYY-MM-DD') : '' ,
-          'sendStartTime': values.sendTime ? values.sendTime[0].format('hh:mm:ss') : '',
-          'sendEndTime': values.sendTime ? values.sendTime[1].format('hh:mm:ss'): ''
+          'sendTimeStr': `${sendDate} ${sendTime}`
         };
         this.props.dispatch({
           type: 'sms/send',
@@ -172,7 +171,7 @@ export default class BasicForms extends PureComponent {
               {getFieldDecorator('sendDate', {
                 
               })(
-                <RangePicker />
+                <DatePicker />
               )}
             </FormItem>
 
@@ -181,11 +180,12 @@ export default class BasicForms extends PureComponent {
               label='发送时间'
             >
               {getFieldDecorator('sendTime', {
-                initialValue: '',
+                initialValue: moment('00:00:00', 'HH:mm:ss'),
               })(
-                <RangePicker />
+                <TimePicker />
               )}
             </FormItem>
+
 
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>

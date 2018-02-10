@@ -29,7 +29,6 @@ class Step2 extends React.PureComponent {
     const onValidateForm = (e) => {
       e.preventDefault();
       validateFields((err, values) => {
-        console.log(123, values)
         if (!err) {
           values = {
             ...values,
@@ -58,11 +57,9 @@ class Step2 extends React.PureComponent {
         <Card bordered={false}>
           <Row>
             <Col sm={6} xs={24}>
-              <Info title="待随访患者总数" value={task.willCount} bordered />
+              <Info title="待随访患者总数" value={task.waitCallCount} bordered />
             </Col>
-            <Col sm={6} xs={24}>
-              <Info title="今日已随访人数" value={task.counted} bordered />
-            </Col>
+            
             
           </Row>
         </Card>

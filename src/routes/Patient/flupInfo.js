@@ -21,6 +21,10 @@ import {
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from './flupInfo.less';
 
+
+/*
+    三个catoysl。 随访人员（支持模糊查询），随访结果，随访方式（本地mock）
+*/
 const FormItem = Form.Item;
 const {
     Option
@@ -42,7 +46,8 @@ export default class BasicForms extends PureComponent {
     state = {
         patient: false,
         name: '',
-        patientCode: ''
+        patientCode: '',
+        id: ''
     };
 
     componentDidMount() {
@@ -53,19 +58,21 @@ export default class BasicForms extends PureComponent {
         let self = this;
         let {
             patientCode,
-            name
-        } = qs.parse(location.search);
-        if (!patientCode) {
-            return
-        }
-        self.setState({
             name,
-            patientCode
+            id
+        } = qs.parse(location.search);
+        this.setState({
+            name,
+            patientCode,
+            id
         });
+        if (!id) {
+            return;
+        }
         dispatch({
             type: 'patient/getFlup',
             payload: {
-                patientCode
+                id
             },
             callback(data) {
                 self.setState({
@@ -77,24 +84,26 @@ export default class BasicForms extends PureComponent {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        let type = 'patient/addFlup';
-        if (this.state.patient) {
-            type = 'patient/editFlup';
-        }
+        
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 const fieldsValue = {
                     ...values,
-                    'callTimeStr': values['callTimeStr'].format('YYYY-MM-DD'),
-                    'changeTimeStr': values['changeTimeStr'].format('YYYY-MM-DD'),
-                    patientCode: this.state.patientCode
+                    'callTimeStr': values['callTimeStr'] ? values['callTimeStr'].format('YYYY-MM-DD') : '',
+                    'changeTimeStr': values['changeTimeStr'] ? values['changeTimeStr'].format('YYYY-MM-DD') : '',
                 };
+                const {patientCode, name, id} = this.state;
+                let type = 'patient/addFlup';
+                let payload = {...fieldsValue, patientCode, name, id};
+                if (this.state.patient) {
+                    type = 'patient/editFlup';
+                    payload = {...fieldsValue, patientCode, name, id}
+                }
                 this.props.dispatch({
                     type,
-                    payload: fieldsValue,
+                    payload,
                     callback() {
-                        window.history.go(-1);
-                        // this.props.dispatch()
+                        window.location.hash = `/patient/flupList?patientCode=${patientCode}`;
                     }
                 });
             }
@@ -117,6 +126,7 @@ export default class BasicForms extends PureComponent {
             patientCode,
             name
         } = this.state;
+        console.log(this.state)
         const formItemLayout = {
             labelCol: {
                 xs: {
@@ -177,7 +187,7 @@ export default class BasicForms extends PureComponent {
 							label="联系电话"
 						>
 							{getFieldDecorator('mobile', {
-								initialValue: patient.mobile,
+								initialValue: patient ? patient.mobile : '',
 								// rules: [{ required: true, message: 'Please input your phone number!' }],
 							})(
 								<Input style={{ width: '100%' }} />
@@ -189,9 +199,10 @@ export default class BasicForms extends PureComponent {
 							label="随访时间"
 						>
 							{getFieldDecorator('callTimeStr', {
-								initialValue: patient && patient.callTimeStr ? moment(patient.callTimeStr, 'YYYY-MM-DD') : ''
+								initialValue: patient && patient.callTimeStr ? moment(patient.callTimeStr, 'YYYY-MM-DD') : '',
+                                rules: [{ required: true, message: 'Please input your 随访时间!' }],
 							})(
-									<DatePicker />
+							     <DatePicker />
 							)}
 						</FormItem>
 
@@ -203,14 +214,14 @@ export default class BasicForms extends PureComponent {
 							})(
 								<Select
 									mode="radio"
-									placeholder="请选择生存状态"
+									placeholder="请选择随访结果"
 									style={{
 										margin: '8px 0'
 									}}
 								>
-									<Option value="0">死亡</Option>
-									<Option value="1">生存</Option>
-									<Option value="2">毁灭</Option>
+									<Option value="101001">稳定</Option>
+									<Option value="101002">复发</Option>
+									<Option value="101003">转移</Option>
 								</Select>
 							)}
 						</FormItem>
@@ -244,14 +255,13 @@ export default class BasicForms extends PureComponent {
 							})(
 								<Select
 									mode="radio"
-									placeholder="请选择生存状态"
+									placeholder="请选择随访方式"
 									style={{
 										margin: '8px 0'
 									}}
 								>
-									<Option value="0">死亡</Option>
-									<Option value="1">生存</Option>
-									<Option value="2">毁灭</Option>
+									<Option value="0">短信</Option>
+									<Option value="1">电话</Option>
 								</Select>
 							)}
 						</FormItem>
@@ -261,6 +271,7 @@ export default class BasicForms extends PureComponent {
 						>
 							{getFieldDecorator('callPerson', {
 								initialValue: patient.callPerson,
+                                rules: [{ required: true, message: '请选择随访人员' }],
 							})(
 								<Input style={{ width: '100%' }} />
 							)}

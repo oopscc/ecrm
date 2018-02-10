@@ -17,83 +17,7 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 // 序号，病案号，姓名，性别，联系电话，病种，确诊时间，原发性诊断名称，治疗方式，主治医师，随访时间，随访结果，随访方式
-const columns = [
-{
-  title: '序号',
-  dataIndex: 'callId',
-  key: 'callId',
-  width: 100,
-  fixed: 'left'
-},{
-  title: '病案号',
-  dataIndex: 'patientCode',
-  key: 'patientCode',
-  width: 100,
-  fixed: 'left'
-},{
-  title: '姓名',
-  dataIndex: 'name',
-  key: 'name',
-  width: 100,
-  fixed: 'left'
-},{
-  title: '性别',
-  dataIndex: 'sex',
-  key: 'sex',
-  width: 80,
-  render: val => val ? <span>女</span> : <span>男</span>
-},{
-  title: '联系电话',
-  dataIndex: 'mobile',
-  key: 'mobile',
-  width: 120
-},{
-  title: '病种',
-  dataIndex: 'diseaseName',
-  key: 'diseaseName',
-  width: 120
-},{
-  title: '确诊时间',
-  dataIndex: 'diagnoseTime',
-  key: 'diagnoseTime',
-  width: 150,
-  render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-},{
-  title: '原发性诊断名称',
-  dataIndex: 'diagnoseName',
-  key: 'diagnoseName',
-  width: 150
-},{
-  title: '原发性病理诊断名称',
-  dataIndex: 'pathologyName',
-  key: 'pathologyName',
-  width: 150
-},{
-  title: '治疗方式',
-  dataIndex: 'cureModeStr',
-  key: 'cureModeStr',
-  width: 100
-},{
-  title: '主治医师',
-  dataIndex: 'treatmentDoctor',
-  key: 'treatmentDoctor',
-  width: 120
-},{
-  title: '随访时间',
-  dataIndex: 'callTime',
-  key: 'callTime',
-  width: 150,
-},{
-  title: '随访结果',
-  dataIndex: 'callResult',
-  key: 'callResult',
-  width: 100,
-},{
-  title: '随访方式',
-  dataIndex: 'callModeStr',
-  key: 'callModeStr',
-  width: 100,
-}];
+
 
 const handleOptionClick = (record, e) => {
     // const { dispatch } = this.props;
@@ -243,13 +167,13 @@ export default class TableList extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
-    const { dispatch, form,  patient} = this.props;
+    const { dispatch, form,  callRecord} = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
         ...fieldsValue,
-        pageSize: patient.data.pagination.pageSize,
-        currentPage: patient.data.pagination.current,
+        pageSize: callRecord.callList.pagination.pageSize,
+        currentPage: callRecord.callList.pagination.currentPage,
         beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
         endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD'): '',
       };
@@ -259,7 +183,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'patient/fetch',
+        type: 'callRecord/fetchCalls',
         payload: values,
       });
     });
@@ -292,7 +216,7 @@ export default class TableList extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="病种名称">
-              {getFieldDecorator('diseaseName')(
+              {getFieldDecorator('diseaseId')(
                 <Input placeholder="请输入" />
               )}
             </FormItem>
@@ -304,7 +228,7 @@ export default class TableList extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
@@ -410,6 +334,86 @@ export default class TableList extends PureComponent {
       handleModalVisible: this.handleModalVisible,
     };
 
+    const columns = [
+{
+  title: '序号',
+  width: 80,
+  fixed: 'left',
+  render: (text, record, index) => {
+      let {currentPage: current, pageSize: size} = data.pagination;
+      return (current - 1) * size + +index + 1;
+  },
+},{
+  title: '病案号',
+  dataIndex: 'patientCode',
+  key: 'patientCode',
+  width: 100,
+  fixed: 'left'
+},{
+  title: '姓名',
+  dataIndex: 'name',
+  key: 'name',
+  width: 100,
+  fixed: 'left'
+},{
+  title: '性别',
+  dataIndex: 'sex',
+  key: 'sex',
+  width: 80,
+  render: val => val ? <span>女</span> : <span>男</span>
+},{
+  title: '联系电话',
+  dataIndex: 'mobile',
+  key: 'mobile',
+  width: 120
+},{
+  title: '病种',
+  dataIndex: 'diseaseName',
+  key: 'diseaseName',
+  width: 120
+},{
+  title: '确诊时间',
+  dataIndex: 'diagnoseTime',
+  key: 'diagnoseTime',
+  width: 150,
+  render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+},{
+  title: '原发性诊断名称',
+  dataIndex: 'diagnoseName',
+  key: 'diagnoseName',
+  width: 150
+},{
+  title: '原发性病理诊断名称',
+  dataIndex: 'pathologyName',
+  key: 'pathologyName',
+  width: 150
+},{
+  title: '治疗方式',
+  dataIndex: 'cureModeStr',
+  key: 'cureModeStr',
+  width: 100
+},{
+  title: '主治医师',
+  dataIndex: 'treatmentDoctor',
+  key: 'treatmentDoctor',
+  width: 120
+},{
+  title: '随访时间',
+  dataIndex: 'callTime',
+  key: 'callTime',
+  width: 150,
+},{
+  title: '随访结果',
+  dataIndex: 'callResult',
+  key: 'callResult',
+  width: 100,
+},{
+  title: '随访方式',
+  dataIndex: 'callMode',
+  key: 'callMode',
+  width: 100,
+}];
+
     return (
       <PageHeaderLayout title="查询表格">
         <Card bordered={false}>
@@ -418,8 +422,8 @@ export default class TableList extends PureComponent {
               {this.renderForm()}
             </div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" href="/#/patient/add">
-                新建
+              <Button icon="plus" type="primary" href="/#/task/taskAdd">
+                分配任务
               </Button>
               {
                 selectedRows.length > 0 && (

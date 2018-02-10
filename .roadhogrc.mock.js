@@ -145,9 +145,8 @@ const proxy = {
   // 'POST /patient/diagnosePageQuery.do': getDiagnoses,
   // 'GET /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
   // 'POST /patient/(.*)': 'http://your.server.com:8080/hospitalCRM/patient/',
-  'GET /hospitalCRM/(.*)': 'http://your.server.com:8080/hospitalCRM/',
-  'POST /hospitalCRM/(.*)': 'http://your.server.com:8080/hospitalCRM/',
-  // 'POST /(.*)': 'http://your.server.com:8080/hospitalCRM/',
+  'GET /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
+  'POST /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
 };
 
 export default noProxy ? {} : delay(proxy, 1000);

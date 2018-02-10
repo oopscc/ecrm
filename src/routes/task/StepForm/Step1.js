@@ -35,13 +35,13 @@ class Step1 extends React.PureComponent {
       validateFields((err, values) => {
         values = {
           ...values,
-          diagnoseStartTimeStr: values.diagnoseTimeStr ? values.diagnoseTimeStr[0].format('YYYY-MM-DD') : '',
-          diagnoseEndTimeStr: values.diagnoseTimeStr ? values.diagnoseTimeStr[1].format('YYYY-MM-DD') : '',
-          admissionStartTimeStr: values.admissionTimeStr ? values.admissionTimeStr[0].format('YYYY-MM-DD'): '',
+          beginTime: values.diagnoseTimeStr ? values.diagnoseTimeStr[0].format('YYYY-MM-DD') : '',
+          endTime: values.diagnoseTimeStr ? values.diagnoseTimeStr[1].format('YYYY-MM-DD') : '',
+          /*admissionStartTimeStr: values.admissionTimeStr ? values.admissionTimeStr[0].format('YYYY-MM-DD'): '',
           admissionEndTimeStr: values.admissionTimeStr ? values.admissionTimeStr[1].format('YYYY-MM-DD'): '',
           outStartTimeStr: values.diagnoseTimeStr ? values.outTimeStr[0].format('YYYY-MM-DD') : '',
           outEndTimeStr: values.diagnoseTimeStr ? values.outTimeStr[1].format('YYYY-MM-DD') : '',
-          taskStartTimeStr: values.taskStartTimeStr ? values.taskStartTimeStr.format('YYYY-MM-DD') : '',
+          taskStartTimeStr: values.taskStartTimeStr ? values.taskStartTimeStr.format('YYYY-MM-DD') : '',*/
         };
         if (!err) {
           dispatch({
@@ -55,28 +55,19 @@ class Step1 extends React.PureComponent {
       });
     };   
 
-    return (
-      <div>
-        <Card bordered={false}>
-          <Form
-            onSubmit={this.handleSubmit}
-            hideRequiredMark = {false}
-            style={{ marginTop: 8 }}
-          >
-            <FormItem
-              {...formItemLayout}
-              label='病案号'
-            >
-              {getFieldDecorator('patientCode', {
-                rules: [{
-                  required: true, message: '请输入病案号',
-                }],
-              })(
-                <TextArea placeholder="可输入多个病案号批量查询，使用，隔开"/>
-              )}
-            </FormItem>
+/*
 
-            <FormItem
+  <FormItem
+    {...formItemLayout}
+    label='病案号'
+  >
+    {getFieldDecorator('patientCode', {
+      
+    })(
+      <TextArea placeholder="可输入多个病案号批量查询，使用，隔开"/>
+    )}
+  </FormItem>
+  <FormItem
               {...formItemLayout}
               label="性别"
             >
@@ -96,9 +87,7 @@ class Step1 extends React.PureComponent {
               label="病种"
             >
               {getFieldDecorator('diseaseName', {
-                rules: [{
-                  required: true, message: '请选择病种',
-                }],
+                
               })(
                 <Input placeholder="病种"/>
               )}
@@ -108,9 +97,7 @@ class Step1 extends React.PureComponent {
               label="年龄"
             >
               {getFieldDecorator('age', {
-                rules: [{
-                  required: true, message: '请输入病人年龄',
-                }],
+                
               })(
                 <Input placeholder="年龄"/>
               )}
@@ -177,6 +164,36 @@ class Step1 extends React.PureComponent {
                   <DatePicker />
               )}
             </FormItem>
+ */
+    return (
+      <div>
+        <Card bordered={false}>
+          <Form
+            onSubmit={this.handleSubmit}
+            hideRequiredMark = {false}
+            style={{ marginTop: 8 }}
+          >
+            <FormItem
+              {...formItemLayout}
+              label="诊断时间"
+            >
+              {getFieldDecorator('diagnoseTimeStr', {
+
+              })(
+                  <RangePicker />
+              )}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label="诊断科室"
+            >
+              {getFieldDecorator('deptId', {
+
+              })(
+                <Input style={{ width: '100%' }} />
+              )}
+            </FormItem>
+            
              <Button type="primary" onClick={onValidateForm}>
               下一步
             </Button>

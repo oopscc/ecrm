@@ -105,9 +105,7 @@ export default class BasicForms extends PureComponent {
             >
               {getFieldDecorator('patientCode', {
                 initialValue: patient ? patient.patientCode : '',
-                rules: [{
-                  required: true, message: '请输入病案号',
-                }],
+                
               })(
                 <Input placeholder="病案号"  disabled={!!patient}/>
               )}
@@ -119,9 +117,7 @@ export default class BasicForms extends PureComponent {
             >
               {getFieldDecorator('name', {
                 initialValue: patient ? patient.name : '',
-                rules: [{
-                  required: true, message: '请输入病人姓名',
-                }],
+                
               })(
                 <Input placeholder="病人姓名" disabled={!!patient}/>
               )}

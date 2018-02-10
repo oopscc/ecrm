@@ -4,12 +4,11 @@ import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider } from 'antd';
 const { RangePicker } = DatePicker;
-import StandardTable from '../../components/StandardTable';
-import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import DropOption from '../../components/DropOption';
+import StandardTable from '../../../components/StandardTable';
+import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
+import DropOption from '../../../components/DropOption';
 
-import styles from './list.less';
-import { Link } from 'react-router-dom';
+import styles from './List.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -17,6 +16,80 @@ const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 const statusMap = ['default', 'processing', 'success', 'error'];
 const status = ['关闭', '运行中', '已上线', '异常'];
 
+const columns = [
+  {
+    title: '序号',
+    dataIndex: 'id',
+    key: 'id',
+    width: 60,
+  },
+  {
+    title: '用户名',
+    dataIndex: 'userName',
+    key: 'userName',
+    width: 60,
+  },{
+    title: '姓名',
+    dataIndex: 'name',
+    key: 'name',
+    width: 60,
+  },{
+    title: '性别',
+    dataIndex: 'sex',
+    key: 'sex',
+    width: 60,
+    render: val => val ? <span>女</span> : <span>男</span>
+  },{
+    title: '科室',
+    dataIndex: 'dept',
+    key: 'dept',
+    width: 80
+  },{
+    title: '职称',
+    dataIndex: 'job',
+    key: 'job',
+    width: 80
+  },{
+    title: '职务',
+    dataIndex: 'duty',
+    key: 'duty',
+    width: 100,
+    // render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+  },{
+    title: '手机',
+    dataIndex: 'userPhone',
+    key: 'userPhone',
+    width: 100
+  },{
+    title: '角色',
+    dataIndex: 'role',
+    key: 'role',
+    width: 100
+  },{
+    title: '锁定（点击切换）',
+    dataIndex: 'lockFlag',
+    key: 'lockFlag',
+    width: 150
+  },{
+    title: '操作',
+    key: 'operation',
+    width: 100,
+    fixed: 'right',
+    render: (text, record) => {
+      return <DropOption onMenuClick={e => handleOptionClick(record, e)} 
+        menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '重置密码' }, { key: '3', name: '修改角色' }]} />
+    }
+  }]
+const handleOptionClick = (record, e) => {
+    // const { dispatch } = this.props;
+    if (e.key === '1') {
+      window.location.hash = `/system/user/info?userId=${record.id}`;
+    } else if (e.key === '2') {
+      // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
+    }else if (e.key === '3') {
+      // alert('问卷');
+    }
+  }
 const CreateForm = Form.create()((props) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
@@ -47,9 +120,9 @@ const CreateForm = Form.create()((props) => {
   );
 });
 
-@connect(({ task, loading }) => ({
-  task,
-  loading: loading.models.task,
+@connect(({ user, loading }) => ({
+  user,
+  loading: loading.models.user,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -63,7 +136,7 @@ export default class TableList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'task/fetch',
+      type: 'user/fetchUsers',
       payload: {
         currentPage: 1,
         pageSize: 10
@@ -104,7 +177,7 @@ export default class TableList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'patient/fetch',
+      type: 'user/fetchUsers',
       payload: {},
     });
   }
@@ -148,14 +221,13 @@ export default class TableList extends PureComponent {
 
   handleSearch = (e) => {
     e.preventDefault();
-    const { dispatch, form,  task} = this.props;
+    const { dispatch, form,  user} = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const values = {
         ...fieldsValue,
-        pageSize: task.tasks.pagination.pageSize,
-        currentPage: task.tasks.pagination.current,
-
+        pageSize: user.users.pagination.pageSize,
+        currentPage: user.users.pagination.current,
       };
 
       this.setState({
@@ -163,7 +235,7 @@ export default class TableList extends PureComponent {
       });
 
       dispatch({
-        type: 'task/fetch',
+        type: 'user/fetchUsers',
         payload: values,
       });
     });
@@ -190,36 +262,36 @@ export default class TableList extends PureComponent {
   }
 
   renderSimpleForm() {
-    const {task: { tasks }} = this.props;
-    const { getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          { tasks.isAdmin != 0 &
-            <Col md={8} sm={24}>
-              <FormItem label="随访人员">
-                {getFieldDecorator('callUserId')(
-                  <Input placeholder="请输入" />
-                )}
-              </FormItem>
-            </Col>
-          }
-          <Col md={8} sm={24}>
-            <FormItem label="任务状态">
-              {getFieldDecorator('taskState')(
-                <Input placeholder="请输入" />
+          <Col md={6} sm={24}>
+            <FormItem label="用户名">
+              {getFieldDecorator('userName')(
+                <Input placeholder="请输入用户名" />
               )}
             </FormItem>
           </Col>
-          
-          <Col md={8} sm={24}>
-            <FormItem label="任务名称">
-              {getFieldDecorator('taskName')(
-                <Input placeholder="请输入" />
+          <Col md={6} sm={24}>
+            <FormItem label="姓名">
+              {getFieldDecorator('name')(
+                <Input placeholder="请输入姓名" />
               )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
+          <FormItem label="是否锁定">
+            {getFieldDecorator('lockFlag')(
+              <Select placeholder="是否锁定" style={{ width: '100%' }}>
+                <Option value="0">未锁定</Option>
+                <Option value="1">已锁定</Option>
+                <Option value="">不限</Option>
+              </Select>
+            )}
+          </FormItem>
+          </Col>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
@@ -310,7 +382,7 @@ export default class TableList extends PureComponent {
   }
 
   render() {
-    const { task: { tasks: data }, loading } = this.props;
+    const { user: { users: data }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
 
     const menu = (
@@ -325,80 +397,29 @@ export default class TableList extends PureComponent {
       handleModalVisible: this.handleModalVisible,
     };
 
-    const columns = [
-  {
-    title: '序号',
-    width: 80,
-    fixed: 'left',
-    render: (text, record, index) => {
-        let {currentPage: current, pageSize: size} = data.pagination;
-        return (current - 1) * size + +index + 1;
-    },
-  },{
-    title: '任务名称',
-    dataIndex: 'taskName',
-    key: 'taskName',
-    width: 100,
-  },{
-    title: '患者数量',
-    dataIndex: 'patientNum',
-    key: 'patientNum',
-    width: 80,
-  },{
-    title: '预计完成时间',
-    dataIndex: 'estimateTime',
-    key: 'estimateTime',
-    width: 120,
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '任务状态',
-    dataIndex: 'taskState',
-    key: 'taskState',
-    width: 120
-  },{
-    title: '操作',
-    key: 'operation',
-    width: 100,
-    render: (text, record) => <Link to={`/task/detail?taskId=${record.taskId}`}>{'查看详情'}</Link>
-
-  }];
-
-    const Info = ({ title, value, bordered }) => (
-      <div className={styles.headerInfo}>
-        <span>{title}</span>
-        <p>{value}</p>
-        {bordered && <em />}
-      </div>
-    );
-
     return (
       <PageHeaderLayout title="查询表格">
-        <Card>
-          <div>
-              <Info title="随访人员" value={data.userName} bordered />
-          </div>
-          <div>
-              任务统计: 
-              <Info title="未开始" value={data.notBeginNum} bordered />
-              <Info title="进行中" value={data.goingNum} bordered />
-          </div>
-        </Card>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
               {this.renderForm()}
             </div>
-            {
-                data.isAdmin != 0 ?
-                <div className={styles.tableListOperator}>
-                  <Button icon="plus" type="primary" href="/#/task/taskAdd">
-                    新增
-                  </Button>
-                </div>
-                : ''
-            }
-            <div>
-              
+            <div className={styles.tableListOperator}>
+              <Button icon="plus" type="primary" href="/#/system/user/info">
+                新建
+              </Button>
+              {
+                selectedRows.length > 0 && (
+                  <span>
+                    <Button>批量操作</Button>
+                    <Dropdown overlay={menu}>
+                      <Button>
+                        更多操作 <Icon type="down" />
+                      </Button>
+                    </Dropdown>
+                  </span>
+                )
+              }
             </div>
             <StandardTable
               selectedRows={selectedRows}
@@ -406,7 +427,7 @@ export default class TableList extends PureComponent {
               data={data}
               columns={columns}
               size="small"
-              scroll={{ x: 1050 }}
+              scroll={{ x: 1000 }}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />

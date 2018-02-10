@@ -7,6 +7,7 @@ const { RangePicker } = DatePicker;
 import StandardTable from '../../components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DropOption from '../../components/DropOption';
+import { Link } from 'react-router-dom';
 
 import styles from './List.less';
 
@@ -81,7 +82,8 @@ const columns = [
     dataIndex: 'callResult',
     key: 'callResult',
     width: 100,
-    fixed: 'right'
+    fixed: 'right',
+    render: (text, record) => <Link to={`/patient/flupList?patientCode=${record.patientCode}&name=${record.name}`}>{record.callResult}</Link>
   },{
     title: '操作',
     key: 'operation',

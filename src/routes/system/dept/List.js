@@ -25,7 +25,8 @@ import {
     Modal,
     message,
     Badge,
-    Divider
+    Divider,
+    Tag
 } from 'antd';
 const {
     RangePicker
@@ -202,14 +203,14 @@ export default class TableList extends PureComponent {
         const {
             dispatch,
             form,
-            user
+            depts
         } = this.props;
         form.validateFields((err, fieldsValue) => {
             if (err) return;
             const values = {
                 ...fieldsValue,
-                pageSize: user.users.pagination.pageSize,
-                currentPage: user.users.pagination.current,
+                pageSize: depts.pagination.pageSize,
+                currentPage: depts.pagination.currentPage,
             };
 
             this.setState({
@@ -237,6 +238,16 @@ export default class TableList extends PureComponent {
         });
     }
 
+    deleteDept = id => {
+        this.props.dispatch({
+            type: 'system/deleteDept',
+            payload: {
+                id,
+            },
+        });   
+    }
+
+
     handleAdd = (fields) => {
         if(!this.state.currentDeptId) {
             this.props.dispatch({
@@ -254,7 +265,6 @@ export default class TableList extends PureComponent {
                 },
             });
         }
-        message.success('添加成功');
         this.setState({
             modalVisible: false,
             currentDeptId: ''
@@ -394,7 +404,7 @@ export default class TableList extends PureComponent {
             title: '序号',
             width: '20%',
             render: (text, record, index) => {
-                let {current, pageSize: size} = data.pagination;
+                let {currentPage: current, pageSize: size} = data.pagination;
                 return (current - 1) * size + +index + 1;
             },
         },{
@@ -406,21 +416,12 @@ export default class TableList extends PureComponent {
             title: '操作',
             key: 'operation',
             render: (text, record) => {
-                return <DropOption onMenuClick={e => handleOptionClick(record, e)}
-                        menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '删除' }]} />
+                return <div>
+                            <Tag color="#2db7f5" onClick={this.editDept.bind(this, record.id)}>编辑</Tag>
+                            <Tag color="#f50" onClick={this.deleteDept.bind(this, record.id)}>删除</Tag>
+                        </div>
             }
         }]
-        const handleOptionClick = (record, e) => {
-            // const { dispatch } = this.props;
-            if (e.key === '1') {
-                this.editDept(record.id);
-                // window.location.hash = `/system/user/info?userId=${record.id}`;
-            } else if (e.key === '2') {
-                // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-            } else if (e.key === '3') {
-                // alert('问卷');
-            }
-        }
 
         return (
             <PageHeaderLayout title="查询表格">
