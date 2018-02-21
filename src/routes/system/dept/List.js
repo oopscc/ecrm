@@ -244,7 +244,7 @@ export default class TableList extends PureComponent {
             payload: {
                 id,
             },
-        });   
+        });
     }
 
 

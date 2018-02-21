@@ -301,7 +301,7 @@ export default class BasicForms extends PureComponent {
                 <DatePicker />
               )}
             </FormItem>
-           
+
             <FormItem
               {...formItemLayout}
               label="死亡原因"

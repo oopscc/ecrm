@@ -15,6 +15,11 @@ import {
     editICD,
     deleteICD,
     getICD,
+    fetchSMSTpls,
+    addSMSTpl,
+    editSMSTpl,
+    deleteSMSTpl,
+    getSMSTpl
 } from '../services/user';
 import {
     message
@@ -37,7 +42,11 @@ export default {
         diseases: {
             list: [],
             pagination: {}
-        }
+        },
+        SMSTpls: {
+            list: [],
+            pagination: {}
+        },
     },
 
     effects: {
@@ -70,7 +79,7 @@ export default {
                 type: 'updateDept',
                 payload: response,
             });
-                        message.success('添加成功');
+            message.success('添加成功');
         },
         *editDept({ payload }, { call, put }) {
             const response = yield call(editDept, payload);
@@ -78,7 +87,7 @@ export default {
                 type: 'updateDept',
                 payload: response,
             });
-                        message.success('修改成功');
+            message.success('修改成功');
 
         },
         *deleteDept({ payload }, { call, put }) {
@@ -87,7 +96,7 @@ export default {
                 type: 'deleteDeptById',
                 payload,
             });
-                        message.success('删除成功');
+            message.success('删除成功');
 
         },
         /*==============system diseases=================*/
@@ -101,7 +110,7 @@ export default {
         },
         *addDisease({ payload }, { call, put }) {
             const response = yield call(addDisease, payload);
-                                    message.success('添加成功');
+            message.success('添加成功');
 
         },
         *getDisease({ payload }, { call, put }) {
@@ -137,6 +146,44 @@ export default {
         },
         *deleteICD({ payload }, { call, put }) {
             yield call(deleteICD, payload);
+        },
+        /*==============system SMSTpl=================*/
+
+        *fetchSMSTpls({ payload }, { call, put }) {
+            const response = yield call(fetchSMSTpls, payload);
+            yield put({
+                type: 'saveSMSTpls',
+                payload: response,
+            });
+        },
+        *addSMSTpl({ payload }, { call, put }) {
+            const response = yield call(addSMSTpl, payload);
+            yield put({
+                type: 'updateSMSTpl',
+                payload: response,
+            });
+            message.success('添加成功');
+        },
+        *editSMSTpl({ payload }, { call, put }) {
+            const response = yield call(editSMSTpl, payload);
+            yield put({
+                type: 'updateSMSTpl',
+                payload: response,
+            });
+            message.success('修改成功');
+
+        },
+        *deleteSMSTpl({ payload }, { call, put }) {
+            yield call(deleteSMSTpl, payload);
+            yield put({
+                type: 'deleteSMSTplById',
+                payload,
+            });
+            message.success('删除成功');
+        },
+        *getSMSTpl({ payload, callback }, { call, put }) {
+            const response = yield call(getSMSTpl, payload);
+            if (callback) callback(response);
         },
     },
 
@@ -176,7 +223,7 @@ export default {
             };
         },
         updateDept(state, action) {
-            const {id} = action.payload.data;
+            const { id } = action.payload.data;
             return {
                 ...state,
                 depts: {
@@ -186,12 +233,45 @@ export default {
             };
         },
         deleteDeptById(state, action) {
-            const {id} = action.payload;
+            const { id } = action.payload;
             return {
                 ...state,
                 depts: {
                     ...state.depts,
                     list: [...state.depts.list.filter(item => item.id != id)],
+                },
+            };
+        },
+        saveSMSTpls(state, action) {
+            return {
+                ...state,
+                SMSTpls: {
+                    list: action.payload.data.rows,
+                    pagination: {
+                        pageSize: action.payload.data.pageSize,
+                        currentPage: action.payload.data.currentPage,
+                        total: action.payload.data.total
+                    }
+                },
+            };
+        },
+        updateSMSTpl(state, action) {
+            const { id } = action.payload.data;
+            return {
+                ...state,
+                SMSTpls: {
+                    ...state.SMSTpls,
+                    list: [action.payload.data, ...state.SMSTpls.list.filter(item => item.id != id)],
+                },
+            };
+        },
+        deleteSMSTplById(state, action) {
+            const { id } = action.payload;
+            return {
+                ...state,
+                SMSTpls: {
+                    ...state.SMSTpls,
+                    list: [...state.SMSTpls.list.filter(item => item.id != id)],
                 },
             };
         },

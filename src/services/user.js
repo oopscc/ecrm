@@ -76,3 +76,20 @@ export async function getICD(params) {
 export async function fetchICDs(params) {
     return req('/hospitalCRM/illnessCoding/illnessPageQuery.do', params);
 }
+
+/*==============system SMSTpl=================*/
+export async function addSMSTpl(params) {
+    return req('/hospitalCRM/smsMessage/addSmsTemplate.do', params);
+}
+export async function editSMSTpl(params) {
+    return req('/hospitalCRM/smsMessage/editSmsTemplate.do', params);
+}
+export async function deleteSMSTpl(params) {
+    return req('/hospitalCRM/smsMessage/deleteSmsTemplate.do', params);
+}
+export async function getSMSTpl(params) {
+    return req('/hospitalCRM/smsMessage/smsTemplateInfo.do', params);
+}
+export async function fetchSMSTpls(params) {
+    return req('/hospitalCRM/smsMessage/smsTemplatePageQuery.do', params);
+}

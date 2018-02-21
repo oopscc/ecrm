@@ -9,9 +9,9 @@ import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
 import { getPatients, getDiagnoses } from './mock/patient';
 
-const success = { 
+const success = {
   status: 'ok',
-  message: 'Ok' 
+  message: 'Ok'
 }
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';

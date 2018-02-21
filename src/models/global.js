@@ -5,7 +5,8 @@ export default {
 
 	state: {
 		collapsed: false,
-		notices: [],
+        notices: [],
+        callRes: []
 	},
 
 	effects: {
@@ -30,7 +31,7 @@ export default {
 				type: 'user/changeNotifyCount',
 				payload: count,
 			});
-		},
+        },
 	},
 
 	reducers: {
@@ -45,7 +46,7 @@ export default {
 				...state,
 				notices: payload,
 			};
-		},
+        },
 		saveClearedNotices(state, { payload }) {
 			return {
 				...state,
