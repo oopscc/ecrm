@@ -65,7 +65,11 @@ export default {
                 ...state,
                 hospitalData: {
                     ...this.state.hospitalData,
-                    chartData: Array.from(payload.chartArray, item => {item.x = item.name; item.y = item.score})
+                    chartData: payload.chartArray.map(item => {
+                        item.x = item.name;
+                        item.y = item.score;
+                        return item;
+                    }),
                 }
             };
         },
@@ -74,7 +78,11 @@ export default {
                 ...state,
                 DeptData: {
                     ...this.state.hospitalData,
-                    chartData: Array.from(payload.chartArray, item => {item.x = item.name; item.y = item.score}),
+                    chartData: payload.chartArray.map(item => {
+                        item.x = item.name;
+                        item.y = item.score;
+                        return item;
+                    }),
                     rankingData: payload.rankingArray
                 }
             };
@@ -84,7 +92,11 @@ export default {
                 ...state,
                 DoctorData: {
                     ...this.state.hospitalData,
-                    chartData: Array.from(payload.chartArray, item => {item.x = item.name; item.y = item.score}),
+                    chartData: payload.chartArray.map(item => {
+                        item.x = item.name;
+                        item.y = item.score;
+                        return item;
+                    }),
                     rankingData: payload.rankingArray
                 }
             };
