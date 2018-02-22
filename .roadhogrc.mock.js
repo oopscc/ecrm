@@ -139,8 +139,8 @@ const proxy = {
     });
   },
 
-//   'GET /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
-//   'POST /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
+  'GET /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
+  'POST /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
 };
 
 export default noProxy ? {} : delay(proxy, 1000);

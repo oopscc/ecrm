@@ -24,6 +24,7 @@ export default class TimeRangePicker extends PureComponent {
     }
     handlePanelChange = (value, mode) => {
         const {onSelect} = this.props;
+        if (mode[0] != 'date' && mode[1] != 'date') return false;
         this.setState({
             value,
             mode: [

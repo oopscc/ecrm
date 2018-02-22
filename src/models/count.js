@@ -55,7 +55,7 @@ export default {
             const response = yield call(fetchMyd, payload);
             yield put({
                 type: payload.mydType == 1? 'saveHospitalData': payload.mydType == 2 ? 'saveDeptData': 'saveDoctorData',
-                payload: response.data.data,
+                payload: response.data,
             });
         },
     },
@@ -64,7 +64,7 @@ export default {
             return {
                 ...state,
                 hospitalData: {
-                    ...this.state.hospitalData,
+                    ...state.hospitalData,
                     chartData: payload.chartArray.map(item => {
                         item.x = item.name;
                         item.y = item.score;
@@ -76,28 +76,28 @@ export default {
         saveDeptData(state, { payload }) {
             return {
                 ...state,
-                DeptData: {
-                    ...this.state.hospitalData,
+                deptData: {
+                    ...state.hospitalData,
                     chartData: payload.chartArray.map(item => {
                         item.x = item.name;
                         item.y = item.score;
                         return item;
                     }),
-                    rankingData: payload.rankingArray
+                    rankingData: [...payload.rankingArray]
                 }
             };
         },
         saveDoctorData(state, { payload }) {
             return {
                 ...state,
-                DoctorData: {
-                    ...this.state.hospitalData,
+                doctorData: {
+                    ...state.hospitalData,
                     chartData: payload.chartArray.map(item => {
                         item.x = item.name;
                         item.y = item.score;
                         return item;
                     }),
-                    rankingData: payload.rankingArray
+                    rankingData: [...payload.rankingArray]
                 }
             };
         },

@@ -50,7 +50,7 @@ for (let i = 0; i < 7; i += 1) {
     count,
     depts: category.Depts,
     doctors: category.Users,
-    loading: loading.effects['count/fetchMyd'],
+    loading: loading.effects['count/fetch'],
 }))
 export default class Analysis extends Component {
     state = {
@@ -62,7 +62,11 @@ export default class Analysis extends Component {
     };
 
     componentDidMount() {
-
+        const {depts, doctors} = this.props;
+        this.setState({
+            currentDept: depts[0],
+            currentDoctor: doctors[0],
+        })
         this.props.dispatch({
             type: 'chart/fetch',
         });
@@ -87,6 +91,7 @@ export default class Analysis extends Component {
     }
     // 拿到科室，人员列表之后，开始搜索一次绘图
     componentWillReceiveProps(nextProps) {
+
         if (nextProps.depts[0] && !this.props.depts[0]) {
             const { depts } = nextProps;
             this.setState({
@@ -178,9 +183,6 @@ export default class Analysis extends Component {
         const { chart, loading, depts, doctors, count } = this.props;
         const { salesData } = chart;
         const {doctorData, deptData, hospitalData} = count;
-        // const doctorData = salesData;
-        // const deptData = salesData;
-        // const hospitalData = salesData;
         const salesExtra = type => {
             const pickerValue = type == 1 ? rangePickerValue : type == 2 ? deptPicker : doctorPicker;
             return (
@@ -210,23 +212,23 @@ export default class Analysis extends Component {
         return (
             <div>
 
-                <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
+                { hospitalData.chartData[0] && <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
                     <div className={styles.salesCard}>
                         <Tabs tabBarExtraContent={salesExtra(1)} size="large" tabBarStyle={{ marginBottom: 24 }}>
                             <TabPane tab="医院满意度统计" key="1">
                                 <Row>
                                     <Col >
                                         <div className={styles.salesBar}>
-                                            <Bar height={295} data={hospitalData} />
+                                            <Bar height={295} data={hospitalData.chartData} />
                                         </div>
                                     </Col>
                                 </Row>
                             </TabPane>
                         </Tabs>
                     </div>
-                </Card>
+                </Card>}
 
-                <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginTop: '24px' }}>
+                {currentDept && <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginTop: '24px' }}>
                     <div className={styles.salesCard}>
                         <Tabs tabBarExtraContent={salesExtra(2)} size="large" tabBarStyle={{ marginBottom: 24 }}>
                             <TabPane tab="科室满意度统计" key="2">
@@ -244,7 +246,7 @@ export default class Analysis extends Component {
                                                     <li key={item.name}>
                                                         <span className={i < 3 ? styles.active : ''}>{i + 1}</span>
                                                         <span>{item.name}</span>
-                                                        <span>{numeral(item.score).format('0,0')}</span>
+                                                        <span>{numeral(item.score).format('0,0.0')}</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -254,9 +256,9 @@ export default class Analysis extends Component {
                             </TabPane>
                         </Tabs>
                     </div>
-                </Card>
+                </Card>}
 
-                <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginTop: '24px' }}>
+                {currentDoctor && <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginTop: '24px' }}>
                     <div className={styles.salesCard}>
                         <Tabs tabBarExtraContent={salesExtra(3)} size="large" tabBarStyle={{ marginBottom: 24 }}>
                             <TabPane tab="医生满意度统计" key="3">
@@ -274,7 +276,7 @@ export default class Analysis extends Component {
                                                     <li key={item.name}>
                                                         <span className={i < 3 ? styles.active : ''}>{i + 1}</span>
                                                         <span>{item.name}</span>
-                                                        <span>{numeral(item.score).format('0,0')}</span>
+                                                        <span>{numeral(item.score).format('0,0.0')}</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -284,7 +286,7 @@ export default class Analysis extends Component {
                             </TabPane>
                         </Tabs>
                     </div>
-                </Card>
+                </Card>}
 
             </div>
         );
