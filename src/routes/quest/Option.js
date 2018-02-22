@@ -134,6 +134,7 @@ export default class DynamicFieldSet extends React.Component {
                             {...(formItemLayout1)}
                             label={'权重'}
                             required={false}
+                            colon={false}
                         >
                             {getFieldDecorator(`titles[${titleId}].quest[${questId}].option[${optionId}.weight`, {
                                 initialValue: options[index].weight,
@@ -143,7 +144,7 @@ export default class DynamicFieldSet extends React.Component {
                                     message: "请选择选项权重...",
                                 }],
                             })(
-                                <Input style={{ width: '200px' }} type='number' />
+                                <Input style={{ width: '200px', color: '#999' }} type='number' />
                             )}
                         </FormItem>
                     }

@@ -1,4 +1,5 @@
 import * as API from '../services/category';
+
 // aop自定义前端字典
 // 性别
 const SEX = [{
@@ -22,6 +23,7 @@ export default {
         Anesthesias: [],
     },
     effects: {
+
         // 问卷模版
         *fetchWJTpls({ payload, callback }, { call, put }) {
             const response = yield call(API.fetchWJTpls, payload);

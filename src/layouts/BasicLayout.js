@@ -101,6 +101,13 @@ class BasicLayout extends React.PureComponent {
         this.props.dispatch({
             type: 'category/fetchSMSTpls',
         });
+
+        // 病种
+        this.props.dispatch({
+            type: 'category/fetchDiseases',
+        });
+        */
+
         //人员
         this.props.dispatch({
             type: 'category/fetchUsers',
@@ -109,11 +116,7 @@ class BasicLayout extends React.PureComponent {
         this.props.dispatch({
             type: 'category/fetchDepts',
         });
-        // 病种
-        this.props.dispatch({
-            type: 'category/fetchDiseases',
-        });
-        */
+
 
         //患者状态
         this.props.dispatch({

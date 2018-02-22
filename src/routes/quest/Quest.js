@@ -168,12 +168,13 @@ export default class DynamicFieldSet extends React.Component {
                                     {...(formItemLayout)}
                                     label={'权重'}
                                     required={false}
+                                    colon={false}
                                 >
                                     {getFieldDecorator(`titles[${titleId}].quest[${questId}].weight`, {
                                         initialValue: quests[index].weight,
                                         validateTrigger: ['onChange', 'onBlur']
                                     })(
-                                        <Input style={{ width: '200px' }} type='number' />
+                                        <Input style={{ width: '200px', color: '#999' }} type='number' />
                                     )}
                                 </FormItem>
                             }

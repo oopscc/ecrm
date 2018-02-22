@@ -235,8 +235,8 @@ export const getRouterData = (app) => {
         '/count/pie': {
             component: dynamicWrapper(app, ['patient'], () => import('../routes/count/pie')),
         },
-        '/count/line': {
-            component: dynamicWrapper(app, ['patient'], () => import('../routes/count/line')),
+        '/count/myd': {
+            component: dynamicWrapper(app, ['count'], () => import('../routes/count/myd')),
         },
         '/system/user/list': {
             component: dynamicWrapper(app, ['user'], () => import('../routes/system/user/List')),

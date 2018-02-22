@@ -148,8 +148,8 @@ const menuData = [{
         name: '饼图',
         path: 'pie',
     }, {
-        name: '折线图',
-        path: 'line',
+        name: '满意度统计',
+        path: 'myd',
     }],
 }, , {
     name: '系统管理',
