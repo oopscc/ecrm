@@ -230,10 +230,10 @@ export const getRouterData = (app) => {
             component: dynamicWrapper(app, ['sms'], () => import('../routes/task/sms')),
         },
         '/task/call': {
-            component: dynamicWrapper(app, ['task', 'category'], () => import('../routes/task/call')),
+            component: dynamicWrapper(app, ['task'], () => import('../routes/task/call')),
         },
-        '/count/pie': {
-            component: dynamicWrapper(app, ['patient'], () => import('../routes/count/pie')),
+        '/count/scl': {
+            component: dynamicWrapper(app, ['count'], () => import('../routes/count/scl')),
         },
         '/count/myd': {
             component: dynamicWrapper(app, ['count'], () => import('../routes/count/myd')),

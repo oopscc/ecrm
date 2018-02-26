@@ -195,8 +195,107 @@ export function postRule(req, res, u, b) {
   }
 }
 
+export function getCount(req, res, u) {
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const body = (b && b.body) || req.body;
+  const { method, no, description } = body;
+  const data = {
+    "survivalRate":{
+            "titleName":"生存率统计",
+            "survivalRateArr":[
+                {
+                    "resultCount":2,
+                    "resultRate":1,
+                    "stage":3,
+                    "accordCount":2
+                },
+                {
+                    "resultCount":3,
+                    "resultRate":0.428571,
+                    "stage":6,
+                    "accordCount":7
+                },
+                {
+                    "resultCount":1,
+                    "resultRate":0.25,
+                    "stage":18,
+                    "accordCount":4
+                }
+            ],
+            "reportMode":1
+        },
+        "diseaseRate":{
+            "diseaseRateArr":[
+                {
+                    "resultRate":0.625,
+                    "name":"霍乱"
+                },
+                {
+                    "resultRate":0.375,
+                    "name":"恶性肿瘤"
+                }
+            ],
+            "titleName":"病种分布率统计",
+            "reportMode":3
+        },
+        "cureModeRate":{
+            "titleName":"疗效分布率统计",
+            "cureModeRateArr":[
+                {
+                    "resultRate":0.64,
+                    "name":"稳定,复发"
+                },
+                {
+                    "resultRate":0.08,
+                    "name":"手术治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"手术治疗,化学治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"手术治疗,靶向治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"化学治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"放射治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"放射治疗,靶向治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"靶向治疗,其他治疗"
+                },
+                {
+                    "resultRate":0.04,
+                    "name":"其他治疗"
+                }
+            ],
+            "reportMode":3
+        }
+      }
+  const result = data;
+  if (res && res.json) {
+    res.json(result);
+  } else {
+    return result;
+  }
+
+}
 export default {
   getPatients,
   getDiagnoses,
   postRule,
+  getCount
 };

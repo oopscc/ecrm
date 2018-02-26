@@ -7,8 +7,7 @@ import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
-import { getPatients, getDiagnoses } from './mock/patient';
-
+import { getPatients, getDiagnoses, getCount } from './mock/patient';
 const success = {
   status: 'ok',
   message: 'Ok'
@@ -138,7 +137,6 @@ const proxy = {
       "path": "/base/category/list"
     });
   },
-
   'GET /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
   'POST /hospitalCRM/(.*)': 'http://dev.server.com:8080/hospitalCRM/',
 };

@@ -145,8 +145,8 @@ const menuData = [{
     icon: 'user',
     path: 'count',
     children: [{
-        name: '饼图',
-        path: 'pie',
+        name: '生存率统计',
+        path: 'scl',
     }, {
         name: '满意度统计',
         path: 'myd',

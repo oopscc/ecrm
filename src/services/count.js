@@ -22,4 +22,8 @@ const req = (url, params) => request(url, {
 export async function fetchMyd(params) {
     return req('/hospitalCRM/satisfaction/chartList.do', params);
 }
+// 生存率数据
+export async function fetchScl(params) {
+    return req('/hospitalCRM/satisfaction/countList.do', params);
+}
 
