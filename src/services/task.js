@@ -24,7 +24,6 @@ export async function getTaskPatients(params) {
   return req('/hospitalCRM/callTask/taskInfoList.do', params);
 }
 
-
 // 删除随访任务
 export async function deleteTask(params) {
   return req('/hospitalCRM/callTask/deleteTask.do', params);

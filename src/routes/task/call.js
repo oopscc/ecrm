@@ -13,30 +13,6 @@ const { Description } = DescriptionList;
 const { TextArea } = Input;
 const CallResult = [{ id: '102002', value: '无人接听' }, { id: '102007', value: '关机' }, { id: '101001', value: '稳定' }];
 
-const progressColumns = [{
-    title: '时间',
-    dataIndex: 'time',
-    key: 'time',
-}, {
-    title: '当前进度',
-    dataIndex: 'rate',
-    key: 'rate',
-}, {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-    render: text => (
-        text === 'success' ? <Badge status="success" text="成功" /> : <Badge status="processing" text="进行中" />
-    ),
-}, {
-    title: '操作员ID',
-    dataIndex: 'operator',
-    key: 'operator',
-}, {
-    title: '耗时',
-    dataIndex: 'cost',
-    key: 'cost',
-}];
 
 @connect(({ callRecord, profile, loading, category }) => ({
     callRecord,
@@ -51,17 +27,31 @@ export default class BasicProfile extends Component {
     componentDidMount() {
         const { dispatch, location, callRes } = this.props;
         let self = this;
-        let { patientCode, id } = qs.parse(location.search);
-        this.setState({ patientCode, id });
-        dispatch({
-            type: 'callRecord/getCallData',
-            payload: {patientCode, id},
-            callback: data => {
-                self.setState({
-                    ...data.data
-                })
-            }
-        });
+        let { patientCode, id, phone } = qs.parse(location.search);
+        if (phone) {
+            this.setState({phone});
+            dispatch({
+                type: 'callRecord/getCallDataByPhone',
+                payload: {phone},
+                callback: data => {
+                    self.setState({
+                        ...data.data
+                    })
+                }
+            });
+        } else {
+            this.setState({ patientCode, id});
+            dispatch({
+                type: 'callRecord/getCallData',
+                payload: {patientCode, id},
+                callback: data => {
+                    self.setState({
+                        ...data.data
+                    })
+                }
+            });
+        }
+        
         dispatch({
             type: 'profile/fetchBasic',
         });
@@ -85,6 +75,16 @@ export default class BasicProfile extends Component {
                 });
             }
         });
+    }
+    call() {
+        const {localFlag, mobile} = this.state;
+        let phone = localFlag ? mobile : `0${mobile}`;
+        window.call(phone);
+    }
+    callOrigin() {
+        const {localFlag, mobile} = this.state;
+        let phone = `0${mobile}`;
+        window.call(phone);
     }
 
     render() {
@@ -319,9 +319,9 @@ export default class BasicProfile extends Component {
                             label='联系电话'
                         >
                             {getFieldDecorator('mobile', {
-                                initialValue: '110',
+                                initialValue: patient.mobile,
                                 rules: [{
-                                    required: true, message: '请输入患者联系电话',
+                                    required: true,
                                 }],
                             })(
                                 <Input placeholder="联系电话" disabled={true} />
@@ -401,9 +401,19 @@ export default class BasicProfile extends Component {
                             )}
                         </FormItem>
                         <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
-                            <Button type="primary" htmlType="submit" loading={submitting}>
+                            {!this.state.phone &&
+                                <span>
+                                    <Button type="primary" icon="phone" onClick={this.call.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
+                                        拨打电话
+                                    </Button>
+                                    <Button type="primary" icon="phone" onClick={this.callOrigin.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
+                                        异地拨打
+                                    </Button>
+                                </span>
+                            }
+                            <Button type="primary" htmlType="submit" loading={submitting} style={{ marginRight: 32 }}>
                                 保存
-              </Button>
+                            </Button>
                         </FormItem>
                     </Form>
                     <Divider style={{ marginBottom: 32 }} />

@@ -174,12 +174,6 @@ export async function editFlup(params) {
   return req('/hospitalCRM/callRecord/editCallRecord.do', params);
 }
 
-// 待随访患者 
- 
-// 已随访患者
-
-
-
 
 
 

@@ -8,6 +8,13 @@ const SEX = [{
     id: 1, name: '男'
 },]
 
+const taskState = [{
+    id: 0, name: '未开始'
+},{
+    id: 1, name: '进行中'
+},{
+    id: 2, name: '完成'
+}]
 export default {
     namespace: "category",
     state: {
@@ -21,6 +28,7 @@ export default {
         Users: [],
         Pays: [],
         Anesthesias: [],
+        taskState
     },
     effects: {
 

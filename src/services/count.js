@@ -27,3 +27,16 @@ export async function fetchScl(params) {
     return req('/hospitalCRM/satisfaction/countList.do', params);
 }
 
+// 首页数据
+export async function indexHeader(params) {
+  return req('/hospitalCRM/statTemplate/statisticsFollowNumber.do', params);
+}
+
+export async function indexTrend(params) {
+  return req('/hospitalCRM/statTemplate/statisticsCallTrend.do', params);
+}
+
+export async function indexPie(params) {
+  return req('/hospitalCRM/statTemplate/statisticsCallResult.do', params);
+}
+

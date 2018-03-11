@@ -47,10 +47,16 @@ export async function getCallList(params) {
   return req('/hospitalCRM/callRecord/calledPageQuery.do', params);
 }
 
-// TODO 获得电话随访的各种信息
+// 获得电话随访的各种信息
 export async function getCallData(params) {
   return req('/hospitalCRM/callRecord/getPhonePageData.do', params);
 }
+// 获得电话随访的各种信息,弹屏模式
+export async function getCallDataByPhone(params) {
+  return req('/hospitalCRM/callRecord/getPhonePageDataByPhone.do', params);
+}
+
+
 
 // 保存随访记录
 export async function saveCallRes(params) {

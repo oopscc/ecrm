@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Icon, message } from 'antd';
+import { Layout, Icon, message, Modal, Button, Card } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { Route, Redirect, Switch, routerRedux } from 'dva/router';
@@ -72,6 +72,7 @@ class BasicLayout extends React.PureComponent {
     }
     state = {
         isMobile,
+        callVisible: false
     };
     getChildContext() {
         const { location, routerData } = this.props;
@@ -138,6 +139,63 @@ class BasicLayout extends React.PureComponent {
         this.props.dispatch({
             type: 'category/fetchCallRes',
         });
+
+        // 系统拨打电话
+        // 系统接听电话
+        // 系统挂断电话
+        // TODO,系统拿到录音，上传
+        window.call = (phone) => {
+            console.log(phone);
+        }
+        window.answer = (phone) => {
+            console.log("answer"+phone);
+        }
+        window.hangup = () => {
+            console.log('hangup!!!')
+        }
+        // call-event
+        window.callIn = (phone) => {
+            // 弹屏
+            this.props.dispatch({
+                type: 'callRecord/getCallDataByPhone',
+                payload: {phone},
+                callback: data => {
+                    if (data.result == 1000) {
+                        this.setState({
+                            name: '未知号码',
+                            phone,
+                            callVisible: true
+                        })
+                    } else {
+                        this.setState({
+                            ...data.data,
+                            phone,
+                            callVisible: true
+                        })
+                    }
+                    
+                }
+            });
+        }
+        // setTimeout(() => {
+        //     callIn(18500812859);
+        // }, 2000);
+    }
+    answer() {
+        this.setState({
+            callVisible: false
+        });
+        const {patientCode, phone, name} = this.state;
+        window.answer(phone);
+        if (name == '未知号码') return false;
+        location.hash = `#/task/call?patientCode=${patientCode}`;
+        
+    }
+    hangup(phone) {
+        this.setState({
+            callVisible: false
+        });
+        window.hangup(phone);
     }
     getPageTitle() {
         const { routerData, location } = this.props;
@@ -198,6 +256,11 @@ class BasicLayout extends React.PureComponent {
         const {
             currentUser, collapsed, fetchingNotices, notices, routerData, match, location,
         } = this.props;
+        const {
+            name,
+            phone,
+            callVisible
+        } = this.state;
         const bashRedirect = this.getBashRedirect();
         const layout = (
             <Layout>
@@ -226,6 +289,26 @@ class BasicLayout extends React.PureComponent {
                         onMenuClick={this.handleMenuClick}
                         onNoticeVisibleChange={this.handleNoticeVisibleChange}
                     />
+                    <Modal
+                      visible={callVisible}
+                      closable={false}
+                      footer={null}
+                      width={360}
+                    >
+                        <div style={{textAlign: 'center', paddingTop: 20}}>
+                            <div style={{fontSize: 32}}>{name}</div>
+                            <div style={{fontSize: 16, color: '#1890ff', padding: 10}}>{phone}</div>
+                            <div>
+                                 <Button type="primary" icon="phone" onClick={this.answer.bind(this, phone)} style={{ margin: 16 }}>
+                                    接听
+                                </Button>
+                                <Button type="primary"  icon="poweroff" onClick={this.hangup.bind(this, phone)} style={{ margin: 16 }}>
+                                    挂断
+                                </Button>
+                             </div>
+                        </div>
+                         
+                    </Modal>
                     <Content style={{ margin: '24px 24px 0', height: '100%' }}>
                         <Switch>
                             {

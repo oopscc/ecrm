@@ -9,7 +9,8 @@ import {
   getTodayCallList,
   getCallList,
   saveCallRes,
-  getCallData
+  getCallData,
+  getCallDataByPhone
 } from '../services/callRecord';
 
 export default {
@@ -92,6 +93,10 @@ export default {
     // 
     *getCallData({ payload, callback }, { call, put }) {
       const response = yield call(getCallData, payload);
+      if (callback) callback(response);
+    },
+    *getCallDataByPhone({ payload, callback }, { call, put }) {
+      const response = yield call(getCallDataByPhone, payload);
       if (callback) callback(response);
     },
     *save({ payload, callback }, { call, put }) {

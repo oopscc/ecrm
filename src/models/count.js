@@ -1,4 +1,4 @@
-import { fetchMyd, fetchScl} from '../services/count';
+import { fetchMyd, fetchScl, indexHeader, indexTrend, indexPie} from '../services/count';
 import { getTimeDistance } from '../utils/utils';
 
 const data = {
@@ -112,8 +112,50 @@ export default {
         cureModeRate: {
             titleName: '',
             data: []
-        }
+        },
 
+
+
+        // 首页数据
+        totalCallData: {
+            total: 0, // 当月随访总量
+            avgNum: 0, // 当月日均随访量
+            weekTrend: 0, // 上周同上上周随访量同比
+            dayTrend: 0 
+        },
+        dayCallData: {
+            total: 0, // 周随访总量
+            dayNum: 0, // 昨天随访量总量
+            trendData: [{
+                x: "2018-02-20",
+                y: 7
+            }, {
+                x: "2018-02-21",
+                y: 9
+            }]
+        },
+        newCallData: {
+            total: 2.7, // 周新增带随访总量
+            dayNum: 3, // 昨天人均随访量
+            trendData: [{
+                x: "2018-02-20",
+                y: 7
+            }, {
+                x: "2018-02-21",
+                y: 9
+            }]
+        },
+
+        trendData: {
+            callTrendData: [],
+            rankingList: []
+        },
+
+        callResData: {
+            dayPieData: [],
+            monthPieData: [],
+            yearPieData: []
+        }
     },
     effects: {
         *fetch({ payload, callback }, { call, put }) {
@@ -189,6 +231,29 @@ export default {
             yield put({
                 type: 'saveCureModeRate',
                 payload: response.data.cureModeRate,
+            });
+        },
+
+        // 首页
+        *fetchIndexHeader({ payload, callback }, { call, put }) {
+            const response = yield call(indexHeader, payload);
+            yield put({
+                type: 'saveIndexHeader',
+                payload: response.data,
+            });
+        },
+        *fetchIndexTrend({ payload, callback }, { call, put }) {
+            const response = yield call(indexTrend, payload);
+            yield put({
+                type: 'saveIndexTrend',
+                payload: response.data,
+            });
+        },
+        *fetchIndexPie({ payload, callback }, { call, put }) {
+            const response = yield call(indexPie, payload);
+            yield put({
+                type: 'saveIndexPie',
+                payload: response.data,
             });
         },
         
@@ -306,7 +371,70 @@ export default {
                     })
                 }
             };
-        }
+        },
+        saveIndexHeader(state, { payload }) {
+            return {
+                ...state,
+                totalCallData: {
+                    ...state.totalCallData,
+                    ...payload.totalCallData
+                },
+                dayCallData: {
+                    ...state.dayCallData,
+                    ...payload.dayCallData,
+                    trendData: payload.dayCallData.trendData.map(item => {
+                        item.x = item.dayName;
+                        item.y = item.num;
+                        return item;
+                    })
+                },
+                newCallData: {
+                    ...state.newCallData,
+                    ...payload.newCallData,
+                    trendData: payload.newCallData.trendData.map(item => {
+                        item.x = item.dayName;
+                        item.y = item.num;
+                        return item;
+                    })
+                }
+            }
+        },
+        saveIndexTrend(state, { payload }) {
+            return {
+                ...state,
+                trendData: {
+                    ...state.trendData,
+                    callTrendData: payload.callTrendData.map(item => {
+                        item.x = item.name;
+                        item.y = item.num;
+                        return item;
+                    })
+                }
+            };
+        },
+        saveIndexPie(state, { payload }) {
+            return {
+                ...state,
+                callResData: {
+                    ...state.callResData,
+                    dayPieData: payload.dayPieData.map(item => {
+                        item.x = item.name;
+                        item.y = item.num;
+                        return item;
+                    }),
+                    monthPieData: payload.monthPieData.map(item => {
+                        item.x = item.name;
+                        item.y = item.num;
+                        return item;
+                    }),
+                    yearPieData: payload.yearPieData.map(item => {
+                        item.x = item.name;
+                        item.y = item.num;
+                        return item;
+                    })
+                }
+            };
+        },
     },
 };
 
