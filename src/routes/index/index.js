@@ -50,9 +50,6 @@ export default class Analysis extends Component {
 
     componentDidMount() {
         this.props.dispatch({
-            type: 'chart/fetch',
-        });
-        this.props.dispatch({
             type: 'count/fetchIndexHeader',
         });
         this.props.dispatch({

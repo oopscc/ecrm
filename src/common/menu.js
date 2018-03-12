@@ -8,6 +8,7 @@ const menuData = [{
     name: 'dashboard',
     icon: 'dashboard',
     path: 'dashboard',
+    hideInMenu: true,
     children: [{
         name: '分析页',
         path: 'analysis',
@@ -17,12 +18,13 @@ const menuData = [{
     }, {
         name: '工作台',
         path: 'workplace',
-        // hideInMenu: true,
+        hideInMenu: true,
     }],
 }, {
     name: '表单页',
     icon: 'form',
     path: 'form',
+    hideInMenu: true,
     children: [{
         name: '基础表单',
         path: 'basic-form',
@@ -70,6 +72,7 @@ const menuData = [{
     name: '详情页',
     icon: 'profile',
     path: 'profile',
+    hideInMenu: true,
     children: [{
         name: '基础详情页',
         path: 'basic',
@@ -82,6 +85,7 @@ const menuData = [{
     name: '结果页',
     icon: 'check-circle-o',
     path: 'result',
+    hideInMenu: true,
     children: [{
         name: '成功',
         path: 'success',

@@ -87,9 +87,9 @@ class BasicLayout extends React.PureComponent {
                 isMobile: mobile,
             });
         });
-        this.props.dispatch({
-            type: 'user/fetchCurrent',
-        });
+        // this.props.dispatch({
+        //     type: 'user/fetchCurrent',
+        // });
         /**
          * 试试刷新的category, 需要场景自己发送请求，不能aop
          */
@@ -217,7 +217,7 @@ class BasicLayout extends React.PureComponent {
             urlParams.searchParams.delete('redirect');
             window.history.replaceState(null, 'redirect', urlParams.href);
         } else {
-            return '/dashboard/analysis';
+            return '/index';
         }
         return redirect;
     }
@@ -247,9 +247,9 @@ class BasicLayout extends React.PureComponent {
     }
     handleNoticeVisibleChange = (visible) => {
         if (visible) {
-            this.props.dispatch({
-                type: 'global/fetchNotices',
-            });
+            // this.props.dispatch({
+            //     type: 'global/fetchNotices',
+            // });
         }
     }
     render() {
@@ -280,7 +280,7 @@ class BasicLayout extends React.PureComponent {
                     <GlobalHeader
                         logo={logo}
                         currentUser={currentUser}
-                        fetchingNotices={fetchingNotices}
+                        // fetchingNotices={fetchingNotices}
                         notices={notices}
                         collapsed={collapsed}
                         isMobile={this.state.isMobile}
@@ -335,22 +335,22 @@ class BasicLayout extends React.PureComponent {
                         </Switch>
                     </Content>
                     <GlobalFooter
-                        links={[{
-                            key: 'Pro 首页',
-                            title: 'Pro 首页',
-                            href: 'http://pro.ant.design',
-                            blankTarget: true,
-                        }, {
-                            key: 'github',
-                            title: <Icon type="github" />,
-                            href: 'https://github.com/ant-design/ant-design-pro',
-                            blankTarget: true,
-                        }, {
-                            key: 'Ant Design',
-                            title: 'Ant Design',
-                            href: 'http://ant.design',
-                            blankTarget: true,
-                        }]}
+                        // links={[{
+                        //     key: 'Pro 首页',
+                        //     title: 'Pro 首页',
+                        //     href: 'http://pro.ant.design',
+                        //     blankTarget: true,
+                        // }, {
+                        //     key: 'github',
+                        //     title: <Icon type="github" />,
+                        //     href: 'https://github.com/ant-design/ant-design-pro',
+                        //     blankTarget: true,
+                        // }, {
+                        //     key: 'Ant Design',
+                        //     title: 'Ant Design',
+                        //     href: 'http://ant.design',
+                        //     blankTarget: true,
+                        // }]}
                         copyright={
                             <div>
                                 Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品

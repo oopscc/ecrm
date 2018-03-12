@@ -68,6 +68,13 @@ export default function request(url, options) {
        if(!response.result || response.result == 0) {
           return response;
        } else {
+          if(response.result == 10000) {
+            const { dispatch } = store;
+            dispatch({
+              type: 'login/logout',
+            });
+            return;
+          }
           notification.error({
             message: `请求错误 ${response.result}: ${response.message}`,
           });
