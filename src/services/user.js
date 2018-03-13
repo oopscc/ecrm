@@ -93,3 +93,9 @@ export async function getSMSTpl(params) {
 export async function fetchSMSTpls(params) {
     return req('/hospitalCRM/smsMessage/smsTemplatePageQuery.do', params);
 }
+export async function getSmsSign(params) {
+    return req('/hospitalCRM/smsMessage/getSmsSign.do', params);
+}
+export async function setSmsSign(params) {
+    return req('/hospitalCRM/smsMessage/setSmsSign.do', params);
+}

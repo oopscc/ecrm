@@ -266,7 +266,7 @@ export const getRouterData = (app) => {
             component: dynamicWrapper(app, ['system'], () => import('../routes/system/dept/Info')),
         },
         '/system/tpl/smsTpl': {
-            component: dynamicWrapper(app, ['task'], () => import('../routes/system/tpl/smsTpl')),
+            component: dynamicWrapper(app, ['system','task'], () => import('../routes/system/tpl/smsTpl')),
         },
         '/system/tpl/questionTpl': {
             component: dynamicWrapper(app, ['quest'], () => import('../routes/system/tpl/questTpl')),

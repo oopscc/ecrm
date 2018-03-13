@@ -8,7 +8,8 @@
     "development": {
       "extraBabelPlugins": [
         "dva-hmr"
-      ]
+      ],
+      "publicPath": "/"
     }
   },
   "ignoreMomentLocale": true,
@@ -16,7 +17,7 @@
   "html": {
     "template": "./src/index.ejs"
   },
-  "publicPath": "/",
-  "disableDynamicImport": true,
+  "publicPath": "./",
+  "disableDynamicImport": false,
   "hash": true
 }

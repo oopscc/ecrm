@@ -19,7 +19,9 @@ import {
     addSMSTpl,
     editSMSTpl,
     deleteSMSTpl,
-    getSMSTpl
+    getSMSTpl,
+    getSmsSign,
+    setSmsSign
 } from '../services/user';
 import {
     message
@@ -150,12 +152,21 @@ export default {
         /*==============system SMSTpl=================*/
 
         *fetchSMSTpls({ payload }, { call, put }) {
-            const response = yield call(fetchSMSTpls, payload);
+            const response = yield call(fetchSMSTpls, {smsType: 0, ...payload});
             yield put({
                 type: 'saveSMSTpls',
                 payload: response,
             });
         },
+        *fetchWjSMSTpl({ payload, callback }, { call, put }) {
+            const response = yield call(fetchSMSTpls, {
+                currentPage: 1,
+                pageSize: 1,
+                smsType: 1
+            });
+            if (callback) callback(response);
+        },
+        
         *addSMSTpl({ payload }, { call, put }) {
             const response = yield call(addSMSTpl, payload);
             yield put({
@@ -183,6 +194,14 @@ export default {
         },
         *getSMSTpl({ payload, callback }, { call, put }) {
             const response = yield call(getSMSTpl, payload);
+            if (callback) callback(response);
+        },
+        *getSmsSign({ payload, callback }, { call, put }) {
+            const response = yield call(getSmsSign, payload);
+            if (callback) callback(response);
+        },
+        *setSmsSign({ payload, callback }, { call, put }) {
+            const response = yield call(setSmsSign, payload);
             if (callback) callback(response);
         },
     },

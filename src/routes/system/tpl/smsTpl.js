@@ -120,6 +120,81 @@ const CreateForm = Form.create()((props) => {
     );
 });
 
+const CreateWjForm = Form.create()((props) => {
+    const {
+        modalWjTpl,
+        form,
+        handleAdd,
+        handleModalWjTpl,
+        wjTpl
+    } = props;
+    const okHandle = () => {
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            handleAdd({...fieldsValue, smsType: 1});
+        });
+    };
+    return (
+        <Modal
+            title="调查问卷短信模版"
+            visible={modalWjTpl}
+            onOk={okHandle}
+            onCancel={() => handleModalWjTpl()}
+        >
+            
+            <FormItem
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 15 }}
+                label="短信内容"
+            >
+                {form.getFieldDecorator('smsContent', {
+                    rules: [{ required: true, message: '请输入短信内容...' }],
+                    initialValue: wjTpl ? wjTpl.smsContent : ''
+                })(
+                    <TextArea placeholder="请输入短信内容" />
+                )}
+            </FormItem>
+        </Modal>
+    );
+});
+
+const CreateSignForm = Form.create()((props) => {
+    const {
+        modalSign,
+        form,
+        handleAddSign,
+        handleModalSign,
+        smsSign
+    } = props;
+    const okHandle = () => {
+        form.validateFields((err, fieldsValue) => {
+            if (err) return;
+            handleAddSign(fieldsValue);
+        });
+    };
+    return (
+        <Modal
+            title="短信签名"
+            visible={modalSign}
+            onOk={okHandle}
+            onCancel={() => handleModalSign()}
+        >
+            <FormItem
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 15 }}
+                label="短信签名"
+            >
+                {form.getFieldDecorator('smsSign', {
+                    rules: [{ required: true, message: '请输入短信签名...' }],
+                    initialValue: smsSign || ''
+                })(
+                    <Input placeholder="请输入短信签名" />
+                )}
+            </FormItem>
+        </Modal>
+    );
+});
+
 @connect(({
     system,
     loading
@@ -135,13 +210,19 @@ export default class TableList extends PureComponent {
         selectedRows: [],
         formValues: {},
         currenSMSId: '',
-        tplInfo: false
+        tplInfo: {},
+
+        modalWjTpl: false,
+        modalSign: false,
+        wjTpl: {},
+        smsSign: ''
     };
 
     componentDidMount() {
         const {
             dispatch
         } = this.props;
+        let self = this;
         dispatch({
             type: 'system/fetchSMSTpls',
             payload: {
@@ -149,6 +230,25 @@ export default class TableList extends PureComponent {
                 pageSize: 10
             }
         });
+        // 获取问卷模版
+        dispatch({
+            type: 'system/fetchWjSMSTpl',
+            callback:(res)=> {
+                this.setState({
+                    wjTpl: res.data.rows[0] ? res.data.rows[0] : {}
+                });
+            }
+        });
+        // 获取签名
+        dispatch({
+            type: 'system/getSmsSign',
+            callback:(res)=> {
+                this.setState({
+                    smsSign: res.data.smsSign
+                })
+            }
+        });
+
     }
 
     handleFormReset = () => {
@@ -208,7 +308,20 @@ export default class TableList extends PureComponent {
         this.setState({
             modalVisible: !!flag,
             currenSMSId: '',
-            tplInfo: false
+            tplInfo: {}
+        });
+    }
+    
+    
+    handleModalWjTpl = (flag) => {
+        this.setState({
+            modalWjTpl: !!flag
+        });
+    }
+
+    handleModalSign = (flag) => {
+        this.setState({
+            modalSign: !!flag
         });
     }
 
@@ -241,7 +354,20 @@ export default class TableList extends PureComponent {
             ...fields,
             canReply: fields.canReply ? 1 : 0
         }
-        if (!this.state.currenSMSId) {
+        if (fields.smsType == 1) {
+            fields = {
+                ...this.state.wjTpl,
+                ...fields
+            }
+        } else {
+            fields = {
+                ...this.state.tplInfo,
+                ...fields,
+                canReply: fields.canReply ? 1 : 0,
+                smsType: 0,
+            }
+        }
+        if (!fields.id) {
             this.props.dispatch({
                 type: 'system/addSMSTpl',
                 payload: {
@@ -252,15 +378,27 @@ export default class TableList extends PureComponent {
             this.props.dispatch({
                 type: 'system/editSMSTpl',
                 payload: {
-                    ...fields,
-                    id: this.state.currenSMSId
+                    ...fields
                 },
             });
         }
         this.setState({
             modalVisible: false,
+            modalWjTpl: false,
+            modalSign: false,
             currenSMSId: '',
-            tplInfo: false
+            tplInfo: {}
+        });
+    }
+    handleAddSign = (fields)=> {
+        this.props.dispatch({
+            type: 'system/setSmsSign',
+            payload: {
+                ...fields,
+            },
+        });
+        this.setState({
+            modalSign: false
         });
     }
 
@@ -311,13 +449,23 @@ export default class TableList extends PureComponent {
         const {
             selectedRows,
             modalVisible,
-            tplInfo
+            tplInfo,
+            modalSign,
+            modalWjTpl,
+            smsSign,
+            wjTpl
         } = this.state;
+        console.log({wjTpl, smsSign})
 
         const parentMethods = {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,
-            tplInfo
+            handleAddSign: this.handleAddSign,
+            handleModalSign: this.handleModalSign,
+            handleModalWjTpl: this.handleModalWjTpl,
+            tplInfo,
+            smsSign,
+            wjTpl
         };
 
         const columns = [{
@@ -366,6 +514,12 @@ export default class TableList extends PureComponent {
                             <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
                                 新建
 							</Button>
+                            <Button type="primary" onClick={() => this.handleModalWjTpl(true)}>
+                                调查问卷短信模版
+                            </Button>
+                            <Button type="primary" onClick={() => this.handleModalSign(true)}>
+                                短信签名
+                            </Button>
                         </div>
                         <StandardTable
                             selectedRows={selectedRows}
@@ -382,6 +536,14 @@ export default class TableList extends PureComponent {
                 <CreateForm
                     {...parentMethods}
                     modalVisible={modalVisible}
+                />
+                <CreateWjForm
+                    {...parentMethods}
+                    modalWjTpl={modalWjTpl}
+                />
+                <CreateSignForm
+                    {...parentMethods}
+                    modalSign={modalSign}
                 />
             </PageHeaderLayout>
         );
