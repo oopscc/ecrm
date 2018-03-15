@@ -46,3 +46,20 @@
     margin-right: 8px;
   }
 }
+
+.dynamicButton {
+    cursor: pointer;
+    position: relative;
+    top: 4px;
+    font-size: 24px;
+    color: #999;
+    transition: all .3s;
+    margin-right: 6px;
+}
+.dynamicButton:hover {
+    color: #777;
+}
+.dynamicButton[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+}

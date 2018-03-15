@@ -88,89 +88,10 @@ export default class BasicProfile extends Component {
     }
 
     render() {
-        const { profile, loading, submitting, callRes } = this.props;
+        const { loading, submitting, callRes } = this.props;
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const patient = this.state;
         const { callRecordArray: calls, diagnoseArray: diagnosesData, questionnaireArray: questData, smsInfoArray: smsData, wjRecordArray: wjData } = this.state;
-        const { basicGoods, basicProgress } = profile;
-        let goodsData = [];
-        if (basicGoods.length) {
-            let num = 0;
-            let amount = 0;
-            basicGoods.forEach((item) => {
-                num += Number(item.num);
-                amount += Number(item.amount);
-            });
-            goodsData = basicGoods.concat({
-                id: '总计',
-                num,
-                amount,
-            });
-        }
-        const renderContent = (value, row, index) => {
-            const obj = {
-                children: value,
-                props: {},
-            };
-            if (index === basicGoods.length) {
-                obj.props.colSpan = 0;
-            }
-            return obj;
-        };
-        const goodsColumns = [{
-            title: '商品编号',
-            dataIndex: 'id',
-            key: 'id',
-            render: (text, row, index) => {
-                if (index < basicGoods.length) {
-                    return <a href="">{text}</a>;
-                }
-                return {
-                    children: <span style={{ fontWeight: 600 }}>总计</span>,
-                    props: {
-                        colSpan: 4,
-                    },
-                };
-            },
-        }, {
-            title: '商品名称',
-            dataIndex: 'name',
-            key: 'name',
-            render: renderContent,
-        }, {
-            title: '商品条码',
-            dataIndex: 'barcode',
-            key: 'barcode',
-            render: renderContent,
-        }, {
-            title: '单价',
-            dataIndex: 'price',
-            key: 'price',
-            align: 'right',
-            render: renderContent,
-        }, {
-            title: '数量（件）',
-            dataIndex: 'num',
-            key: 'num',
-            align: 'right',
-            render: (text, row, index) => {
-                if (index < basicGoods.length) {
-                    return text;
-                }
-                return <span style={{ fontWeight: 600 }}>{text}</span>;
-            },
-        }, {
-            title: '金额',
-            dataIndex: 'amount',
-            key: 'amount',
-            align: 'right',
-            render: (text, row, index) => {
-                if (index < basicGoods.length) {
-                    return text;
-                }
-                return <span style={{ fontWeight: 600 }}>{text}</span>;
-            },
-        }];
         // const call
         const callColumns = [
             {

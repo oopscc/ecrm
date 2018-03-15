@@ -37,8 +37,7 @@ import { depth } from 'array-flatten';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
-@connect(({ chart, loading, category, count }) => ({
-    chart,
+@connect(({ loading, category, count }) => ({
     count,
     depts: category.Depts,
     doctors: category.Users,
@@ -172,8 +171,7 @@ export default class Analysis extends Component {
 
     render() {
         const { rangePickerValue, currentDept, currentDoctor, deptPicker, doctorPicker} = this.state;
-        const { chart, loading, depts, doctors, count } = this.props;
-        const { salesData } = chart;
+        const { loading, depts, doctors, count } = this.props;
         const {doctorData, deptData, hospitalData} = count;
         const salesExtra = type => {
             const pickerValue = type == 1 ? rangePickerValue : type == 2 ? deptPicker : doctorPicker;

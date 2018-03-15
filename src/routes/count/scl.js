@@ -43,8 +43,7 @@ for (let i = 0; i < 7; i += 1) {
     });
 }
 
-@connect(({ chart, loading, count }) => ({
-    chart,
+@connect(({ loading, count }) => ({
     count,
     loading: loading.effects['chart/fetch'],
 }))
@@ -119,39 +118,10 @@ export default class Analysis extends Component {
 
     render() {
         const { rangePickerValue, salesType, currentTabKey } = this.state;
-        const { chart, loading, count } = this.props;
-        const {
-            visitData,
-            visitData2,
-            salesData,
-            searchData,
-            offlineData,
-            offlineChartData,
-            salesTypeData,
-            salesTypeDataOnline,
-            salesTypeDataOffline,
-        } = chart;
-        const {survivalLine, survivalRate, diseaseRate,  cureModeRate} = count;
-        const salesPieData =
-            salesType === 'all'
-                ? salesTypeData
-                : salesType === 'online' ? salesTypeDataOnline : salesTypeDataOffline;
+        const { loading, count } = this.props;
         
-
-        const menu = (
-            <Menu>
-                <Menu.Item>操作一</Menu.Item>
-                <Menu.Item>操作二</Menu.Item>
-            </Menu>
-        );
-
-        const iconGroup = (
-            <span className={styles.iconGroup}>
-                <Dropdown overlay={menu} placement="bottomRight">
-                    <Icon type="ellipsis" />
-                </Dropdown>
-            </span>
-        );
+        const {survivalLine, survivalRate, diseaseRate,  cureModeRate} = count;
+        
 
         const columns = [
             {
@@ -208,8 +178,6 @@ export default class Analysis extends Component {
                 width: '10%'
             }
         ];
-
-        const activeKey = currentTabKey || (offlineData[0] && offlineData[0].name);
 
         const CustomTab = ({ data, currentTabKey: currentKey }) => (
             <Row gutter={8} style={{ width: 138, margin: '8px 0' }}>

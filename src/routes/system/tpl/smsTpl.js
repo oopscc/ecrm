@@ -36,6 +36,7 @@ const {
 import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import DropOption from '../../../components/DropOption';
+import Reply from './replyTpl';
 
 import styles from './smsTpl.less';
 
@@ -61,6 +62,8 @@ const CreateForm = Form.create()((props) => {
             handleAdd(fieldsValue);
         });
     };
+    
+    
     return (
         <Modal
             title="新增短信模版"
@@ -116,6 +119,7 @@ const CreateForm = Form.create()((props) => {
                     <TextArea placeholder="请输入科室名称" />
                 )}
             </FormItem>
+            <Reply form={form} replys={tplInfo.smsReplys}/>
         </Modal>
     );
 });
@@ -210,7 +214,12 @@ export default class TableList extends PureComponent {
         selectedRows: [],
         formValues: {},
         currenSMSId: '',
-        tplInfo: {},
+        tplInfo: {
+            smsReplys: [{
+                replyContent: '',
+                contentResult: ''
+            }]
+        },
 
         modalWjTpl: false,
         modalSign: false,
@@ -308,7 +317,12 @@ export default class TableList extends PureComponent {
         this.setState({
             modalVisible: !!flag,
             currenSMSId: '',
-            tplInfo: {}
+            tplInfo: {
+                smsReplys: [{
+                    replyContent: '',
+                    contentResult: ''
+                }]
+            },
         });
     }
     
@@ -387,7 +401,12 @@ export default class TableList extends PureComponent {
             modalWjTpl: false,
             modalSign: false,
             currenSMSId: '',
-            tplInfo: {}
+            tplInfo: {
+                smsReplys: [{
+                    replyContent: '',
+                    contentResult: ''
+                }]
+            },
         });
     }
     handleAddSign = (fields)=> {
