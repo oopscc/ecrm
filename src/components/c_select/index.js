@@ -23,7 +23,7 @@ export default class C_select extends PureComponent {
         return (
             <Select
                 {...this.props}
-            >
+                >
                 {data.map(item => {
                     return <Select.Option key={item[id]} value={item[id]}>{item[value]}</Select.Option>
                 })}

@@ -12,6 +12,7 @@ import {
     Tooltip,
     Menu,
     Dropdown,
+    Badge
 } from 'antd';
 import numeral from 'numeral';
 import {
@@ -28,6 +29,7 @@ import {
 import Trend from '../../components/Trend';
 import NumberInfo from '../../components/NumberInfo';
 import { getTimeDistance } from '../../utils/utils';
+const statusMap = ['default', 'processing', 'success', 'error'];
 
 import styles from './index.less';
 
@@ -177,10 +179,11 @@ export default class Analysis extends Component {
                 dataIndex: 'taskState',
                 key: 'taskState',
                 width: '30%',
-                render: text => {
-                    return taskState.filter(item => item.id == text)[0].name;
+                render(text) {
+                    let task = taskState.filter(item => item.id == text)[0];
+                    return <Badge status={task.status} text={task.name} />;
                 },
-                align: 'right',
+                align: 'center',
             },
         ];
 

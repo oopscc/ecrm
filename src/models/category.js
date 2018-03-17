@@ -9,11 +9,11 @@ const SEX = [{
 },]
 
 const taskState = [{
-    id: 0, name: '未开始'
+    id: 0, name: '未开始', status: 'default'
 },{
-    id: 1, name: '进行中'
+    id: 1, name: '进行中', status: 'processing'
 },{
-    id: 2, name: '完成'
+    id: 2, name: '完成', status: 'success'
 }]
 export default {
     namespace: "category",

@@ -54,7 +54,8 @@ const CreateForm = Form.create()((props) => {
         form,
         handleAdd,
         handleModalVisible,
-        tplInfo
+        tplInfo,
+        PStates
     } = props;
     const okHandle = () => {
         form.validateFields((err, fieldsValue) => {
@@ -62,11 +63,10 @@ const CreateForm = Form.create()((props) => {
             handleAdd(fieldsValue);
         });
     };
-    
-    
+    const canReply = tplInfo && !!tplInfo.canReply;
     return (
         <Modal
-            title="新增短信模版"
+            title={tplInfo.id ? "编辑短信模版" : "新增短信模版"}
             visible={modalVisible}
             onOk={okHandle}
             onCancel={() => handleModalVisible()}
@@ -101,25 +101,34 @@ const CreateForm = Form.create()((props) => {
                 label="是否需要回复"
             >
                 {form.getFieldDecorator('canReply', {
-                    rules: [{ required: true, message: '请选择是否需要回复...' }],
-                    initialValue: tplInfo && tplInfo.canReply
+                    initialValue: canReply,
+                    valuePropName: 'checked'
                 })(
                     <Switch />
                 )}
             </FormItem>
-            <FormItem
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 15 }}
-                label="回复内容"
-            >
-                {form.getFieldDecorator('subContent', {
-                    // rules: [{ required: true, message: '请输入科室名称...' }],
-                    initialValue: tplInfo ? tplInfo.subContent : ''
-                })(
-                    <TextArea placeholder="请输入科室名称" />
-                )}
-            </FormItem>
-            <Reply form={form} replys={tplInfo.smsReplys}/>
+            { form.getFieldValue('canReply') && <div>
+                <FormItem
+                    labelCol={{ span: 5 }}
+                    wrapperCol={{ span: 15 }}
+                    label="回复内容"
+                >
+                    {form.getFieldDecorator('subContent', {
+                        // rules: [{ required: true, message: '请输入科室名称...' }],
+                        initialValue: tplInfo ? tplInfo.subContent : ''
+                    })(
+                        <TextArea placeholder="请输入科室名称" />
+                    )}
+                </FormItem>
+                <Reply form={form} PStates={PStates}
+                    replys={tplInfo.smsReplys.length != 0 ? tplInfo.smsReplys : [{
+                            replyContent: '',
+                            contentResult: ''
+                        }]
+                    } 
+                />
+            </div>
+            }
         </Modal>
     );
 });
@@ -201,10 +210,12 @@ const CreateSignForm = Form.create()((props) => {
 
 @connect(({
     system,
-    loading
+    loading,
+    category
 }) => ({
     SMSTpls: system.SMSTpls,
     loading: loading.models.SMSTpls,
+    PStates: category.PStates
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -318,6 +329,8 @@ export default class TableList extends PureComponent {
             modalVisible: !!flag,
             currenSMSId: '',
             tplInfo: {
+                smsName: '',
+                smsContent: '',
                 smsReplys: [{
                     replyContent: '',
                     contentResult: ''
@@ -366,7 +379,8 @@ export default class TableList extends PureComponent {
     handleAdd = (fields) => {
         fields = {
             ...fields,
-            canReply: fields.canReply ? 1 : 0
+            canReply: fields.canReply ? 1 : 0,
+            smsReplys: fields.smsReplys ? Object.values(fields.smsReplys) : []
         }
         if (fields.smsType == 1) {
             fields = {
@@ -402,6 +416,8 @@ export default class TableList extends PureComponent {
             modalSign: false,
             currenSMSId: '',
             tplInfo: {
+                smsName: '',
+                smsContent: '',
                 smsReplys: [{
                     replyContent: '',
                     contentResult: ''
@@ -463,7 +479,8 @@ export default class TableList extends PureComponent {
     render() {
         const {
             SMSTpls: data,
-            loading
+            loading,
+            PStates
         } = this.props;
         const {
             selectedRows,
@@ -474,7 +491,6 @@ export default class TableList extends PureComponent {
             smsSign,
             wjTpl
         } = this.state;
-        console.log({wjTpl, smsSign})
 
         const parentMethods = {
             handleAdd: this.handleAdd,
@@ -484,7 +500,8 @@ export default class TableList extends PureComponent {
             handleModalWjTpl: this.handleModalWjTpl,
             tplInfo,
             smsSign,
-            wjTpl
+            wjTpl,
+            PStates
         };
 
         const columns = [{
@@ -492,7 +509,6 @@ export default class TableList extends PureComponent {
             width: '10%',
             render: (text, record, index) => {
                 let { currentPage: current, pageSize: size } = data.pagination;
-                console.log(current, size, data)
                 return (current - 1) * size + +index + 1;
             },
         }, {

@@ -8,7 +8,7 @@ export default class DynamicFieldSet extends React.Component {
     constructor(props) {
         super(props);
         const {replys} = props;
-        console.log({replys});
+        console.log(replys);
         this.state = {
             keys: Array.from(replys, (x, index) => `replyId${index}`),
             uuid: replys.length,
@@ -81,7 +81,7 @@ export default class DynamicFieldSet extends React.Component {
                 sm: { span: 20, offset: 4 },
             },
         };
-
+        const {PStates} = this.props;
         const formItems = keys.map((replyId, index) => {
             return(
                 <div key={replyId} >
@@ -99,7 +99,6 @@ export default class DynamicFieldSet extends React.Component {
                                 })(
                                     <Input placeholder="passenger name" style={{ width: '90%' }} />
                                 )}
-                                
                             </FormItem>
                         </Col>
                         <Col md={12} sm={24}>
@@ -115,7 +114,10 @@ export default class DynamicFieldSet extends React.Component {
                                     validateTrigger: ['onChange', 'onBlur'],
                                     
                                 })(
-                                    <Input style={{ width: '56%', color: '#999', marginRight: 4}} />
+                                    <C_Select 
+                                        data={PStates} 
+                                        style={{ width: '56%', color: '#999', marginRight: 4 }}
+                                    />
                                 )}
                                 <Icon
                                     className={styles.dynamicButton}
