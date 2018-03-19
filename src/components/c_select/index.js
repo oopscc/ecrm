@@ -10,22 +10,29 @@ export default class C_select extends PureComponent {
         data: [],
         kv: ['id', 'name'],
         style: {
-            margin: '8px 0'
-        }
+            margin: '0'
+        },
+        needAll: false
     };
     constructor(props) {
         super(props);
         this.state = {};
     }
     render() {
-        const { placeholder, mode, data, kv, style } = this.props;
+        const { placeholder, mode, data, kv, style, needAll } = this.props;
         const [id , value] = kv;
+        let all = {};
+        if (needAll) {
+            all[id] = '';
+            all[value] = '全部';
+        }
+        const list = [all, ...data];
         return (
             <Select
                 {...this.props}
                 >
-                {data.map(item => {
-                    return <Select.Option key={item[id]} value={item[id]}>{item[value]}</Select.Option>
+                {list.map(item => {
+                    return <Select.Option key={item[id] || 'itemId'} value={item[id]}>{item[value]}</Select.Option>
                 })}
             </Select>
         );

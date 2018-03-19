@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
 import qs from 'query-string'
+import { Route, Redirect, Switch, routerRedux } from 'dva/router';
 import {
   Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
 } from 'antd';
@@ -73,6 +74,9 @@ export default class BasicForms extends PureComponent {
   handleReset = () => {
     this.props.form.resetFields();
   }
+  goBack() {
+    this.props.dispatch(routerRedux.goBack());
+  }
   render() {
     const { submitting, form } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -97,6 +101,7 @@ export default class BasicForms extends PureComponent {
     };
     return (
       <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
+        <Button onClick={this.goBack.bind(this)} />
         <Card bordered={false}>
           <Form
             onSubmit={this.handleSubmit}

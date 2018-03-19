@@ -41,26 +41,32 @@ const menuData = [{
     icon: 'user',
     path: 'patient',
     children: [{
-        name: '全部患者列表',
-        path: 'list',
+        name: '患者列表',
+        path: 'list'
     }, {
         name: '患者信息',
         path: 'info',
+        hideInMenu: true,
     }, {
         name: '住院信息列表',
         path: 'diagnoseList',
+        hideInMenu: true,
     }, {
         name: '住院信息',
         path: 'diagnoseInfo',
+        hideInMenu: true,
     }, {
         name: '随访历史记录列表',
         path: 'flupList',
+        hideInMenu: true,
     }, {
         name: '随访信息',
         path: 'flupInfo',
+        hideInMenu: true,
     }, {
         name: '患者历史问卷',
         path: 'questList',
+        hideInMenu: true,
     }, {
         name: '待随访患者',
         path: 'willFlup',
@@ -97,6 +103,7 @@ const menuData = [{
     name: '异常页',
     icon: 'warning',
     path: 'exception',
+    hideInMenu: true,
     children: [{
         name: '403',
         path: '403',

@@ -51,7 +51,7 @@ export default class BasicProfile extends Component {
                 }
             });
         }
-        
+
         dispatch({
             type: 'profile/fetchBasic',
         });

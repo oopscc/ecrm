@@ -103,10 +103,6 @@ class BasicLayout extends React.PureComponent {
             type: 'category/fetchSMSTpls',
         });
 
-        // 病种
-        this.props.dispatch({
-            type: 'category/fetchDiseases',
-        });
         */
 
         //人员
@@ -119,6 +115,10 @@ class BasicLayout extends React.PureComponent {
         });
 
 
+        // 病种
+        this.props.dispatch({
+            type: 'category/fetchDiseases',
+        });
         //患者状态
         this.props.dispatch({
             type: 'category/fetchPStates',
@@ -173,7 +173,7 @@ class BasicLayout extends React.PureComponent {
                             callVisible: true
                         })
                     }
-                    
+
                 }
             });
         }
@@ -189,7 +189,7 @@ class BasicLayout extends React.PureComponent {
         window.answer(phone);
         if (name == '未知号码') return false;
         location.hash = `#/task/call?patientCode=${patientCode}`;
-        
+
     }
     hangup(phone) {
         this.setState({
@@ -307,7 +307,7 @@ class BasicLayout extends React.PureComponent {
                                 </Button>
                              </div>
                         </div>
-                         
+
                     </Modal>
                     <Content style={{ margin: '24px 24px 0', height: '100%' }}>
                         <Switch>

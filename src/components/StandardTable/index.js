@@ -109,7 +109,7 @@ class StandardTable extends PureComponent {
         <Table
           loading={loading}
           rowKey={record => record.key}
-          rowSelection={this.props.onSelectRow ? rowSelection : {}}
+          rowSelection={this.props.onSelectRow ? rowSelection : null}
           dataSource={list}
           columns={columns}
           pagination={paginationProps}

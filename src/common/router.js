@@ -233,7 +233,7 @@ export const getRouterData = (app) => {
             component: dynamicWrapper(app, ['sms'], () => import('../routes/task/sms')),
         },
         '/task/call': {
-            component: dynamicWrapper(app, ['task'], () => import('../routes/task/call')),
+            component: dynamicWrapper(app, ['task', 'callRecord'], () => import('../routes/task/call')),
         },
         '/count/scl': {
             component: dynamicWrapper(app, ['count'], () => import('../routes/count/scl')),
