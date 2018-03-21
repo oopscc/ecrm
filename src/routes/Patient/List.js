@@ -383,7 +383,16 @@ export default class TableList extends PureComponent {
                                     患者随访历史导入
                                 </Button>
                             </Upload>
-
+                            <Button icon="download" type="primary"
+                                href='/hospitalCRM/patient/downloadExcelTemplate.do'
+                            >
+                                患者信息模版
+                            </Button>
+                            <Button icon="download" type="primary"
+                                href='/hospitalCRM/callRecord/downloadExcelTemplate.do'
+                            >
+                                随访历史模版
+                            </Button>
                         </div>
                         <StandardTable
                             loading={loading}

@@ -189,7 +189,7 @@ export async function batchExport(params) {
     });
 }
 export async function batchUpHistory(params) {
-    return request('/hospitalCRM/patient/uploadCallRecordExcel.do', {
+    return request('/hospitalCRM/patient/imoprtExcelPatientList.do', {
         method: 'formdata',
         body: params,
     });

@@ -11,60 +11,60 @@ const { Step } = Steps;
 
 
 export default class StepForm extends PureComponent {
-  // componentDidMount() {
-  //   const { dispatch, location } = this.props;
-  //   let patientCode = qs.parse(location.search).patientCode;
-  //   if (!patientCode) {
-  //     return
-  //   }
-  //   dispatch({
-  //     type: 'patient/getDiagnose',
-  //     payload: {
-  //       patientCode
-  //     }
-  //   });
-  // }
-  getCurrentStep() {
-    const { location } = this.props;
-    const { pathname } = location;
-    const pathList = pathname.split('/');
-    switch (pathList[pathList.length - 1]) {
-      case 'info': return 0;
-      case 'diagnoseRecords': return 1;
-      case 'operationRecords': return 2;
-      case 'result': return 3;
-      default: return 0;
+    // componentDidMount() {
+    //   const { dispatch, location } = this.props;
+    //   let patientCode = qs.parse(location.search).patientCode;
+    //   if (!patientCode) {
+    //     return
+    //   }
+    //   dispatch({
+    //     type: 'patient/getDiagnose',
+    //     payload: {
+    //       patientCode
+    //     }
+    //   });
+    // }
+    getCurrentStep() {
+        const { location } = this.props;
+        const { pathname } = location;
+        const pathList = pathname.split('/');
+        switch (pathList[pathList.length - 1]) {
+            case 'info': return 0;
+            case 'diagnoseRecords': return 1;
+            case 'operationRecords': return 2;
+            case 'result': return 3;
+            default: return 0;
+        }
     }
-  }
-  render() {
-    const { loading, match, routerData, location } = this.props;
-    return (
-      <PageHeaderLayout title="分步表单" content="将一个冗长或用户不熟悉的表单任务分成多个步骤，指导用户完成。">
-        <Card bordered={false}>
-          <div>
-            <Steps current={this.getCurrentStep()} className={styles.steps}>
-              <Step title="填写住院信息" />
-              <Step title="填写诊断信息" />
-              <Step title="填写手术信息" />
-              <Step title="完成" />
-            </Steps>
-            <Switch>
-              {
-                getRoutes(match.path, routerData).map(item => (
-                  <Route
-                    key={item.key}
-                    path={item.path}
-                    component={item.component}
-                    exact={item.exact}
-                  />
-                ))
-              }
-              <Redirect exact from="/patient/diagnoseInfo" to={'/patient/diagnoseInfo/info' + location.search} />
-              <Route render={NotFound} />
-            </Switch>
-          </div>
-        </Card>
-      </PageHeaderLayout>
-    );
-  }
+    render() {
+        const { loading, match, routerData, location } = this.props;
+        return (
+            <PageHeaderLayout title="添加患者住院信息" content="分步填写患者的住院信息，诊断信息，手术信息。">
+                <Card bordered={false}>
+                    <div>
+                        <Steps current={this.getCurrentStep()} className={styles.steps}>
+                            <Step title="填写住院信息" />
+                            <Step title="填写诊断信息" />
+                            <Step title="填写手术信息" />
+                            <Step title="完成" />
+                        </Steps>
+                        <Switch>
+                            {
+                                getRoutes(match.path, routerData).map(item => (
+                                    <Route
+                                        key={item.key}
+                                        path={item.path}
+                                        component={item.component}
+                                        exact={item.exact}
+                                    />
+                                ))
+                            }
+                            <Redirect exact from="/patient/diagnoseInfo" to={'/patient/diagnoseInfo/info' + location.search} />
+                            <Route render={NotFound} />
+                        </Switch>
+                    </div>
+                </Card>
+            </PageHeaderLayout>
+        );
+    }
 }

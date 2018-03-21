@@ -28,6 +28,10 @@ export default {
         Users: [],
         Pays: [],
         Anesthesias: [],
+        Duties: [],
+        Jobs: [],
+        Doctors: [],
+        Nurses: [],
         taskState
     },
     effects: {
@@ -122,6 +126,51 @@ export default {
             });
             if (callback) callback(response);
         },
+        //随访结果
+        *fetchDuties({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchDuties, payload);
+            yield put({
+				type: 'saveDuties',
+				payload: response.data.contentArray,
+            });
+            if (callback) callback(response);
+        },
+        //随访结果
+        *fetchJobs({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchJobs, payload);
+            yield put({
+				type: 'saveJobs',
+				payload: response.data.contentArray,
+            });
+            if (callback) callback(response);
+        },
+        //随访结果
+        *fetchDoctors({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchDoctors, payload);
+            yield put({
+				type: 'saveDoctors',
+				payload: response.data.contentArray,
+            });
+            if (callback) callback(response);
+        },
+        //随访结果
+        *fetchNurses({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchNurses, payload);
+            yield put({
+				type: 'saveNurses',
+				payload: response.data.contentArray,
+            });
+            if (callback) callback(response);
+        },
+        //随访结果
+        *fetchCategory({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchCategory, payload);
+            // yield put({
+			// 	type: 'saveCategory',
+			// 	payload: response.data.contentArray,
+            // });
+            if (callback) callback(response);
+        },
 
     },
     reducers: {
@@ -184,10 +233,34 @@ export default {
 				Pays: payload,
 			};
         },
+        saveJobs(state, { payload }) {
+			return {
+				...state,
+				Jobs: payload,
+			};
+        },
+        saveDoctors(state, { payload }) {
+			return {
+				...state,
+				Doctors: payload,
+			};
+        },
+        saveDuties(state, { payload }) {
+			return {
+				...state,
+				Duties: payload,
+			};
+        },
         saveAnesthesias(state, { payload }) {
 			return {
 				...state,
 				Anesthesias: payload,
+			};
+        },
+        saveNurses(state, { payload }) {
+			return {
+				...state,
+				Nurses: payload,
 			};
         },
         /**

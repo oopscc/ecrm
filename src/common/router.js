@@ -179,13 +179,13 @@ export const getRouterData = (app) => {
             component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm')),
         },
         '/patient/diagnoseInfo/info': {
-            component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step1')),
+            component: dynamicWrapper(app, ['patient', 'category'], () => import('../routes/Patient/StepForm/Step1')),
         },
         '/patient/diagnoseInfo/diagnoseRecords': {
-            component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step2')),
+            component: dynamicWrapper(app, ['patient', 'category'], () => import('../routes/Patient/StepForm/Step2')),
         },
         '/patient/diagnoseInfo/operationRecords': {
-            component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step3')),
+            component: dynamicWrapper(app, ['patient', 'category'], () => import('../routes/Patient/StepForm/Step3')),
         },
         '/patient/diagnoseInfo/result': {
             component: dynamicWrapper(app, ['patient'], () => import('../routes/Patient/StepForm/Step4')),

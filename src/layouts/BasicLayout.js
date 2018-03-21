@@ -38,7 +38,6 @@ const getRedirect = (item) => {
     }
 };
 getMenuData().forEach(getRedirect);
-
 const query = {
     'screen-xs': {
         maxWidth: 575,
@@ -139,6 +138,10 @@ class BasicLayout extends React.PureComponent {
         this.props.dispatch({
             type: 'category/fetchCallRes',
         });
+        //医生
+        this.props.dispatch({
+            type: 'category/fetchDoctors',
+        });
 
         // 系统拨打电话
         // 系统接听电话
@@ -219,6 +222,7 @@ class BasicLayout extends React.PureComponent {
         } else {
             return '/index';
         }
+        console.log(redirect)
         return redirect;
     }
     handleMenuCollapse = (collapsed) => {
@@ -256,6 +260,7 @@ class BasicLayout extends React.PureComponent {
         const {
             currentUser, collapsed, fetchingNotices, notices, routerData, match, location,
         } = this.props;
+        console.log(this.props);
         const {
             name,
             phone,
@@ -326,6 +331,7 @@ class BasicLayout extends React.PureComponent {
                                             exact={item.exact}
                                             authority={item.authority}
                                             redirectPath="/exception/403"
+                                            isMobile={this.state.isMobile}
                                         />
                                     )
                                 )
@@ -354,7 +360,7 @@ class BasicLayout extends React.PureComponent {
                         copyright={
                             <div>
                                 Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
-              </div>
+                            </div>
                         }
                     />
                 </Layout>

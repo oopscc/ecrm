@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Card, Button, Form, Icon, Col, Row, DatePicker, TimePicker, Input, Select, Popover, Radio, Checkbox } from 'antd';
+import { List, Radio as RadioM, Flex, WhiteSpace } from 'antd-mobile';
 import qs from 'query-string';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -42,7 +43,7 @@ class Quest extends PureComponent {
     componentDidMount() {
         window.addEventListener('resize', this.resizeFooterToolbar);
         const { dispatch, location } = this.props;
-        let { id, doneFlag } = qs.parse(location.search);
+        let { id } = qs.parse(location.search);
         if (!id) {
             return
         }
@@ -54,7 +55,7 @@ class Quest extends PureComponent {
             callback: data => {
                 let wJ = data.data;
                 this.setState({
-                    id, wJ, doneFlag: +doneFlag
+                    id:wJ.id, wJ, doneFlag: +wJ.doneFlag
                 })
             }
         });
@@ -72,7 +73,7 @@ class Quest extends PureComponent {
     }
     handleSubmit = (e) => {
         e.preventDefault();
-        const { dispatch, location } = this.props;
+        const { dispatch, location} = this.props;
         const { id } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
@@ -110,7 +111,7 @@ class Quest extends PureComponent {
         });
     }
     render() {
-        const { form, dispatch, submitting } = this.props;
+        const { form, dispatch, submitting, isMobile} = this.props;
         const { getFieldDecorator, validateFieldsAndScroll, getFieldsError } = form;
         const validate = () => {
             validateFieldsAndScroll((error, values) => {
@@ -146,13 +147,18 @@ class Quest extends PureComponent {
                         type
                     }
                 });
+                const radioStyle = {
+                    display: 'block',
+                    padding: '6px',
+                    whiteSpace: 'normal'
+                  };
                 if (type == 1) {
                     return (
-                        <Radio key={option.id} value={option.id}>{option.optionContent}</Radio>
+                        <Radio style={radioStyle} key={option.id} value={option.id}>{option.optionContent}</Radio>
                     )
                 } else {
                     return (
-                        <Checkbox key={option.id} value={option.id}>{option.optionContent}</Checkbox>
+                        <Checkbox style={radioStyle} key={option.id} value={option.id}>{option.optionContent}</Checkbox>
                     )
                 }
 
@@ -252,8 +258,10 @@ class Quest extends PureComponent {
             >
                 <Form onSubmit={this.handleSubmit}>
                     {Title}
-                    <FormItem>
-                        <Button type="primary" htmlType="submit" style={doneFlag ? {display: 'none'} : {}}>Submit</Button>
+                    <FormItem style={{textAlign: 'center'}}>
+                        <Button type="primary" htmlType="submit" style={doneFlag ? {display: 'none'} : {}}>
+                            提交
+                        </Button>
                     </FormItem>
                 </Form>
             </PageHeaderLayout>

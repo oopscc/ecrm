@@ -5,7 +5,7 @@ import SiderMenu from './SiderMenu';
 
 export default props => (
   props.isMobile ? (
-    <DrawerMenu
+    <DrawerMenu style={{display: 'hidden'}}
       parent={null}
       level={null}
       iconChild={null}

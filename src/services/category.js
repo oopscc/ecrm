@@ -59,5 +59,29 @@ export async function fetchCallRes(params) {
     return req('/hospitalCRM/patient/callResultList.do', params);
 }
 
+// 医生职务
+export async function fetchDuties(params) {
+    return req('/hospitalCRM/user/dutyList.do', params);
+}
+
+// 职称
+export async function fetchJobs(params) {
+    return req('/hospitalCRM/user/jobList.do', params);
+}
+
+// 医生
+export async function fetchDoctors(params) {
+    return req('/hospitalCRM/user/doctorList.do', params);
+}
+
+// 护士
+export async function fetchNurses(params) {
+    return req('/hospitalCRM/user/nurseList.do', params);
+}
+// 统一
+export async function fetchCategory(params) {
+    return req('/hospitalCRM/patient/categoryList.do', params);
+}
+
 
 

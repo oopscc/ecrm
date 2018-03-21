@@ -32,7 +32,7 @@ export default class C_select extends PureComponent {
                 {...this.props}
                 >
                 {list.map(item => {
-                    return <Select.Option key={item[id] || 'itemId'} value={item[id]}>{item[value]}</Select.Option>
+                    return <Select.Option key={item[id] || Math.random()} value={item[id]}>{item[value]}</Select.Option>
                 })}
             </Select>
         );
