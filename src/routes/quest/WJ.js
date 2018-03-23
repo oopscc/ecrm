@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Card, Button, Form, Icon, Col, Row, DatePicker, TimePicker, Input, Select, Popover, Radio, Checkbox } from 'antd';
-import { List, Radio as RadioM, Flex, WhiteSpace } from 'antd-mobile';
 import qs from 'query-string';
 import { connect } from 'dva';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';

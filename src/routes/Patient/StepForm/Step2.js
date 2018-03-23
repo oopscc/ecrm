@@ -7,6 +7,7 @@ import TableForm from './TableForm';
 import qs from 'query-string';
 import moment from 'moment';
 import C_Select from '../../../components/c_select';
+import category from '../../../models/category';
 
 
 const { Option } = Select;
@@ -64,7 +65,7 @@ const tableData = [{
 @Form.create()
 class Step2 extends React.PureComponent {
     render() {
-        const { form, dispatch, data, patient } = this.props;
+        const { form, dispatch, data, patient, cures,  diseases} = this.props;
         const { getFieldDecorator, validateFields } = form;
         const onPrev = () => {
             dispatch(routerRedux.push('/patient/diagnoseInfo'));
@@ -85,7 +86,7 @@ class Step2 extends React.PureComponent {
                 type: 'patient/saveDiagnoseInfo',
                 payload: {
                     data: {
-                        diagnoseRecords: data
+                        diagnoseRecords: data.diagnoseRecords
                     }
                 },
             });
@@ -95,7 +96,11 @@ class Step2 extends React.PureComponent {
                 <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
                     <Card title="诊断信息" className={styles.card} bordered={false}>
                         {getFieldDecorator('diagnoseRecords', {
-                            initialValue: tableData,
+                            initialValue: {
+                                ...patient,
+                                cures,
+                                diseases
+                            },
                         })(<TableForm onChange={onChange} />)}
                     </Card>
                     <Form.Item
@@ -127,7 +132,9 @@ class Step2 extends React.PureComponent {
     }
 }
 
-export default connect(({ patient }) => ({
-    patient: patient.diagnoseInfo
+export default connect(({ patient, category }) => ({
+    patient: patient.diagnoseInfo,
+    diseases: category.Diseases,
+    cures: category.Cures
 }))(Step2);
 
