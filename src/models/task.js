@@ -39,7 +39,7 @@ export default {
             pagination: {}
         },
         taskNum: {
-            waitCallCount: 10
+            waitCallCount: 0
         }
     },
 
@@ -89,7 +89,7 @@ export default {
         // 保存随访任务
         *saveTask({ payload, callback }, { call, put }) {
             const response = yield call(saveTask, payload);
-            if (callback) callback();
+            if (callback) callback(response);
         },
 
     },

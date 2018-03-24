@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Card, Badge, Table, Divider, Input, Button, Select } from 'antd';
 import { Link } from 'react-router-dom';
+import { routerRedux } from 'dva/router';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DescriptionList from '../../components/DescriptionList';
@@ -11,8 +12,6 @@ import qs from 'query-string'
 const FormItem = Form.Item;
 const { Description } = DescriptionList;
 const { TextArea } = Input;
-const CallResult = [{ id: '102002', value: '无人接听' }, { id: '102007', value: '关机' }, { id: '101001', value: '稳定' }];
-
 
 @connect(({ callRecord, profile, loading, category }) => ({
     callRecord,
@@ -29,10 +28,10 @@ export default class BasicProfile extends Component {
         let self = this;
         let { patientCode, id, phone } = qs.parse(location.search);
         if (phone) {
-            this.setState({phone});
+            this.setState({ phone });
             dispatch({
                 type: 'callRecord/getCallDataByPhone',
-                payload: {phone},
+                payload: { phone },
                 callback: data => {
                     self.setState({
                         ...data.data
@@ -40,10 +39,10 @@ export default class BasicProfile extends Component {
                 }
             });
         } else {
-            this.setState({ patientCode, id});
+            this.setState({ patientCode, id });
             dispatch({
                 type: 'callRecord/getCallData',
-                payload: {patientCode, id},
+                payload: { patientCode, id },
                 callback: data => {
                     self.setState({
                         ...data.data
@@ -51,14 +50,11 @@ export default class BasicProfile extends Component {
                 }
             });
         }
-
-        dispatch({
-            type: 'profile/fetchBasic',
-        });
     }
 
     handleSubmit = (e) => {
         e.preventDefault();
+        const self = this;
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 const fieldsValue = {
@@ -68,21 +64,24 @@ export default class BasicProfile extends Component {
                 this.props.dispatch({
                     type: 'callRecord/save',
                     payload: fieldsValue,
-                    callback() {
-                        // 返回
-                        window.location.hash = '/patient/willFlup';
+                    callback(res) {
+                        if (!res.result) {
+                            self.props.dispatch(routerRedux.goBack());
+                        }
                     }
                 });
             }
         });
     }
+
     call() {
-        const {localFlag, mobile} = this.state;
+        const { localFlag, mobile } = this.state;
         let phone = localFlag ? mobile : `0${mobile}`;
         window.call(phone);
     }
+
     callOrigin() {
-        const {localFlag, mobile} = this.state;
+        const { localFlag, mobile } = this.state;
         let phone = `0${mobile}`;
         window.call(phone);
     }
@@ -218,12 +217,12 @@ export default class BasicProfile extends Component {
         /*
         */
         return (
-            <PageHeaderLayout title="基础详情页">
+            <PageHeaderLayout title="电话随访页">
                 <Card bordered={false}>
                     <DescriptionList size="large" title="用户信息" style={{ marginBottom: 32 }}>
                         <Description term="病案号">{patient.patientCode}</Description>
                         <Description term="患者姓名">{patient.name}</Description>
-                        <Description term="性别">{patient.sex}</Description>
+                        <Description term="性别">{patient.sex ? '男' : '女'}</Description>
                         <Description term="年龄">{patient.age}</Description>
                         <Description term="身份证">{patient.idNumber}</Description>
                         <Description term="最近诊断日期">{patient.latelyDiagnoseDateStr}</Description>

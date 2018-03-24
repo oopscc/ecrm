@@ -11,19 +11,7 @@ const { Step } = Steps;
 
 
 export default class StepForm extends PureComponent {
-    // componentDidMount() {
-    //   const { dispatch, location } = this.props;
-    //   let patientCode = qs.parse(location.search).patientCode;
-    //   if (!patientCode) {
-    //     return
-    //   }
-    //   dispatch({
-    //     type: 'patient/getDiagnose',
-    //     payload: {
-    //       patientCode
-    //     }
-    //   });
-    // }
+
     getCurrentStep() {
         const { location } = this.props;
         const { pathname } = location;

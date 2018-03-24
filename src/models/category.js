@@ -2,7 +2,7 @@ import * as API from '../services/category';
 
 // aop自定义前端字典
 // 性别
-const SEX = [{
+const sex = [{
     id: 0, name: '女'
 },{
     id: 1, name: '男'
@@ -15,6 +15,12 @@ const taskState = [{
 },{
     id: 2, name: '完成', status: 'success'
 }]
+// 随访方式
+const flupType = [{
+    id: 0, name: '短信'
+},{
+    id: 1, name: '电话'
+},]
 export default {
     namespace: "category",
     state: {
@@ -32,7 +38,9 @@ export default {
         Jobs: [],
         Doctors: [],
         Nurses: [],
-        taskState
+        taskState,
+        flupType,
+        sex
     },
     effects: {
 

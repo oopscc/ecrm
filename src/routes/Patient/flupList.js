@@ -15,404 +15,120 @@ import styles from './flupList.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const statusMap = ['default', 'processing', 'success', 'error'];
-const status = ['关闭', '运行中', '已上线', '异常'];
-// 序号，随访时间，主要诊断，随访结果，随访方式，随访人员，练习电话，操作（修改，删除，新增）
-// 
+
+
 const columns = [
-  {
-    title: '病案号',
-    dataIndex: 'patientCode',
-    key: 'patientCode',
-    width: '10%'
-  },{
-    title: '随访时间',
-    dataIndex: 'callTime',
-    key: 'callTime',
-    width: '10%',
-    render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
-  },{
-    title: '主要诊断',
-    dataIndex: 'diagnoseName',
-    key: 'diagnoseName',
-    width: '10%'
-  },{
-    title: '随访结果',
-    dataIndex: 'callResult',
-    key: 'callResult',
-    width: '10%'
-  },{
-    title: '随访方式',
-    dataIndex: 'callMode',
-    key: 'callMode',
-    width: '15%'
-  },{
-    title: '随访人员',
-    dataIndex: 'callPerson',
-    key: 'callPerson',
-    width: '15%'
-  },{
-    title: '联系电话',
-    dataIndex: 'mobile',
-    key: 'mobile',
-    width: '15%'
-  },{
-    title: '操作',
-    key: 'operation',
-    width: 120,
-    fixed: 'right',
-    render: (text, record) => <Link to={`/patient/flupInfo?patientCode=${record.patientCode}&name=${record.name}&id=${record.id}`}>{'编辑'}</Link>
-  }]
+    {
+        title: '病案号',
+        dataIndex: 'patientCode',
+        key: 'patientCode',
+        width: '10%',
+        align: 'center'
+    }, {
+        title: '随访时间',
+        dataIndex: 'callTime',
+        key: 'callTime',
+        width: '10%',
+        align: 'center',
+        render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
+    }, {
+        title: '主要诊断',
+        dataIndex: 'diagnoseName',
+        key: 'diagnoseName',
+        align: 'center',
+        width: '15%'
+    }, {
+        title: '随访结果',
+        dataIndex: 'callResult',
+        key: 'callResult',
+        align: 'center',
+        width: '13%'
+    }, {
+        title: '随访方式',
+        dataIndex: 'callMode',
+        key: 'callMode',
+        align: 'center',
+        width: '13%',
+        render: val => {
+            return +val ? '电话' : '短信'
+        }
+    }, {
+        title: '随访人员',
+        dataIndex: 'callPerson',
+        key: 'callPerson',
+        align: 'center',
+        width: '15%'
+    }, {
+        title: '联系电话',
+        dataIndex: 'mobile',
+        key: 'mobile',
+        align: 'center',
+        width: '13%'
+    }, {
+        title: '操作',
+        key: 'operation',
+        width: 120,
+        fixed: 'right',
+        align: 'center',
+        render: (text, record) => <Link to={`/patient/flupInfo?patientCode=${record.patientCode}&name=${record.name}&id=${record.id}`}>{'编辑'}</Link>
+    }]
 
-const CreateForm = Form.create()((props) => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
-  const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      handleAdd(fieldsValue);
-    });
-  };
-  return (
-    <Modal
-      title="新建规则"
-      visible={modalVisible}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible()}
-    >
-      <FormItem
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 15 }}
-        label="描述"
-      >
-        {form.getFieldDecorator('desc', {
-          rules: [{ required: true, message: 'Please input some description...' }],
-        })(
-          <Input placeholder="请输入" />
-        )}
-      </FormItem>
-    </Modal>
-  );
-});
-
-@connect(({ patient, loading }) => ({
-  patient,
-  loading: loading.models.patient,
+@connect(({ patient, loading, category }) => ({
+    patient,
+    loading: loading.models.patient,
 }))
 @Form.create()
 export default class TableList extends PureComponent {
-  state = {
-    modalVisible: false,
-    expandForm: false,
-    selectedRows: [],
-    formValues: {},
-    patientCode: '',
-    name: ''
-  };
-
-  componentDidMount() {
-    const { dispatch, location } = this.props;
-    let self = this;
-    let {patientCode, name} = qs.parse(location.search);
-    if (!patientCode) {
-      return
-    }
-    this.setState({
-      patientCode,
-      name
-    })
-    dispatch({
-      type: 'patient/fetchFlupList',
-      payload: {
-        currentPage: 1,
-        pageSize: 10,
-        patientCode
-      }
-    });
-  }
-
-  handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
-
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      ...filters,
+    state = {
+        formValues: {},
+        patientCode: '',
+        name: ''
     };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
 
-    dispatch({
-      type: 'patient/fetch',
-      payload: params,
-    });
-  }
-
-  handleFormReset = () => {
-    const { form, dispatch } = this.props;
-    form.resetFields();
-    this.setState({
-      formValues: {},
-    });
-    dispatch({
-      type: 'patient/fetch',
-      payload: {},
-    });
-  }
-
-  toggleForm = () => {
-    this.setState({
-      expandForm: !this.state.expandForm,
-    });
-  }
-
-  handleMenuClick = (e) => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
+    componentDidMount() {
+        const { dispatch, location } = this.props;
+        let self = this;
+        let { patientCode, name } = qs.parse(location.search);
+        if (!patientCode) {
+            return
+        }
+        this.setState({
+            patientCode,
+            name
+        })
         dispatch({
-          type: 'rule/remove',
-          payload: {
-            no: selectedRows.map(row => row.no).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
+            type: 'patient/fetchFlupList',
+            payload: {
+                currentPage: 1,
+                pageSize: 10,
+                patientCode
+            }
         });
-        break;
-      default:
-        break;
     }
-  }
 
-  handleSelectRows = (rows) => {
-    this.setState({
-      selectedRows: rows,
-    });
-  }
+    render() {
+        const { patient: { flup: data }, loading } = this.props;
+        const { patientCode, name } = this.state;
+        return (
+            <PageHeaderLayout title={`${name}的历史随访纪录`}>
+                <Card bordered={false}>
+                    <div className={styles.tableList}>
+                        <div className={styles.tableListOperator}>
+                            <Button icon="plus" type="primary" href={`/#/patient/flupInfo?patientCode=${patientCode}&name=${name}`}>
+                                新建
+                            </Button>
 
-  handleSearch = (e) => {
-    e.preventDefault();
-    const { dispatch, form,  patient} = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      const values = {
-        ...fieldsValue,
-        pageSize: patient.data.pagination.pageSize,
-        currentPage: patient.data.pagination.current,
-        beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
-        endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD'): '',
-      };
-
-      this.setState({
-        formValues: values,
-      });
-
-      dispatch({
-        type: 'patient/fetch',
-        payload: values,
-      });
-    });
-  }
-
-  handleModalVisible = (flag) => {
-    this.setState({
-      modalVisible: !!flag,
-    });
-  }
-
-  handleAdd = (fields) => {
-    this.props.dispatch({
-      type: 'rule/add',
-      payload: {
-        description: fields.desc,
-      },
-    });
-
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
-  }
-
-  renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="病种名称">
-              {getFieldDecorator('diseaseName')(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="确诊时间">
-              {getFieldDecorator('diagnoseTime')(
-                <RangePicker />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-              <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
-
-  renderAdvancedForm() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="规则编号">
-              {getFieldDecorator('no')(
-                <Input placeholder="请输入" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="调用次数">
-              {getFieldDecorator('number')(
-                <InputNumber style={{ width: '100%' }} />
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="更新日期">
-              {getFieldDecorator('date')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status3')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status4')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <span style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">查询</Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-            </a>
-          </span>
-        </div>
-      </Form>
-    );
-  }
-
-  renderForm() {
-    return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
-  }
-
-  render() {
-    const { patient: { flup: data }, loading } = this.props;
-    const { selectedRows, modalVisible, patientCode, name } = this.state;
-
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-        <Menu.Item key="approval">批量审批</Menu.Item>
-      </Menu>
-    );
-
-    const parentMethods = {
-      handleAdd: this.handleAdd,
-      handleModalVisible: this.handleModalVisible,
-    };
-
-    return (
-      <PageHeaderLayout title="查询表格">
-        <Card bordered={false}>
-          <div className={styles.tableList}>
-            
-            <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" href={`/#/patient/flupInfo?patientCode=${patientCode}&name=${name}`}>
-                新建
-              </Button>
-              {
-                selectedRows.length > 0 && (
-                  <span>
-                    <Button>批量操作</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多操作 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
-                  </span>
-                )
-              }
-            </div>
-            <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={data}
-              columns={columns}
-              size="small"
-              scroll={{ x: 1050 }}
-              onSelectRow={this.handleSelectRows}
-              onChange={this.handleStandardTableChange}
-            />
-          </div>
-        </Card>
-        <CreateForm
-          {...parentMethods}
-          modalVisible={modalVisible}
-        />
-      </PageHeaderLayout>
-    );
-  }
+                        </div>
+                        <StandardTable
+                            loading={loading}
+                            data={data}
+                            columns={columns}
+                            size="small"
+                            scroll={{ x: 1050 }}
+                        />
+                    </div>
+                </Card>
+            </PageHeaderLayout>
+        );
+    }
 }

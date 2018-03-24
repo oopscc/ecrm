@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Alert, Divider, Card, Row, Col, DatePicker } from 'antd';
+import { Form, Input, Button, Alert, Divider, Card, Row, Col, DatePicker, List } from 'antd';
 import { routerRedux } from 'dva/router';
 import { digitUppercase } from '../../../utils/utils';
 import styles from './style.less';
@@ -39,7 +39,7 @@ class Step2 extends React.PureComponent {
         console.log(this.props);
         const { getFieldDecorator, validateFields } = form;
         const onPrev = () => {
-            dispatch(routerRedux.push('/task/search'));
+            dispatch(routerRedux.goBack());
         };
         const onValidateForm = (e) => {
             e.preventDefault();
@@ -54,6 +54,10 @@ class Step2 extends React.PureComponent {
                         payload: {
                             ...values
                         },
+                        callback(res) {
+                            dispatch(routerRedux.push(`/task/taskAdd/result?result=${(res && !res.result) ? 1 : 0}`));
+                        }
+
                     });
                 }
             });
@@ -61,23 +65,18 @@ class Step2 extends React.PureComponent {
 
         const Info = ({ title, value, bordered }) => (
             <div className={styles.headerInfo}>
-                <span>{title}</span>
-                <p>{value}</p>
+                <span>{title}:</span>
+                <span>{value}</span>
                 {bordered && <em />}
             </div>
         );
 
         return (
             <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
-                <Card bordered={false}>
-                    <Row>
-                        <Col sm={6} xs={24}>
-                            <Info title="待随访患者总数" value={task.waitCallCount} bordered />
-                        </Col>
-
-
-                    </Row>
-                </Card>
+                <Alert
+                    message={`待随访患者总数：${task.waitCallCount}`} type="info"
+                    style={{margin: '0 auto 16px', width: '80%'}}
+                />
                 <Form.Item
                     {...formItemLayout}
                     label="任务患者人数"
@@ -85,7 +84,7 @@ class Step2 extends React.PureComponent {
                     {getFieldDecorator('patientNum', {
 
                     })(
-                        <Input style={{ width: '100%' }} />
+                        <Input style={{ width: '50%' }} />
                     )}
                 </Form.Item>
                 <Form.Item
@@ -95,7 +94,7 @@ class Step2 extends React.PureComponent {
                     {getFieldDecorator('estimateTime', {
 
                     })(
-                        <DatePicker />
+                        <DatePicker style={{ width: '50%' }}/>
                     )}
                 </Form.Item>
                 <Form.Item
@@ -105,7 +104,7 @@ class Step2 extends React.PureComponent {
                     {getFieldDecorator('userId', {
 
                     })(
-                        <C_Select data={Users}>
+                        <C_Select data={Users} style={{ width: '50%' }}>
                         </C_Select>
                     )}
                 </Form.Item>
@@ -116,7 +115,7 @@ class Step2 extends React.PureComponent {
                     {getFieldDecorator('taskName', {
 
                     })(
-                        <Input style={{ width: '100%' }} />
+                        <Input style={{ width: '50%' }} />
                     )}
                 </Form.Item>
                 <Form.Item
@@ -126,7 +125,9 @@ class Step2 extends React.PureComponent {
                     {getFieldDecorator('smsArray', {
 
                     })(
-                        <C_Select data={SMSTpls} kv={['id', 'smsName']} mode="multiple">
+                        <C_Select data={SMSTpls} kv={['id', 'smsName']}
+                            mode="multiple"
+                            style={{ width: '50%' }}>
                         </C_Select>
                     )}
                 </Form.Item>
@@ -137,9 +138,11 @@ class Step2 extends React.PureComponent {
                     {getFieldDecorator('questionnaireId', {
 
                     })(
-                        <C_Select data={WJTpls} kv={['id', 'questionnaireName']}>
+                        <C_Select data={WJTpls}
+                        kv={['id', 'questionnaireName']}
+                        style={{ width: '50%' }}>
                         </C_Select>
-          )}
+                    )}
                 </Form.Item>
                 <Form.Item
                     style={{ marginBottom: 8 }}
@@ -151,7 +154,7 @@ class Step2 extends React.PureComponent {
                 >
                     <Button type="primary" onClick={onValidateForm} loading={submitting}>
                         提交
-          </Button>
+                    </Button>
                     <Button onClick={onPrev} style={{ marginLeft: 8 }}>
                         上一步
           </Button>

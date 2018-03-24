@@ -73,6 +73,9 @@ const menuData = [{
     }, {
         name: '已随访患者',
         path: 'fluped',
+    }, {
+        name: '今日已随访患者',
+        path: 'todayFluped',
     }],
 }, {
     name: '详情页',
@@ -141,7 +144,7 @@ const menuData = [{
         name: '随访任务列表',
         path: 'list',
     }, {
-        name: '分配随访任务(分步式)',
+        name: '分配随访任务',
         // 条件查询患者列表 －> 设置条件，新建任务
         path: 'taskAdd',
     }, {

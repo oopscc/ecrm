@@ -90,7 +90,7 @@ const columns = [
         fixed: 'right',
         render: (text, record) => {
             return <DropOption onMenuClick={e => handleOptionClick(record, e)}
-                menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '问卷' }]} />
+                menuOptions={[{ key: '1', name: '查看' }, { key: '2', name: '住院信息' }, { key: '3', name: '调查问卷' }]} />
         }
     }]
 const handleOptionClick = (record, e) => {
@@ -107,7 +107,7 @@ const handleOptionClick = (record, e) => {
     } else if (e.key === '2') {
         window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
     } else if (e.key === '3') {
-        alert('问卷');
+        window.location.hash = `/patient/questList?patientCode=${record.patientCode}&name=${record.name}`;
     }
 }
 
@@ -232,7 +232,7 @@ export default class TableList extends PureComponent {
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                     <Col md={8} sm={24}>
                         <FormItem label="病种名称">
-                            {getFieldDecorator('diseaseName')(
+                            {getFieldDecorator('diseaseId')(
                                 <C_Select data={diseases} needAll={true}/>
                             )}
                         </FormItem>
@@ -259,14 +259,15 @@ export default class TableList extends PureComponent {
     }
 
     renderAdvancedForm() {
-        const { getFieldDecorator } = this.props.form;
+        const {form, diseases} = this.props;
+        const { getFieldDecorator } = form;
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                     <Col md={8} sm={24}>
                         <FormItem label="病种名称">
-                            {getFieldDecorator('diseaseName')(
-                                <Input placeholder="请输入" />
+                            {getFieldDecorator('diseaseId')(
+                                <C_Select data={diseases} needAll={true}/>
                             )}
                         </FormItem>
                     </Col>

@@ -2,25 +2,48 @@ import React, { PureComponent } from 'react';
 import { Table, Button, Input, message, Popconfirm, Divider } from 'antd';
 import styles from './style.less';
 import C_Select from '../../../components/c_select';
-
+const diseaseType = [{
+    id: 0, name: '主要诊断'
+}, {
+    id: 1, name: '其他诊断'
+}]
+const admissionState = [
+    {
+        id: 1, name: '有'
+    }, {
+        id: 2, name: '临床未确定'
+    },
+    {
+        id: 3, name: '情况不明'
+    }, {
+        id: 4, name: '无'
+    }
+]
+const judge = [{
+    id: 0, name: '否'
+}, {
+    id: 1, name: '是'
+}]
 
 export default class TableForm extends PureComponent {
     constructor(props) {
         super(props);
-
+        const data = (props.value.diagnoseRecords || []).map(item => {
+            return { ...item, key: item.id }
+        })
         this.state = {
-            data: props.value.diagnoseRecords || [],
-            cures: props.value.cures ||[],
-            diseases: props.value.diseases ||[],
+            data,
+            cures: diseaseType || [],
+            diseases: admissionState || [],
             loading: false,
         };
     }
     componentWillReceiveProps(nextProps) {
-        if ('value' in nextProps) {
-            this.setState({
-                data: nextProps.value.diagnoseRecords,
-            });
-        }
+        // if ('value' in nextProps) {
+        //     this.setState({
+        //         data: nextProps.value.diagnoseRecords,
+        //     });
+        // }
     }
     getRowByKey(key, newData) {
         return (newData || this.state.data).filter(item => item.key === key)[0];
@@ -39,7 +62,7 @@ export default class TableForm extends PureComponent {
         });
     }
     toggleEditable = (e, key) => {
-        // e.preventDefault();
+        e.preventDefault();
         const newData = this.state.data.map(item => ({ ...item }));
         const target = this.getRowByKey(key, newData);
         if (target) {
@@ -49,23 +72,19 @@ export default class TableForm extends PureComponent {
             }
             target.editable = !target.editable;
             this.setState({ data: newData });
+            this.props.onChange(newData);
         }
     }
     remove(key) {
         const newData = this.state.data.filter(item => item.key !== key);
         this.setState({ data: newData });
-        this.props.onChange({
-            ...this.state,
-            diagnoseRecords: newData
-        });
+        this.props.onChange(newData);
     }
     newMember = () => {
         const newData = this.state.data.map(item => ({ ...item }));
         newData.push({
-            key: `NEW_TEMP_ID_${this.index}`,
-            workId: '',
+            key: `NEW_Dis_ID_${this.index}`,
             name: '',
-            department: '',
             editable: true,
             isNew: true,
         });
@@ -92,13 +111,13 @@ export default class TableForm extends PureComponent {
         });
         // save field when blur input
         setTimeout(() => {
-            // if (document.activeElement.tagName === 'INPUT' &&
-            //     document.activeElement !== e.target) {
-            //     this.setState({
-            //         loading: false,
-            //     });
-            //     return;
-            // }
+            if (document.activeElement.tagName === 'INPUT' &&
+                document.activeElement !== e.target) {
+                this.setState({
+                    loading: false,
+                });
+                return;
+            }
             if (this.clickedCancel) {
                 this.clickedCancel = false;
                 this.setState({
@@ -116,7 +135,7 @@ export default class TableForm extends PureComponent {
             //   return;
             // }
             delete target.isNew;
-            this.toggleEditable(e, key);
+            // this.toggleEditable(e, key);
             this.props.onChange({
                 ...this.state,
                 diagnoseRecords: this.state.data
@@ -139,7 +158,7 @@ export default class TableForm extends PureComponent {
         this.setState({ data: newData });
     }
     render() {
-        const {cures, diseases} = this.state;
+        const { cures, diseases } = this.state;
         const columns = [{
             title: '诊断类型',
             dataIndex: 'diagnoseMode',
@@ -151,11 +170,11 @@ export default class TableForm extends PureComponent {
                         <C_Select data={cures} defaultValue={text}
                             autoFocus
                             onChange={e => this.handleFieldChange(e, 'diagnoseMode', record.key)}
-                            onBlur={e => this.saveRow(e, record.key)}
                         />
                     );
                 }
-                return text;
+                let names = cures.filter(item => item.id == text)[0];
+                return names ? names.name : '';
             },
         }, {
             title: '是否设置为原发诊断',
@@ -165,16 +184,13 @@ export default class TableForm extends PureComponent {
             render: (text, record) => {
                 if (record.editable) {
                     return (
-                        <Input
-                            value={text}
-                            onChange={e => this.handleFieldChange(e.target.value, 'primaryFlag', record.key)}
-                            onBlur={e => this.saveRow(e, record.key)}
-                            onKeyPress={e => this.handleKeyPress(e, record.key)}
-                            placeholder="是否设置为原发诊断"
+                        <C_Select data={judge} defaultValue={text}
+                            onChange={e => this.handleFieldChange(e, 'primaryFlag', record.key)}
                         />
                     );
                 }
-                return text;
+                let names = judge.filter(item => item.id == text)[0];
+                return names ? names.name : '';
             },
         }, {
             title: '诊断名称',
@@ -187,8 +203,6 @@ export default class TableForm extends PureComponent {
                         <Input
                             value={text}
                             onChange={e => this.handleFieldChange(e.target.value, 'diagnoseName', record.key)}
-                            onBlur={e => this.saveRow(e, record.key)}
-                            onKeyPress={e => this.handleKeyPress(e, record.key)}
                             placeholder="所属部门"
                         />
                     );
@@ -205,9 +219,7 @@ export default class TableForm extends PureComponent {
                     return (
                         <Input
                             value={text}
-                            onChange={value => this.handleFieldChange(e.target.value, 'diagnoseCode', record.key)}
-                            onBlur={e => this.saveRow(e, record.key)}
-                            onKeyPress={e => this.handleKeyPress(e, record.key)}
+                            onChange={e => this.handleFieldChange(e.target.value, 'diagnoseCode', record.key)}
                             placeholder="所属部门"
                         />
                     );
@@ -222,16 +234,13 @@ export default class TableForm extends PureComponent {
             render: (text, record) => {
                 if (record.editable) {
                     return (
-                        <Input
-                            value={text}
-                            onChange={e => this.handleFieldChange(e.target.value, 'admissionState', record.key)}
-                            onBlur={e => this.saveRow(e, record.key)}
-                            onKeyPress={e => this.handleKeyPress(e, record.key)}
-                            placeholder="所属部门"
+                        <C_Select data={diseases} defaultValue={text}
+                            onChange={e => this.handleFieldChange(e, 'admissionState', record.key)}
                         />
                     );
                 }
-                return text;
+                let names = diseases.filter(item => item.id == text)[0];
+                return names ? names.name : '';
             },
         }, {
             title: '操作',
@@ -244,7 +253,7 @@ export default class TableForm extends PureComponent {
                     if (record.isNew) {
                         return (
                             <span>
-                                <a>保存</a>
+                                <a onClick={e => this.toggleEditable(e, record.key)}>保存</a>
                                 <Divider type="vertical" />
                                 <Popconfirm title="是否要删除此行？" onConfirm={() => this.remove(record.key)}>
                                     <a>删除</a>
@@ -254,7 +263,7 @@ export default class TableForm extends PureComponent {
                     }
                     return (
                         <span>
-                            <a>保存</a>
+                            <a onClick={e => this.toggleEditable(e, record.key)}>保存</a>
                             <Divider type="vertical" />
                             <a onClick={e => this.cancel(e, record.key)}>取消</a>
                         </span>

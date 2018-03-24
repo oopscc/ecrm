@@ -27,15 +27,18 @@ class Step1 extends React.PureComponent {
     componentDidMount() {
         const { dispatch, location } = this.props;
         let { id, patientCode, name } = qs.parse(location.search);
-        if (patientCode) {
-            dispatch({
-                type: 'patient/saveDiagnoseInfo',
-                payload: {
-                    data: { patientCode, name }
-                }
-            });
-        }
         if (!id) {
+            dispatch({
+                type: 'patient/clearDiagnoseInfo'
+            });
+            if (patientCode) {
+                dispatch({
+                    type: 'patient/saveDiagnoseInfo',
+                    payload: {
+                        data: { patientCode, name }
+                    }
+                });
+            }
             return
         }
         dispatch({
@@ -118,7 +121,7 @@ class Step1 extends React.PureComponent {
                         >
                             {getFieldDecorator('diagnoseTimeStr', patient && patient.diagnoseTimeStr && {
                                 initialValue: moment(patient.diagnoseTimeStr, 'YYYY-MM-DD')
-                            })(
+                            } || {})(
                                 <DatePicker />
                             )}
                         </FormItem>
@@ -148,7 +151,7 @@ class Step1 extends React.PureComponent {
                         >
                             {getFieldDecorator('admissionTimeStr', patient && patient.admissionTimeStr && {
                                 initialValue: moment(patient.admissionTimeStr, 'YYYY-MM-DD')
-                            })(
+                            } || {})(
                                 <DatePicker />
                             )}
                         </FormItem>

@@ -22,7 +22,7 @@ const formItemLayout = {
 };
 // 诊断类型，是否设置为原发诊断，诊断名称，诊断疾病编码，诊断分期，操作
 /*
-  diagnoseMode
+diagnoseMode
 primaryFlag
 diagnoseName
 diagnoseCode
@@ -72,11 +72,12 @@ class Step2 extends React.PureComponent {
         };
         const onValidateForm = () => {
             validateFields((err, values) => {
+
                 if (!err) {
-                    dispatch({
-                        type: 'patient/saveDiagnoseInfo',
-                        payload: values,
-                    });
+                    // dispatch({
+                    //     type: 'patient/saveDiagnoseInfo',
+                    //     payload: values,
+                    // });
                     dispatch(routerRedux.push('/patient/diagnoseInfo/operationRecords'));
                 }
             });
@@ -86,7 +87,7 @@ class Step2 extends React.PureComponent {
                 type: 'patient/saveDiagnoseInfo',
                 payload: {
                     data: {
-                        diagnoseRecords: data.diagnoseRecords
+                        diagnoseRecords: data
                     }
                 },
             });
@@ -122,10 +123,7 @@ class Step2 extends React.PureComponent {
                 <Divider style={{ margin: '40px 0 24px' }} />
                 <div className={styles.desc}>
                     <h3>说明</h3>
-                    <h4>转账到支付宝账户</h4>
-                    <p>如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。</p>
-                    <h4>转账到银行卡</h4>
-                    <p>如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。如果需要，这里可以放一些关于产品的常见问题说明。</p>
+                    <p>步骤2一些重要的说明</p>
                 </div>
             </div>
         );

@@ -15,15 +15,14 @@ import styles from './diagnoseList.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const statusMap = ['default', 'processing', 'success', 'error'];
-const status = ['关闭', '运行中', '已上线', '异常'];
 
 const columns = [
     {
         title: '诊断时间',
         dataIndex: 'diagnoseTime',
         key: 'diagnoseTime',
-        width: 80,
+        width: 120,
+        align: 'center',
         render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
     }, {
         title: '诊断科别',
@@ -183,7 +182,7 @@ export default class TableList extends PureComponent {
                             data={diagnosesData}
                             columns={columns}
                             size="small"
-                            scroll={{ x: 1250 }}
+                            scroll={{ x: 1050 }}
                             onChange={this.handleStandardTableChange}
                         />
                     </div>

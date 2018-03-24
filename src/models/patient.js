@@ -67,12 +67,16 @@ export default {
         },
         *addDiagnose({ payload, callback }, { call, put }) {
             const response = yield call(addDiagnose, payload);
-            yield put(routerRedux.push('/patient/diagnoseInfo/result'));
+            yield put(routerRedux.push(
+                `/patient/diagnoseInfo/result?result=${(response && !response.result) ? 1 : 0}`
+            ));
             if (callback) callback();
         },
         *editDiagnose({ payload, callback }, { call, put }) {
             const response = yield call(editDiagnose, payload);
-            yield put(routerRedux.push('/patient/diagnoseInfo/result'));
+            yield put(routerRedux.push(
+                `/patient/diagnoseInfo/result?result=${(response && !response.result) ? 1 : 0}`
+            ));
             if (callback) callback();
         },
         *getDiagnose({ payload, callback }, { call, put }) {
@@ -93,7 +97,9 @@ export default {
         },
         *addFlup({ payload, callback }, { call, put }) {
             const response = yield call(addFlup, payload);
-            yield put(routerRedux.push('/patient/diagnoseInfo/result'));
+            yield put(routerRedux.push(
+                `/patient/diagnoseInfo/result?result=${(res && !res.result) ? 1 : 0}`
+            ));
             if (callback) callback();
         },
         *editFlup({ payload, callback }, { call, put }) {
@@ -147,6 +153,12 @@ export default {
                         total: action.payload.data.total
                     }
                 },
+            };
+        },
+        clearDiagnoseInfo(state, action) {
+            return {
+                ...state,
+                diagnoseInfo: {},
             };
         },
         saveDiagnoseInfo(state, action) {

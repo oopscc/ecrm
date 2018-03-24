@@ -36,7 +36,7 @@ import styles from './index.less';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
-@connect(({ chart, loading, count, task, category}) => ({
+@connect(({ chart, loading, count, task, category }) => ({
     chart,
     count,
     tasks: task.tasks,
@@ -113,7 +113,7 @@ export default class Analysis extends Component {
         const { rangePickerValue, currentTabKey, pieType } = this.state;
         const { chart, loading, count, tasks, taskState } = this.props;
 
-        const {totalCallData, dayCallData, newCallData, trendData, callResData} = count;
+        const { totalCallData, dayCallData, newCallData, trendData, callResData } = count;
 
         const salesExtra = (
             <div className={styles.salesExtraWrap}>
@@ -214,7 +214,7 @@ export default class Analysis extends Component {
                         >
                             <Trend flag={totalCallData.weekTrend - 1 > 0 ? 'up' : 'down'} style={{ marginRight: 16 }}>
                                 周同比<span className={styles.trendText}>
-                                {numeral(totalCallData.weekTrend * 100 - 100).format('0,0')}%
+                                    {numeral(totalCallData.weekTrend * 100 - 100).format('0,0')}%
                                 </span>
                             </Trend>
                             <Trend flag={totalCallData.dayTrend - 1 > 0 ? 'up' : 'down'}>

@@ -15,7 +15,8 @@ import styles from './willFlup.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 
-@connect(({ callRecord, loading, category}) => ({
+// 随访阶段，病种id（模糊查询）
+@connect(({ callRecord, loading, category }) => ({
     callRecord,
     category,
     loading: loading.models.callRecord,
@@ -46,7 +47,7 @@ export default class TableList extends PureComponent {
             }
         });
         dispatch({
-            type: 'callRecord/fetchWillCalls',
+            type: 'callRecord/fetchToadyCalls',
             payload: {
                 currentPage: 1,
                 pageSize: 10
@@ -60,7 +61,7 @@ export default class TableList extends PureComponent {
             formValues: {},
         });
         dispatch({
-            type: 'patient/fetchWillCalls',
+            type: 'patient/fetchToadyCalls',
             payload: {},
         });
     }
@@ -68,12 +69,6 @@ export default class TableList extends PureComponent {
     toggleForm = () => {
         this.setState({
             expandForm: !this.state.expandForm,
-        });
-    }
-
-    handleSelectRows = (rows) => {
-        this.setState({
-            selectedRows: rows,
         });
     }
 
@@ -95,14 +90,14 @@ export default class TableList extends PureComponent {
             });
 
             dispatch({
-                type: 'callRecord/fetchWillCalls',
+                type: 'callRecord/fetchToadyCalls',
                 payload: values,
             });
         });
     }
 
     renderSimpleForm() {
-        const {form, category} = this.props;
+        const { form, category } = this.props;
         const { getFieldDecorator } = form;
 
         return (
@@ -118,7 +113,7 @@ export default class TableList extends PureComponent {
                     <Col md={6} sm={24}>
                         <FormItem label="病种名称">
                             {getFieldDecorator('diseaseId')(
-                                <C_Select data={category.Diseases} needAll={true}/>
+                                <C_Select data={category.Diseases} needAll={true} />
                             )}
                         </FormItem>
                     </Col>
@@ -144,7 +139,7 @@ export default class TableList extends PureComponent {
     }
 
     renderAdvancedForm() {
-        const {form, category} = this.props;
+        const { form, category } = this.props;
         const { getFieldDecorator } = form;
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
@@ -159,7 +154,7 @@ export default class TableList extends PureComponent {
                     <Col md={8} sm={24}>
                         <FormItem label="病种名称">
                             {getFieldDecorator('diseaseId')(
-                                <C_Select data={category.Diseases} needAll={true}/>
+                                <C_Select data={category.Diseases} needAll={true} />
                             )}
                         </FormItem>
                     </Col>
@@ -218,7 +213,7 @@ export default class TableList extends PureComponent {
                             )}
                         </FormItem>
                     </Col>
-                    </Row>
+                </Row>
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                     <Col md={8} sm={24} offset={16}>
                         <span className={styles.submitButtons}>
@@ -241,24 +236,24 @@ export default class TableList extends PureComponent {
 
     }
     render() {
-        const { callRecord: { willCallList: data }, loading } = this.props;
+        const { callRecord: { todayCallList: data }, loading } = this.props;
         const { selectedRows, modalVisible, callConut, todayCallNum, calledNum, callTaskNum } = this.state;
 
         const Info = ({ title, value, bordered, path }) => (
-            <div className={styles.headerInfo} style={{textAlign: 'center'}}>
+            <div className={styles.headerInfo} style={{ textAlign: 'center' }}>
                 <span>{title}</span>
                 <Link to={path}>
-                    <p style={{fontSize: 20, textAlign: 'center', paddingTop: 8, margin: 0}}>{value}</p>
+                    <p style={{ fontSize: 20, textAlign: 'center', paddingTop: 8, margin: 0 }}>{value}</p>
                 </Link>
                 {bordered && <em />}
             </div>
         );
-
         const columns = [
             {
                 title: '序号',
                 width: 80,
                 fixed: 'left',
+                align: 'center',
                 render: (text, record, index) => {
                     let { currentPage: current, pageSize: size } = data.pagination;
                     return (current - 1) * size + +index + 1;
@@ -267,13 +262,13 @@ export default class TableList extends PureComponent {
                 title: '病案号',
                 dataIndex: 'patientCode',
                 key: 'patientCode',
-                width: 80,
+                width: 100,
                 fixed: 'left'
             }, {
                 title: '姓名',
                 dataIndex: 'name',
                 key: 'name',
-                width: 80,
+                width: 100,
                 fixed: 'left'
             }, {
                 title: '性别',
@@ -285,74 +280,64 @@ export default class TableList extends PureComponent {
                 title: '联系电话',
                 dataIndex: 'mobile',
                 key: 'mobile',
-                width: 100
+                width: 130
             }, {
                 title: '病种',
                 dataIndex: 'diseaseName',
                 key: 'diseaseName',
-                width: 100
+                width: 120
             }, {
                 title: '确诊时间',
                 dataIndex: 'diagnoseTime',
                 key: 'diagnoseTime',
-                width: 100,
+                width: 150,
                 render: val => val ? <span>{moment(val).format('YYYY-MM-DD')}</span> : ''
             }, {
                 title: '原发性诊断名称',
                 dataIndex: 'diagnoseName',
                 key: 'diagnoseName',
-                width: 100
+                width: 150
             }, {
                 title: '原发性病理诊断名称',
                 dataIndex: 'pathologyName',
                 key: 'pathologyName',
-                width: 100
+                width: 150
             }, {
                 title: '治疗方式',
                 dataIndex: 'cureModeStr',
                 key: 'cureModeStr',
-                width: 80
+                width: 100
             }, {
                 title: '主治医师',
                 dataIndex: 'treatmentDoctor',
                 key: 'treatmentDoctor',
-                width: 80
+                width: 120
             }, {
-                title: '随访阶段',
-                dataIndex: 'callStageStr',
-                key: 'callStageStr',
-                width: 80,
+                title: '随访时间',
+                dataIndex: 'callTime',
+                key: 'callTime',
+                width: 150,
             }, {
-                title: '短信状态',
-                dataIndex: 'smsStageStr',
-                key: 'smsStageStr',
-                width: 80,
-            }, {
-                title: '操作',
-                key: 'operation',
+                title: '随访结果',
+                dataIndex: 'callResult',
+                key: 'callResult',
                 width: 100,
-                fixed: 'right',
-                render: (text, record) => {
-                    return <div>
-                        <Link style={{ marginRight: 8 }}
-                            to={`/task/call?patientCode=${record.patientCode}&id=${record.id}`}>
-                            {'电话'}
-                        </Link>
-                        <Link to={`/task/sms?patientCode=${record.patientCode}&id=${record.id}`}>
-                            {'短信'}
-                        </Link>
-                    </div>
-                }
+            }, {
+                title: '随访方式',
+                dataIndex: 'callMode',
+                key: 'callMode',
+                width: 100,
+                render: val => +val ? '电话' : '短信'
             }];
 
         return (
-            <PageHeaderLayout title="待随访患者">
-                <Card bordered={false} style={{marginBottom: 16}}>
+            <PageHeaderLayout title="今日已随访患者">
+                <Card bordered={false} style={{ marginBottom: 16 }}>
                     <Row>
                         <Col sm={6} xs={24}>
                             <Info title="待随访患者总数"
                                 value={numeral(callConut).format('0,0')}
-                                path = {'/patient/willFlup'}
+                                path={'/patient/willFlup'}
                                 bordered />
                         </Col>
                         <Col sm={6} xs={24}>
@@ -391,13 +376,11 @@ export default class TableList extends PureComponent {
                             }
                         </div>
                         <StandardTable
-                            selectedRows={selectedRows}
                             loading={loading}
                             data={data}
                             columns={columns}
                             size="small"
                             scroll={{ x: 1350 }}
-                            onSelectRow={this.handleSelectRows}
                         />
                     </div>
                 </Card>
