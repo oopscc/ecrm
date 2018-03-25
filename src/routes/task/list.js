@@ -83,14 +83,17 @@ export default class TableList extends PureComponent {
     renderSimpleForm() {
         const { task: { tasks }, category } = this.props;
         const { getFieldDecorator } = this.props.form;
+        console.log(tasks);
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    {tasks.isAdmin != 0 &
+                    {tasks.isAdmin != 0 &&
                         <Col md={6} sm={24}>
                             <FormItem label="随访人员">
-                                {getFieldDecorator('callUserId')(
-                                    <C_Select data={category.Users} needAll={true} />
+                                {getFieldDecorator('callUserId', {
+                                    initialValue: tasks.callUserId || '',
+                                })(
+                                    <C_Select data={category.Users} />
                                 )}
                             </FormItem>
                         </Col>

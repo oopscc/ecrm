@@ -53,7 +53,7 @@ export async function deleteDisease(params) {
     return req('/hospitalCRM/diseaseKind/deleteDisease.do', params);
 }
 export async function fetchDiseases(params) {
-    return req('/hospitalCRM/diseaseKind/DiseasePageQuery.do', params);
+    return req('/hospitalCRM/diseaseKind/diseasePageQuery.do', params);
 }
 export async function getDisease(params) {
     return req('/hospitalCRM/diseaseKind/diseaseInfo.do', params);

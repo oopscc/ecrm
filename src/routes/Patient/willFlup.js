@@ -369,7 +369,7 @@ export default class TableList extends PureComponent {
                         </Col>
                         <Col sm={6} xs={24}>
                             <Info title="我的待随访任务"
-                                value={numeral(calledNum).format('0,0')}
+                                value={numeral(callTaskNum).format('0,0')}
                                 path={'/task/list'}
                             />
                         </Col>

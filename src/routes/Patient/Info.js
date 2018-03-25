@@ -55,11 +55,12 @@ export default class BasicForms extends PureComponent {
         }
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
+                debugger;
                 const fieldsValue = {
                     ...values,
-                    'birthdayStr': values['birthdayStr'].format('YYYY-MM-DD'),
-                    'diagnoseTimeStr': values['diagnoseTimeStr'].format('YYYY-MM-DD'),
-                    'deathTimeStr': values['deathTimeStr'].format('YYYY-MM-DD')
+                    'birthdayStr': values['birthdayStr'] ? values['birthdayStr'].format('YYYY-MM-DD') : '',
+                    'diagnoseTimeStr': values['diagnoseTimeStr'] ? values['diagnoseTimeStr'].format('YYYY-MM-DD') : '',
+                    'deathTimeStr': values['deathTimeStr'] ? values['deathTimeStr'].format('YYYY-MM-DD') : ''
                 };
                 this.props.dispatch({
                     type,

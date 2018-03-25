@@ -212,8 +212,7 @@ export default class TableList extends PureComponent {
                 key: 'callDone',
                 width: 100,
                 render(text) {
-                    let task = category.taskState.filter(item => item.id == text)[0];
-                    return <Badge status={task.status} text={task.name} />;
+                    return +text ? '已完成' : '未完成';
                 },
             }, {
                 title: '随访方式',
