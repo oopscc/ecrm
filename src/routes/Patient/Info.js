@@ -55,7 +55,6 @@ export default class BasicForms extends PureComponent {
         }
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                debugger;
                 const fieldsValue = {
                     ...values,
                     'birthdayStr': values['birthdayStr'] ? values['birthdayStr'].format('YYYY-MM-DD') : '',
@@ -101,7 +100,7 @@ export default class BasicForms extends PureComponent {
             },
         };
         return (
-            <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
+            <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="收录患者信息，用于建立患者数据库。">
                 <Button onClick={this.goBack.bind(this)} />
                 <Card bordered={false}>
                     <Form
@@ -266,9 +265,11 @@ export default class BasicForms extends PureComponent {
                             label="是否可以随访"
                         >
                             <div>
-                                {getFieldDecorator('canCall', {
-                                    initialValue: patient && patient.canCall ? patient.canCall.toString() : '',
+                                {getFieldDecorator('canCall', patient && {
+                                    initialValue: patient.canCall+'',
                                     rules: [{ required: true, message: '请选择是否可以随访' }],
+                                } || {
+                                    rules: [{ required: true, message: '请选择是否可以随访' }]
                                 })(
                                     <Radio.Group>
                                         <Radio value="0">不可以</Radio>

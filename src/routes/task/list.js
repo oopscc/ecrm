@@ -178,10 +178,10 @@ export default class TableList extends PureComponent {
         return (
             <PageHeaderLayout title="随访任务">
                 <Card bordered={false} style={{ marginBottom: 16 }}>
-                    <DescriptionList size="large" title="任务信息" style={{ marginBottom: 32 }}>
+                    {/* <DescriptionList size="large" title="任务信息" style={{ marginBottom: 32 }}>
                         <Description term="随访人员">{data.userName}</Description>
                     </DescriptionList>
-                    <Divider style={{ marginBottom: 32 }} />
+                    <Divider style={{ marginBottom: 32 }} /> */}
                     <DescriptionList size="large" title="任务统计" style={{ marginBottom: 32 }}>
                         <Description className={styles.description} term="未开始">
                             {numeral(data.notBeginNum).format('0,0')}
