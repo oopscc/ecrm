@@ -42,7 +42,7 @@ export async function fetchDepts(params) {
     return req('/hospitalCRM/dept/deptPageQuery.do', params);
 }
 
-/*==============system Diseases=================*/
+/*==============system diseases=================*/
 export async function addDisease(params) {
     return req('/hospitalCRM/diseaseKind/addDisease.do', params);
 }
