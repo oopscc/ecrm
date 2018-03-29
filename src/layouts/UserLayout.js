@@ -21,15 +21,15 @@ const links = [{
     href: '',
 }];
 
-const copyright = <div>Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品</div>;
+const copyright = <div>Copyright <Icon type="copyright" /> 2018 廊坊沙丁鱼科技有限公司出品</div>;
 
 class UserLayout extends React.PureComponent {
     getPageTitle() {
         const { routerData, location } = this.props;
         const { pathname } = location;
-        let title = 'Ant Design Pro';
+        let title = '随访系统';
         if (routerData[pathname] && routerData[pathname].name) {
-            title = `${routerData[pathname].name} - Ant Design Pro`;
+            title = `${routerData[pathname].name} - 随访系统`;
         }
         return title;
     }
@@ -43,10 +43,10 @@ class UserLayout extends React.PureComponent {
                             <div className={styles.header}>
                                 <Link to="/">
                                     <img alt="logo" className={styles.logo} src={logo} />
-                                    <span className={styles.title}>Ant Design</span>
+                                    <span className={styles.title}>随访系统</span>
                                 </Link>
                             </div>
-                            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+                            <div className={styles.desc}>华北地区最具影响力的随访系统</div>
                         </div>
                         <Switch>
                             {getRoutes(match.path, routerData).map(item =>
@@ -62,7 +62,7 @@ class UserLayout extends React.PureComponent {
                             <Redirect exact from="/user" to="/user/login" />
                         </Switch>
                     </div>
-                    <GlobalFooter links={links} copyright={copyright} />
+                    <GlobalFooter  copyright={copyright} />
                 </div>
             </DocumentTitle>
         );
