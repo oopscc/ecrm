@@ -1,52 +1,22 @@
-import React, {
-    PureComponent,
-    Fragment
-} from 'react';
-import {
-    connect
-} from 'dva';
-import {
-    routerRedux
-} from 'dva/router';
+import React, { PureComponent, Fragment } from 'react';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import {
-    Row,
-    Col,
-    Card,
-    Form,
-    Input,
-    Select,
-    Icon,
-    Button,
-    Dropdown,
-    Menu,
-    InputNumber,
-    DatePicker,
-    Modal,
-    message,
-    Badge,
-    Divider,
-    Tag,
-    Radio,
-    Switch
+    Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider, Tag, Radio, Switch
 } from 'antd';
-const {
-    RangePicker
-} = DatePicker;
 import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import DropOption from '../../../components/DropOption';
 import Reply from './replyTpl';
+import C_Select from '../../../components/c_select';
 
 import styles from './smsTpl.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
-const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const statusMap = ['default', 'processing', 'success', 'error'];
-const status = ['关闭', '运行中', '已上线', '异常'];
-
+const { RangePicker } = DatePicker;
 
 const CreateForm = Form.create()((props) => {
     const {
@@ -107,7 +77,7 @@ const CreateForm = Form.create()((props) => {
                     <Switch />
                 )}
             </FormItem>
-            { form.getFieldValue('canReply') && <div>
+            {form.getFieldValue('canReply') && <div>
                 <FormItem
                     labelCol={{ span: 5 }}
                     wrapperCol={{ span: 15 }}
@@ -122,10 +92,10 @@ const CreateForm = Form.create()((props) => {
                 </FormItem>
                 <Reply form={form} PStates={PStates}
                     replys={tplInfo.smsReplys.length != 0 ? tplInfo.smsReplys : [{
-                            replyContent: '',
-                            contentResult: ''
-                        }]
-                    } 
+                        replyContent: '',
+                        contentResult: ''
+                    }]
+                    }
                 />
             </div>
             }
@@ -144,7 +114,7 @@ const CreateWjForm = Form.create()((props) => {
     const okHandle = () => {
         form.validateFields((err, fieldsValue) => {
             if (err) return;
-            handleAdd({...fieldsValue, smsType: 1});
+            handleAdd({ ...fieldsValue, smsType: 1 });
         });
     };
     return (
@@ -154,7 +124,7 @@ const CreateWjForm = Form.create()((props) => {
             onOk={okHandle}
             onCancel={() => handleModalWjTpl()}
         >
-            
+
             <FormItem
                 labelCol={{ span: 5 }}
                 wrapperCol={{ span: 15 }}
@@ -215,7 +185,8 @@ const CreateSignForm = Form.create()((props) => {
 }) => ({
     SMSTpls: system.SMSTpls,
     loading: loading.models.SMSTpls,
-    PStates: category.PStates
+    PStates: category.PStates,
+    category
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -253,7 +224,7 @@ export default class TableList extends PureComponent {
         // 获取问卷模版
         dispatch({
             type: 'system/fetchWjSMSTpl',
-            callback:(res)=> {
+            callback: (res) => {
                 this.setState({
                     wjTpl: res.data.rows[0] ? res.data.rows[0] : {}
                 });
@@ -262,7 +233,7 @@ export default class TableList extends PureComponent {
         // 获取签名
         dispatch({
             type: 'system/getSmsSign',
-            callback:(res)=> {
+            callback: (res) => {
                 this.setState({
                     smsSign: res.data.smsSign
                 })
@@ -292,19 +263,9 @@ export default class TableList extends PureComponent {
         });
     }
 
-    handleSelectRows = (rows) => {
-        this.setState({
-            selectedRows: rows,
-        });
-    }
-
     handleSearch = (e) => {
         e.preventDefault();
-        const {
-            dispatch,
-            form,
-            SMSTpls
-        } = this.props;
+        const { dispatch, form, SMSTpls } = this.props;
         form.validateFields((err, fieldsValue) => {
             if (err) return;
             const values = {
@@ -312,13 +273,11 @@ export default class TableList extends PureComponent {
                 pageSize: SMSTpls.pagination.pageSize,
                 currentPage: SMSTpls.pagination.currentPage,
             };
-
             this.setState({
                 formValues: values,
             });
-
             dispatch({
-                type: 'system/fetcSMSTpls',
+                type: 'system/fetchSMSTpls',
                 payload: values,
             });
         });
@@ -338,8 +297,7 @@ export default class TableList extends PureComponent {
             },
         });
     }
-    
-    
+
     handleModalWjTpl = (flag) => {
         this.setState({
             modalWjTpl: !!flag
@@ -370,9 +328,7 @@ export default class TableList extends PureComponent {
     deleteTpl = id => {
         this.props.dispatch({
             type: 'system/deleteSMSTpl',
-            payload: {
-                id,
-            },
+            payload: { id },
         });
     }
 
@@ -425,7 +381,7 @@ export default class TableList extends PureComponent {
             },
         });
     }
-    handleAddSign = (fields)=> {
+    handleAddSign = (fields) => {
         this.props.dispatch({
             type: 'system/setSmsSign',
             payload: {
@@ -438,15 +394,16 @@ export default class TableList extends PureComponent {
     }
 
     renderSimpleForm() {
-        const {
-            getFieldDecorator
-        } = this.props.form;
+        const { form, category } = this.props;
+        const { getFieldDecorator } = this.props.form;
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                     <Col md={6} sm={24}>
                         <FormItem label="模版名称">
-                            {getFieldDecorator('smsName')(
+                            {getFieldDecorator('smsName',{
+                                initialValue: ''
+                            })(
                                 <Input placeholder="请输入模版名称" />
                             )}
                         </FormItem>
@@ -454,10 +411,7 @@ export default class TableList extends PureComponent {
                     <Col md={6} sm={24}>
                         <FormItem label="是否需要回复">
                             {getFieldDecorator('canReply')(
-                                <Select>
-                                    <Option value="0">否</Option>
-                                    <Option value="1">是</Option>
-                                </Select>
+                                <C_Select data={category.yesOrNo} needAll={true} />
                             )}
                         </FormItem>
                     </Col>
@@ -505,41 +459,42 @@ export default class TableList extends PureComponent {
         };
 
         const columns = [{
-            title: '序号',
-            width: '10%',
-            render: (text, record, index) => {
-                let { currentPage: current, pageSize: size } = data.pagination;
-                return (current - 1) * size + +index + 1;
-            },
-        }, {
-            title: '短信模版名称',
-            dataIndex: 'smsName',
-            key: 'smsName',
-            width: '15%',
-        }, {
-            title: '短信内容',
-            dataIndex: 'smsContent',
-            key: 'smsContent',
-        }, {
-            title: '是否需要回复',
-            dataIndex: 'canReply',
-            key: 'canReply',
-            width: '15%',
-            render: val => val ? <span>是</span> : <span>否</span>
-        }, {
-            title: '操作',
-            key: 'operation',
-            width: '15%',
-            render: (text, record) => {
-                return <div>
-                    <Tag color="#2db7f5" onClick={this.editTpl.bind(this, record.id)}>编辑</Tag>
-                    <Tag color="#f50" onClick={this.deleteTpl.bind(this, record.id)}>删除</Tag>
-                </div>
-            }
-        }]
+                title: '序号',
+                width: '10%',
+                render: (text, record, index) => {
+                    let { currentPage: current, pageSize: size } = data.pagination;
+                    return (current - 1) * size + +index + 1;
+                },
+            }, {
+                title: '短信模版名称',
+                dataIndex: 'smsName',
+                key: 'smsName',
+                width: '15%',
+            }, {
+                title: '短信内容',
+                dataIndex: 'smsContent',
+                key: 'smsContent',
+            }, {
+                title: '是否需要回复',
+                dataIndex: 'canReply',
+                key: 'canReply',
+                width: '15%',
+                render: val => val ? <span>是</span> : <span>否</span>
+            }, {
+                title: '操作',
+                key: 'operation',
+                width: '15%',
+                render: (text, record) => {
+                    return <div>
+                        <Tag color="#2db7f5" onClick={this.editTpl.bind(this, record.id)}>编辑</Tag>
+                        <Tag color="#f50" onClick={this.deleteTpl.bind(this, record.id)}>删除</Tag>
+                    </div>
+                }
+            }]
+
 
         return (
-            <PageHeaderLayout title="查询表格">
+            <PageHeaderLayout title="短信模版">
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListForm}>

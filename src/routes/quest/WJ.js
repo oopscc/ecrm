@@ -42,8 +42,21 @@ class Quest extends PureComponent {
     componentDidMount() {
         window.addEventListener('resize', this.resizeFooterToolbar);
         const { dispatch, location } = this.props;
-        let { id } = qs.parse(location.search);
+        let { id, preview } = qs.parse(location.search);
         if (!id) {
+            return
+        }
+        if (preview) {
+            dispatch({
+                type: 'quest/get',
+                payload: {id},
+                callback: data => {
+                    let wJ = data.data;
+                    this.setState({
+                        id:wJ.id, wJ, doneFlag: 1
+                    })
+                }
+            });
             return
         }
         dispatch({

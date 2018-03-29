@@ -27,6 +27,20 @@ export async function getUser(params) {
 export async function fetchUsers(params) {
     return req('/hospitalCRM/user/userList.do', params);
 }
+export async function editUserLock(params) {
+    return req('/hospitalCRM/user/editUserLockState.do', params);
+}
+export async function resetPassword(params) {
+    return req('/hospitalCRM/user/resetPassword.do', params);
+}
+export async function updateRole(params) {
+    return req('/hospitalCRM/user/authRole.do', params);
+}
+export async function activateUser(params) {
+    return req('/hospitalCRM/user/activateUser.do', params);
+}
+
+
 
 /*==============system depts=================*/
 export async function addDept(params) {
@@ -71,7 +85,7 @@ export async function deleteICD(params) {
     return req('/hospitalCRM/illnessCoding/deleteIllnessCoding.do', params);
 }
 export async function getICD(params) {
-    return req('/hospitalCRM/illnessCoding/getIllnessInfo.do', params);
+    return req('/hospitalCRM/illnessCoding/illnessCodingInfo.do', params);
 }
 export async function fetchICDs(params) {
     return req('/hospitalCRM/illnessCoding/illnessPageQuery.do', params);

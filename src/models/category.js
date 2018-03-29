@@ -21,6 +21,13 @@ const flupType = [{
 },{
     id: 1, name: '电话'
 },]
+// 随访方式
+const yesOrNo = [{
+    id: 0, name: '否'
+},{
+    id: 1, name: '是'
+},]
+
 export default {
     namespace: "category",
     state: {
@@ -40,7 +47,8 @@ export default {
         Nurses: [],
         taskState,
         flupType,
-        sex
+        sex,
+        yesOrNo
     },
     effects: {
 

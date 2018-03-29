@@ -25,57 +25,20 @@ import {
     Modal,
     message,
     Badge,
-    Divider
+    Divider, Tag
 } from 'antd';
-const {
-    RangePicker
-} = DatePicker;
 import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import DropOption from '../../../components/DropOption';
 import Icds from './list_icd';
-import qs from 'query-string'
+import qs from 'query-string';
 
 import styles from './List.less';
 
+const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
-const {
-    Option
-} = Select;
-const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const statusMap = ['default', 'processing', 'success', 'error'];
-const status = ['关闭', '运行中', '已上线', '异常'];
+const { Option } = Select;
 
-const columns = [{
-    title: '序号',
-    width: '10%'
-}, {
-    title: '疾病编码',
-    dataIndex: 'illnessCode',
-    key: 'illnessCode',
-    width: '15%'
-}, {
-    title: '疾病名称',
-    dataIndex: 'illnessName',
-    key: 'illnessName',
-    width: '15%'
-}, {
-    title: '操作',
-    key: 'operation',
-    render: (text, record) => {
-        return <div onClick={e => handleDelete(record, e)}>删除</div>
-    }
-}]
-const handleOptionClick = (record, e) => {
-    // const { dispatch } = this.props;
-    if (e.key === '1') {
-        window.location.hash = `/system/diagnoseList/info?id=${record.id}`;
-    } else if (e.key === '2') {
-        // window.location.hash = `/patient/diagnoseList?patientCode=${record.patientCode}&name=${record.name}`;
-    } else if (e.key === '3') {
-        // alert('问卷');
-    }
-}
 const CreateForm = Form.create()((props) => {
     const {
         modalVisible,
@@ -84,13 +47,13 @@ const CreateForm = Form.create()((props) => {
         handleModalVisible,
         handleSelectIcds,
     } = props;
-    
+
     const onSelectRow = (rows) => {
         handleSelectIcds(rows);
     }
     return (
         <Modal
-            title="新建规则"
+            title="添加疾病"
             visible={modalVisible}
             onOk={() => handleAdd()}
             onCancel={() => handleModalVisible()}
@@ -99,16 +62,12 @@ const CreateForm = Form.create()((props) => {
             <Icds
                 onSelectRow={onSelectRow}
             >
-
             </Icds>
         </Modal>
     );
 });
 
-@connect(({
-    system,
-    loading,
-}) => ({
+@connect(({ system, loading, }) => ({
     diseases: system.diseases,
     loading: loading.models.system,
 }))
@@ -116,8 +75,6 @@ const CreateForm = Form.create()((props) => {
 export default class TableList extends PureComponent {
     state = {
         modalVisible: false,
-        expandForm: false,
-        selectedRows: [],
         formValues: {},
         seleceedIcds: [],
         icds: [],
@@ -126,61 +83,25 @@ export default class TableList extends PureComponent {
     };
 
     componentDidMount() {
-        const {
-            dispatch,
-            location
-        } = this.props;
-        let {id, diseaseName} = qs.parse(location.search);
+        const { dispatch, location } = this.props;
+        let { id, diseaseName } = qs.parse(location.search);
         if (!id) {
-          return
+            return
         }
         this.setState({
             id, diseaseName
         })
         dispatch({
-            type: 'system/getDiseases',
-            payload: {
-                id
-            },
+            type: 'system/getDisease',
+            payload: { id },
             callback: data => {
                 this.setState({
+                    diseaseName: data.data.diseaseName,
                     icds: data.data.illnessArr
                 })
             }
         });
-        
-    }
 
-    handleStandardTableChange = (pagination, filtersArg, sorter) => {
-        const {
-            dispatch
-        } = this.props;
-        const {
-            formValues
-        } = this.state;
-
-        const filters = Object.keys(filtersArg).reduce((obj, key) => {
-            const newObj = {
-                ...obj
-            };
-            newObj[key] = getValue(filtersArg[key]);
-            return newObj;
-        }, {});
-
-        const params = {
-            currentPage: pagination.current,
-            pageSize: pagination.pageSize,
-            ...formValues,
-            ...filters,
-        };
-        if (sorter.field) {
-            params.sorter = `${sorter.field}_${sorter.order}`;
-        }
-
-        dispatch({
-            type: 'system/fetchDiseases',
-            payload: params,
-        });
     }
 
     handleFormReset = () => {
@@ -204,41 +125,6 @@ export default class TableList extends PureComponent {
         });
     }
 
-    handleMenuClick = (e) => {
-        const {
-            dispatch
-        } = this.props;
-        const {
-            selectedRows
-        } = this.state;
-
-        if (!selectedRows) return;
-
-        switch (e.key) {
-            case 'remove':
-                dispatch({
-                    type: 'rule/remove',
-                    payload: {
-                        no: selectedRows.map(row => row.no).join(','),
-                    },
-                    callback: () => {
-                        this.setState({
-                            selectedRows: [],
-                        });
-                    },
-                });
-                break;
-            default:
-                break;
-        }
-    }
-
-    handleSelectRows = (rows) => {
-        this.setState({
-            selectedRows: rows,
-        });
-    }
-
     handleSearch = (e) => {
         e.preventDefault();
         const {
@@ -249,19 +135,20 @@ export default class TableList extends PureComponent {
             if (err) return;
             const values = {
                 ...fieldsValue,
+                id: this.state.id,
+                illnessIdList: this.state.icds.map(item => item.id)
             };
-            if (!this.state.id) {
-                dispatch({
-                    type: 'system/addDiseases',
-                    payload: values,
-                });
-            } else {
-                dispatch({
-                    type: 'system/editDiseases',
-                    payload: {id, ...values},
-                });
-            }
-            
+            const type = !this.state.id ? 'system/addDisease' : 'system/editDisease';
+            this.props.dispatch({
+                type,
+                payload: values,
+                callback: (res) => {
+                    if (res && !res.result) {
+                        this.props.dispatch(routerRedux.goBack());
+                    }
+                }
+            });
+
         });
     }
 
@@ -277,7 +164,8 @@ export default class TableList extends PureComponent {
         });
     }
 
-    handleAdd = (icds) => {
+    handleAdd = () => {
+        const icds = this.state.seleceedIcds;
         const icdIds = Array.from(icds, item => item.id);
         this.setState({
             icds: [...this.state.icds.filter(icd => !icdIds.includes(icd.id)), ...icds],
@@ -300,7 +188,12 @@ export default class TableList extends PureComponent {
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
                     <Col md={8} sm={24}>
                         <FormItem label="病种名称">
-                            {getFieldDecorator('diseaseName')(
+                            {getFieldDecorator('diseaseName', {
+                                initialValue: this.state.diseaseName,
+                                rules: [{
+                                    required: true, message: '请输入病种名称',
+                                }],
+                            })(
                                 <Input placeholder="请输入" />
                             )}
                         </FormItem>
@@ -316,129 +209,49 @@ export default class TableList extends PureComponent {
         );
     }
 
-    renderAdvancedForm() {
-        const {
-            getFieldDecorator
-        } = this.props.form;
-        return (
-            <Form onSubmit={this.handleSearch} layout="inline">
-                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    <Col md={8} sm={24}>
-                        <FormItem label="规则编号">
-                            {getFieldDecorator('no')(
-                                <Input placeholder="请输入" />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col md={8} sm={24}>
-                        <FormItem label="使用状态">
-                            {getFieldDecorator('status')(
-                                <Select placeholder="请选择" style={{ width: '100%' }}>
-                                    <Option value="0">关闭</Option>
-                                    <Option value="1">运行中</Option>
-                                </Select>
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col md={8} sm={24}>
-                        <FormItem label="调用次数">
-                            {getFieldDecorator('number')(
-                                <InputNumber style={{ width: '100%' }} />
-                            )}
-                        </FormItem>
-                    </Col>
-                </Row>
-                <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-                    <Col md={8} sm={24}>
-                        <FormItem label="更新日期">
-                            {getFieldDecorator('date')(
-                                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col md={8} sm={24}>
-                        <FormItem label="使用状态">
-                            {getFieldDecorator('status3')(
-                                <Select placeholder="请选择" style={{ width: '100%' }}>
-                                    <Option value="0">关闭</Option>
-                                    <Option value="1">运行中</Option>
-                                </Select>
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col md={8} sm={24}>
-                        <FormItem label="使用状态">
-                            {getFieldDecorator('status4')(
-                                <Select placeholder="请选择" style={{ width: '100%' }}>
-                                    <Option value="0">关闭</Option>
-                                    <Option value="1">运行中</Option>
-                                </Select>
-                            )}
-                        </FormItem>
-                    </Col>
-                </Row>
-                <div style={{ overflow: 'hidden' }}>
-                    <span style={{ float: 'right', marginBottom: 24 }}>
-                        <Button type="primary" htmlType="submit">查询</Button>
-                        <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
-                        <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                            收起 <Icon type="up" />
-                        </a>
-                    </span>
-                </div>
-            </Form>
-        );
-    }
-
     renderForm() {
-        return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
+        return this.renderSimpleForm();
     }
 
     render() {
-        const {
-            loading,
-        } = this.props;
-        const {
-            selectedRows,
-            modalVisible,
-            icds: data
-        } = this.state;
-
-        const menu = (
-            <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-                <Menu.Item key="remove">删除</Menu.Item>
-                <Menu.Item key="approval">批量审批</Menu.Item>
-            </Menu>
-        );
-
+        const { loading, } = this.props;
+        const { selectedRows, modalVisible, icds} = this.state;
+        const data = {list: icds};
         const parentMethods = {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,
             handleSelectIcds: this.handleSelectIcds,
         };
 
-        const columns = [{
-            title: '序号',
-            width: '10%',
-            dataIndex: 'id',
-            key: 'id',
-        }, {
-            title: '疾病编码',
-            dataIndex: 'illnessCode',
-            key: 'illnessCode',
-            width: '15%'
-        }, {
-            title: '疾病名称',
-            dataIndex: 'illnessName',
-            key: 'illnessName',
-            width: '15%'
-        }, {
-            title: '操作',
-            key: 'operation',
-            render: (text, record) => {
-                return <div onClick={e => this.handleDelete(record, e)}>删除</div>
-            }
-        }]
+        const columns = [
+            {
+                title: '序号',
+                width: '20%',
+                dataIndex: 'id',
+                key: 'id',
+                render: (text, record, index) => {
+                    return +index + 1;
+                },
+                align: 'center'
+            }, {
+                title: '疾病编码',
+                dataIndex: 'illnessCode',
+                key: 'illnessCode',
+                width: '25%'
+            }, {
+                title: '疾病名称',
+                dataIndex: 'illnessName',
+                key: 'illnessName',
+                width: '25%'
+            }, {
+                title: '操作',
+                key: 'operation',
+                render: (text, record) => {
+                    return <div>
+                        <Tag color="#f50" onClick={this.handleDelete.bind(this, record)}>删除</Tag>
+                    </div>
+                }
+            }]
 
         return (
             <PageHeaderLayout title="添加病种">
@@ -448,14 +261,10 @@ export default class TableList extends PureComponent {
                             {this.renderForm()}
                         </div>
                         <StandardTable
-                            selectedRows={selectedRows}
                             loading={loading}
                             data={data}
                             columns={columns}
                             size="small"
-                            scroll={{ x: 1250 }}
-                            onSelectRow={this.handleSelectRows}
-                            onChange={this.handleStandardTableChange}
                         />
                     </div>
 

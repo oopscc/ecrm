@@ -3,7 +3,6 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 import { Row, Col, Card, Form, Input, Select, Icon, Button, Dropdown, Menu, InputNumber, DatePicker, Modal, message, Badge, Divider, Tag } from 'antd';
-const { RangePicker } = DatePicker;
 import StandardTable from '../../../components/StandardTable';
 import PageHeaderLayout from '../../../layouts/PageHeaderLayout';
 import DropOption from '../../../components/DropOption';
@@ -12,13 +11,13 @@ import styles from './questTpl.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
-const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
-const statusMap = ['default', 'processing', 'success', 'error'];
-const status = ['关闭', '运行中', '已上线', '异常'];
+const { RangePicker } = DatePicker;
 
-@connect(({ quest, loading }) => ({
+
+@connect(({ quest, loading, category }) => ({
     loading: loading.models.quest,
-    quests: quest.tplList
+    quests: quest.tplList,
+    category
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -82,7 +81,7 @@ export default class TableList extends PureComponent {
     }
 
     editTpl = id => {
-        window.location.hash = `/system/Tpl/questionInfo/?id=${id}`;
+        window.location.hash = `/system/tpl/questionInfo/?id=${id}`;
     }
 
     deleteTpl = id => {
@@ -94,6 +93,9 @@ export default class TableList extends PureComponent {
         });
     }
 
+    previewTpl = id => {
+        window.location.hash = `/system/tpl/wj/?id=${id}&preview=1`;
+    }
     renderSimpleForm() {
         const { getFieldDecorator } = this.props.form;
         return (
@@ -156,11 +158,12 @@ export default class TableList extends PureComponent {
                 return <div>
                     <Tag color="#2db7f5" onClick={this.editTpl.bind(this, record.id)}>编辑</Tag>
                     <Tag color="#f50" onClick={this.deleteTpl.bind(this, record.id)}>删除</Tag>
+                    <Tag color="#87d068" onClick={this.previewTpl.bind(this, record.id)}>预览</Tag>
                 </div>
             }
         }]
         return (
-            <PageHeaderLayout title="查询表格">
+            <PageHeaderLayout title="问卷模版列表">
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListForm}>
@@ -177,7 +180,6 @@ export default class TableList extends PureComponent {
                             columns={columns}
                             size="small"
                             scroll={{ x: 800 }}
-
                         />
                     </div>
                 </Card>

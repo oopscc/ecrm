@@ -110,23 +110,29 @@ export default {
                 payload: response,
             });
         },
-        *addDisease({ payload }, { call, put }) {
+        *addDisease({ payload, callback }, { call, put }) {
             const response = yield call(addDisease, payload);
-            message.success('添加成功');
+            callback && callback(response);
+            // message.success('添加成功');
 
         },
-        *getDisease({ payload }, { call, put }) {
+        *getDisease({ payload, callback }, { call, put }) {
             const response = yield call(getDisease, payload);
+            callback && callback(response);
         },
-        *editDisease({ payload }, { call, put }) {
+        *editDisease({ payload, callback }, { call, put }) {
             const response = yield call(editDisease, payload);
-            message.success('修改成功');
+            callback && callback(response);
+            // message.success('修改成功');
 
         },
         *deleteDisease({ payload }, { call, put }) {
             yield call(deleteDisease, payload);
+            yield put({
+                type: 'deleteDiseaseById',
+                payload,
+            });
             message.success('删除成功');
-
         },
         /*==============system icd-10=================*/
 
@@ -137,22 +143,30 @@ export default {
                 payload: response,
             });
         },
-        *getICD({ payload }, { call, put }) {
+        *getICD({ payload,callback }, { call, put }) {
             const response = yield call(getICD, payload);
+            callback && callback(response);
         },
-        *addICD({ payload }, { call, put }) {
+        *addICD({ payload, callback }, { call, put }) {
             const response = yield call(addICD, payload);
+            callback && callback(response);
         },
-        *editICD({ payload }, { call, put }) {
+        *editICD({ payload, callback }, { call, put }) {
             const response = yield call(editICD, payload);
+            callback && callback(response);
         },
         *deleteICD({ payload }, { call, put }) {
             yield call(deleteICD, payload);
+            yield put({
+                type: 'deleteICDById',
+                payload,
+            });
+            message.success('删除成功');
         },
         /*==============system SMSTpl=================*/
 
         *fetchSMSTpls({ payload }, { call, put }) {
-            const response = yield call(fetchSMSTpls, {smsType: 0, ...payload});
+            const response = yield call(fetchSMSTpls, { smsType: 0, ...payload });
             yield put({
                 type: 'saveSMSTpls',
                 payload: response,
@@ -166,7 +180,7 @@ export default {
             });
             if (callback) callback(response);
         },
-        
+
         *addSMSTpl({ payload }, { call, put }) {
             const response = yield call(addSMSTpl, payload);
             yield put({
@@ -317,6 +331,26 @@ export default {
                         currentPage: action.payload.data.currentPage,
                         total: action.payload.data.total
                     }
+                },
+            };
+        },
+        deleteICDById(state, action) {
+            const { id } = action.payload;
+            return {
+                ...state,
+                ICDs: {
+                    ...state.ICDs,
+                    list: [...state.ICDs.list.filter(item => item.id != id)],
+                },
+            };
+        },
+        deleteDiseaseById(state, action) {
+            const { id } = action.payload;
+            return {
+                ...state,
+                diseases: {
+                    ...state.diseases,
+                    list: [...state.diseases.list.filter(item => item.id != id)],
                 },
             };
         },

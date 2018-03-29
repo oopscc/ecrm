@@ -142,6 +142,15 @@ class BasicLayout extends React.PureComponent {
         this.props.dispatch({
             type: 'category/fetchDoctors',
         });
+        //医院职务
+        this.props.dispatch({
+            type: 'category/fetchDuties',
+        });
+        //医生职称
+        this.props.dispatch({
+            type: 'category/fetchJobs',
+        });
+
 
         // 系统拨打电话
         // 系统接听电话

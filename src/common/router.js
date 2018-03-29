@@ -262,11 +262,8 @@ export const getRouterData = (app) => {
         '/system/icd-10/info': {
             component: dynamicWrapper(app, ['system'], () => import('../routes/system/icd-10/Info')),
         },
-        '/system/dept/list': {
+        '/system/dept': {
             component: dynamicWrapper(app, ['system'], () => import('../routes/system/dept/List')),
-        },
-        '/system/dept/info': {
-            component: dynamicWrapper(app, ['system'], () => import('../routes/system/dept/Info')),
         },
         '/system/tpl/smsTpl': {
             component: dynamicWrapper(app, ['system','task', 'category'], () => import('../routes/system/tpl/smsTpl')),
