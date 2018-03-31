@@ -192,7 +192,6 @@ class BasicLayout extends React.PureComponent {
                     } break;
                 case 104:
                     {
-
                         // 弹屏
                         this.props.dispatch({
                             type: 'callRecord/getCallDataByPhone',
