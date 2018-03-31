@@ -337,7 +337,7 @@ export default class TableList extends PureComponent {
                     {...parentMethods}
                     modalVisible={modalVisible}
                     rolePayload={rolePayload}
-                    roles={category.Duties}
+                    roles={category.Roles}
                 />
             </PageHeaderLayout>
         );

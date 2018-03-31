@@ -86,9 +86,9 @@ class BasicLayout extends React.PureComponent {
                 isMobile: mobile,
             });
         });
-        // this.props.dispatch({
-        //     type: 'user/fetchCurrent',
-        // });
+        this.props.dispatch({
+            type: 'user/fetchCurrent',
+        });
         /**
          * 试试刷新的category, 需要场景自己发送请求，不能aop
          */
@@ -156,48 +156,73 @@ class BasicLayout extends React.PureComponent {
         // 系统接听电话
         // 系统挂断电话
         // TODO,系统拿到录音，上传
-        window.call = (phone) => {
+        window.call = (to) => {
             console.log(phone);
+            if (window.url_StartDial(0, to) <= 0) {
+                console.log("拨号错误");
+            }
+            else {
+                console.log("拨号:" + to);
+            }
         }
         window.answer = (phone) => {
-            console.log("answer"+phone);
+            console.log("answer" + phone);
+            if (url_DoAnswer(0) < 0) {
+                console.log("usb设备应答错误");
+            }
+            else {
+                console.log("usb设备应答");
+            }
         }
         window.hangup = () => {
             console.log('hangup!!!')
+            if (url_DoHang(0) < 0) {
+                console.log("挂机错误");
+            }
+            else {
+                console.log("挂机");
+            }
         }
         // call-event
-        window.callIn = (phone) => {
-            // 弹屏
-            this.props.dispatch({
-                type: 'callRecord/getCallDataByPhone',
-                payload: {phone},
-                callback: data => {
-                    if (data.result == 1000) {
-                        this.setState({
-                            name: '未知号码',
-                            phone,
-                            callVisible: true
-                        })
-                    } else {
-                        this.setState({
-                            ...data.data,
-                            phone,
-                            callVisible: true
-                        })
-                    }
+        window.event_callin = (tagaccount, eventObj) => {
+            switch (eventObj.result) {
+                case 102:
+                    {
+                        url_SetCaller(0, url_GetJsonCaller(eventObj));
+                    } break;
+                case 104:
+                    {
 
-                }
-            });
+                        // 弹屏
+                        this.props.dispatch({
+                            type: 'callRecord/getCallDataByPhone',
+                            payload: { phone },
+                            callback: data => {
+                                if (data.result == 1000) {
+                                    this.setState({
+                                        name: '未知号码',
+                                        phone,
+                                        callVisible: true
+                                    })
+                                } else {
+                                    this.setState({
+                                        ...data.data,
+                                        phone,
+                                        callVisible: true
+                                    })
+                                }
+
+                            }
+                        });
+                    } break;
+            }
         }
-        // setTimeout(() => {
-        //     callIn(18500812859);
-        // }, 2000);
     }
     answer() {
         this.setState({
             callVisible: false
         });
-        const {patientCode, phone, name} = this.state;
+        const { patientCode, phone, name } = this.state;
         window.answer(phone);
         if (name == '未知号码') return false;
         location.hash = `#/task/call?patientCode=${patientCode}`;
@@ -304,22 +329,22 @@ class BasicLayout extends React.PureComponent {
                         onNoticeVisibleChange={this.handleNoticeVisibleChange}
                     />
                     <Modal
-                      visible={callVisible}
-                      closable={false}
-                      footer={null}
-                      width={360}
+                        visible={callVisible}
+                        closable={false}
+                        footer={null}
+                        width={360}
                     >
-                        <div style={{textAlign: 'center', paddingTop: 20}}>
-                            <div style={{fontSize: 32}}>{name}</div>
-                            <div style={{fontSize: 16, color: '#1890ff', padding: 10}}>{phone}</div>
+                        <div style={{ textAlign: 'center', paddingTop: 20 }}>
+                            <div style={{ fontSize: 32 }}>{name}</div>
+                            <div style={{ fontSize: 16, color: '#1890ff', padding: 10 }}>{phone}</div>
                             <div>
-                                 <Button type="primary" icon="phone" onClick={this.answer.bind(this, phone)} style={{ margin: 16 }}>
+                                <Button type="primary" icon="phone" onClick={this.answer.bind(this, phone)} style={{ margin: 16 }}>
                                     接听
                                 </Button>
-                                <Button type="primary"  icon="poweroff" onClick={this.hangup.bind(this, phone)} style={{ margin: 16 }}>
+                                <Button type="primary" icon="poweroff" onClick={this.hangup.bind(this, phone)} style={{ margin: 16 }}>
                                     挂断
                                 </Button>
-                             </div>
+                            </div>
                         </div>
 
                     </Modal>

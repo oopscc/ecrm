@@ -1,10 +1,11 @@
 import {
   getSmsList,
   sendSms,
-  getTplList
+  getTplList,
+  sendWJSms
 } from '../services/sms';
 
-
+import {message} from 'antd';
 export default {
   namespace: 'sms',
 
@@ -30,7 +31,14 @@ export default {
       const response = yield call(sendSms, payload);
       if (callback) callback();
     },
-    
+    *sendWJSms({ payload, callback }, { call, put }) {
+        const response = yield call(sendWJSms, payload);
+        if (response && !response.result) {
+            message.success('发送成功');
+        }
+        if (callback) callback();
+      },
+
     *fetchTpls({ payload }, { call, put }) {
       const response = yield call(getTplList, payload);
       yield put({

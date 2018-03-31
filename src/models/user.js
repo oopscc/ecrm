@@ -9,6 +9,7 @@ import {
     updateRole,
     activateUser
 } from '../services/user';
+import { setAuthority, getUserName } from '../utils/authority';
 
 export default {
     namespace: 'user',
@@ -31,10 +32,11 @@ export default {
             });
         },
         *fetchCurrent(_, { call, put }) {
-            const response = yield call(queryCurrent);
+            // const response = yield call(queryCurrent);
+            const username = getUserName();
             yield put({
                 type: 'saveCurrentUser',
-                payload: response,
+                payload: {username},
             });
         },
         *getUser({ payload, callback }, { call, put }) {

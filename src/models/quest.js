@@ -68,6 +68,9 @@ export default {
         },
         *submitWJ({ payload, callback }, { call, put }) {
             const response = yield call(submitWJ, payload);
+            if (response && !response.result) {
+                message.success('发送成功');
+            }
             if (callback) callback(response);
         },
     },

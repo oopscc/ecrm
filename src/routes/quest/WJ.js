@@ -271,7 +271,7 @@ class Quest extends PureComponent {
                 <Form onSubmit={this.handleSubmit}>
                     {Title}
                     <FormItem style={{textAlign: 'center'}}>
-                        <Button type="primary" htmlType="submit" style={doneFlag ? {display: 'none'} : {}}>
+                        <Button type="primary" htmlType="submit" style={doneFlag ? {display: 'block'} : {}}>
                             提交
                         </Button>
                     </FormItem>

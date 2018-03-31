@@ -83,7 +83,6 @@ export default class TableList extends PureComponent {
     renderSimpleForm() {
         const { task: { tasks }, category } = this.props;
         const { getFieldDecorator } = this.props.form;
-        console.log(tasks);
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
                 <Row gutter={{ md: 8, lg: 24, xl: 48 }}>

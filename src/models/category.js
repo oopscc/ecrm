@@ -45,6 +45,7 @@ export default {
         Jobs: [],
         Doctors: [],
         Nurses: [],
+        Roles: [],
         taskState,
         flupType,
         sex,
@@ -178,6 +179,15 @@ export default {
             });
             if (callback) callback(response);
         },
+        //用户角色
+        *fetchRoles({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchRoles, payload);
+            yield put({
+				type: 'saveRoles',
+				payload: response.data.contentArray,
+            });
+            if (callback) callback(response);
+        },
         //随访结果
         *fetchCategory({ payload, callback }, { call, put }) {
             const response = yield call(API.fetchCategory, payload);
@@ -277,6 +287,12 @@ export default {
 			return {
 				...state,
 				Nurses: payload,
+			};
+        },
+        saveRoles(state, { payload }) {
+			return {
+				...state,
+				Roles: payload,
 			};
         },
         /**

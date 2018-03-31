@@ -15,7 +15,12 @@ export async function getSmsList(params) {
 export async function sendSms(params) {
   return req('/hospitalCRM/smsMessage/sendSms.do', params);
 }
+// 发送任务问卷
+export async function sendWJSms(params) {
+    return req('/hospitalCRM/smsMessage/sendWJSms.do', params);
+  }
 // 短信随访模版
 export async function getTplList(params) {
   return req('/hospitalCRM/smsMessage/smsTemplateList.do', params);
 }
+

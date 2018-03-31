@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Card, Badge, Table, Divider, Input, Button, Select } from 'antd';
+import { Form, Card, Badge, Table, Divider, Input, Button, Select, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import { routerRedux } from 'dva/router';
 
@@ -85,7 +85,12 @@ export default class BasicProfile extends Component {
         let phone = `0${mobile}`;
         window.call(phone);
     }
-
+    submitWj = id => {
+        this.props.dispatch({
+            type: 'sms/sendWJSms',
+            payload: { wjId: id, callIdArray: [this.state.id] }
+        });
+    }
     render() {
         const { loading, submitting, callRes } = this.props;
         const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -162,13 +167,38 @@ export default class BasicProfile extends Component {
                 dataIndex: 'questionnaireName',
                 key: 'questionnaireName',
                 width: 60,
-                render: (text, record) => <Link to={`/system/tpl/wj?id=${record.id}&doneFlag=${record.fillInTimeStr ? 1 : 0}`}>{record.questionnaireName}</Link>
+                render: (text, record) => <Link to={`/system/tpl/wj?id=${record.id}`}>{record.questionnaireName}</Link>
 
             }, {
                 title: '填写时间',
                 dataIndex: 'fillInTimeStr',
                 key: 'fillInTimeStr',
                 width: 60,
+            }];
+        const questColumns1 = [
+            {
+                title: '问卷名称',
+                dataIndex: 'questionnaireName',
+                key: 'questionnaireName',
+                width: 60,
+                render: (text, record) => <Link to={`/system/tpl/wj?id=${record.id}`}>{record.questionnaireName}</Link>
+
+            }, {
+                title: '填写时间',
+                dataIndex: 'fillInTimeStr',
+                key: 'fillInTimeStr',
+                width: 60,
+            }, {
+                title: '操作',
+                dataIndex: 'operation',
+                key: 'operation',
+                width: 60,
+                align: 'center',
+                render: (text, record) => {
+                    return <div>
+                        <Tag color="#2db7f5" onClick={this.submitWj.bind(this, record.id)}>发送短信问卷</Tag>
+                    </div>
+                }
             }];
         const smsColumns = [
             {
@@ -362,7 +392,7 @@ export default class BasicProfile extends Component {
                         pagination={false}
                         loading={loading}
                         dataSource={questData}
-                        columns={questColumns}
+                        columns={questColumns1}
                         rowKey="id"
                     />
                     <Divider style={{ marginBottom: 32 }} />

@@ -78,6 +78,11 @@ export async function fetchDoctors(params) {
 export async function fetchNurses(params) {
     return req('/hospitalCRM/user/nurseList.do', params);
 }
+
+// 角色
+export async function fetchRoles(params) {
+    return req('/hospitalCRM/user/roleList.do', params);
+}
 // 统一
 export async function fetchCategory(params) {
     return req('/hospitalCRM/patient/categoryList.do', params);

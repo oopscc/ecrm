@@ -138,7 +138,7 @@ const menuData = [{
     }],
 }, {
     name: '随访任务管理',
-    icon: 'user',
+    icon: 'form',
     path: 'task',
     children: [{
         name: '随访任务列表',
@@ -147,6 +147,7 @@ const menuData = [{
         name: '分配随访任务',
         // 条件查询患者列表 －> 设置条件，新建任务
         path: 'taskAdd',
+        authority: 'admin',
     }, {
         name: '随访任务详情',
         path: 'detail',
@@ -160,7 +161,7 @@ const menuData = [{
     }],
 }, {
     name: '随访结果统计',
-    icon: 'user',
+    icon: 'check-circle-o',
     path: 'count',
     children: [{
         name: '生存率统计',
@@ -171,16 +172,16 @@ const menuData = [{
     }],
 }, , {
     name: '系统管理',
-    icon: 'user',
+    icon: 'profile',
     path: 'system',
     children: [{
         name: '随访人员管理',
         path: 'user',
         children: [{
-            name: '人员列表－分配权限',
+            name: '人员列表',
             path: 'list',
         }, {
-            name: '新增人员',
+            name: '人员信息',
             path: 'info',
         }]
     }, {

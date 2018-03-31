@@ -132,7 +132,7 @@ export default class BasicForms extends PureComponent {
                         >
                             <div>
                                 {getFieldDecorator('sex', {
-                                    initialValue: user.sex+'',
+                                    initialValue:  user.sex ? user.sex+'' : '',
                                 })(
                                     <C_Select data={category.sex} style={{margin: '8px 0'}}/>
                                 )}
@@ -194,7 +194,7 @@ export default class BasicForms extends PureComponent {
                                 initialValue: user ? user.roleId : '',
                                 rules: [{ required: true, message: '请选择角色' }],
                             })(
-                                <C_Select data={category.Duties} style={{margin: '8px 0'}}/>
+                                <C_Select data={category.Roles} style={{margin: '8px 0'}}/>
                             )}
                         </FormItem>
                         <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
