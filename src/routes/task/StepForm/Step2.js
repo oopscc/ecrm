@@ -36,7 +36,6 @@ class Step2 extends React.PureComponent {
     }
     render() {
         const { form, task, dispatch, submitting, WJTpls, Users, SMSTpls, category } = this.props;
-        console.log(this.props);
         const { getFieldDecorator, validateFields } = form;
         const onPrev = () => {
             dispatch(routerRedux.goBack());

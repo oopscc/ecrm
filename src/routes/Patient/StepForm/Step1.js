@@ -27,6 +27,9 @@ class Step1 extends React.PureComponent {
     componentDidMount() {
         const { dispatch, location } = this.props;
         let { id, patientCode, name } = qs.parse(location.search);
+        this.props.dispatch({
+            type: 'category/fetchIcds',
+        });
         if (!id) {
             dispatch({
                 type: 'patient/clearDiagnoseInfo'
@@ -43,9 +46,7 @@ class Step1 extends React.PureComponent {
         }
         dispatch({
             type: 'patient/getDiagnose',
-            payload: {
-                id
-            }
+            payload: {id}
         });
     }
     render() {
@@ -57,6 +58,8 @@ class Step1 extends React.PureComponent {
                     ...values,
                     diagnoseTimeStr: values.diagnoseTimeStr ? values.diagnoseTimeStr.format('YYYY-MM-DD') : '',
                     admissionTimeStr: values.admissionTimeStr ? values.admissionTimeStr.format('YYYY-MM-DD') : '',
+                    outTimeStr: values.outTimeStr ? values.outTimeStr.format('YYYY-MM-DD') : '',
+                    cureMode: values.cureMode ? values.cureMode.toString() : ''
                 };
                 if (!err) {
                     dispatch({
@@ -176,7 +179,38 @@ class Step1 extends React.PureComponent {
                                 <C_Select data={category.Diseases} style={{ width: '50%' }}/>
                             )}
                         </FormItem>
-
+                        <FormItem
+                            {...formItemLayout}
+                            label="治疗方式"
+                        >
+                            {getFieldDecorator('cureMode', patient.cureMode && {
+                                initialValue: patient.cureMode.split(',')
+                            } || {})(
+                                <C_Select data={category.Cures}
+                                mode="multiple"
+                                style={{ width: '50%' }}/>
+                            )}
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="出院时间"
+                        >
+                            {getFieldDecorator('outTimeStr', patient && patient.outTimeStr && {
+                                initialValue: moment(patient.outTimeStr, 'YYYY-MM-DD')
+                            } || {})(
+                                <DatePicker />
+                            )}
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="出院科别"
+                        >
+                            {getFieldDecorator('outDept', {
+                                initialValue: patient.outDept,
+                            })(
+                                <C_Select data={depts} style={{ width: '50%' }}/>
+                            )}
+                        </FormItem>
                         <Button type="primary" onClick={onValidateForm}>
                             下一步
                         </Button>

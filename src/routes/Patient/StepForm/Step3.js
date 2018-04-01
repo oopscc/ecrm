@@ -39,7 +39,7 @@ class Step3 extends React.PureComponent {
         const { form, patient, dispatch, submitting, cures,  diseases, anesthesias, doctors } = this.props;
         const { getFieldDecorator, validateFields } = form;
         const onPrev = () => {
-            dispatch(routerRedux.push('/patient/diagnoseInfo'));
+            dispatch(routerRedux.goBack());
         };
         const onValidateForm = (e) => {
             e.preventDefault();

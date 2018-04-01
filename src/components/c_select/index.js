@@ -22,11 +22,14 @@ export default class C_select extends PureComponent {
         const { placeholder, mode, data, kv, style, needAll } = this.props;
         const [id , value] = kv;
         let all = {};
+        let list = [];
         if (needAll) {
             all[id] = '';
             all[value] = '全部';
+            list = [all, ...data]
+        } else {
+            list = [ ...data];
         }
-        const list = [all, ...data];
         return (
             <Select
                 {...this.props}

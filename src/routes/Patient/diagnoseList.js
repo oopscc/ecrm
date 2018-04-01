@@ -30,7 +30,7 @@ const columns = [
         key: 'diagnoseDept',
         width: 120
     }, {
-        title: '患者第几次住院',
+        title: '第几次住院',
         dataIndex: 'admissionNumber',
         key: 'admissionNumber',
         width: 120

@@ -324,8 +324,8 @@ export default class TableList extends PureComponent {
                 width: 80,
             }, {
                 title: '短信状态',
-                dataIndex: 'smsStageStr',
-                key: 'smsStageStr',
+                dataIndex: 'smsStateStr',
+                key: 'smsStateStr',
                 width: 80,
             }, {
                 title: '操作',

@@ -71,11 +71,10 @@ class Step2 extends React.PureComponent {
         });
     }
     render() {
-        const { form, dispatch, data, patient, cures,  diseases, category} = this.props;
+        const { form, dispatch, data, patient, cures, diseases, category } = this.props;
         const { getFieldDecorator, validateFields } = form;
-        console.log(category)
         const onPrev = () => {
-            dispatch(routerRedux.push('/patient/diagnoseInfo'));
+            dispatch(routerRedux.goBack());
         };
         const onValidateForm = () => {
             validateFields((err, values) => {
@@ -122,10 +121,10 @@ class Step2 extends React.PureComponent {
                     >
                         <Button type="primary" onClick={onValidateForm}>
                             下一步
-            </Button>
+                        </Button>
                         <Button onClick={onPrev} style={{ marginLeft: 8 }}>
                             上一步
-            </Button>
+                        </Button>
                     </Form.Item>
                 </Form>
                 <Divider style={{ margin: '40px 0 24px' }} />

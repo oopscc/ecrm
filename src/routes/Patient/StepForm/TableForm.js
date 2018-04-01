@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Table, Button, Input, message, Popconfirm, Divider } from 'antd';
+import { Table, Button, Input, message, Popconfirm, Divider, Select } from 'antd';
 import styles from './style.less';
 import C_Select from '../../../components/c_select';
 const diseaseType = [{
@@ -209,9 +209,19 @@ export default class TableForm extends PureComponent {
             render: (text, record) => {
                 if (record.editable) {
                     return (
-                        <C_Select data={icds} defaultValue={text}
+                        <Select
+                            showSearch
+                            defaultValue={text}
                             onChange={e => this.handleFieldChange(e, 'diagnoseCode', record.key)}
-                        />
+                            optionFilterProp="children"
+                            filterOption={(input, option) => {
+                                return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            }
+                        >
+                            {icds.map(item => {
+                                return <Select.Option key={item['id'] || Math.random()} value={item['id']}>{item['name']}</Select.Option>
+                            })}
+                        </Select>
                     );
                 }
                 return record.diagnoseName;
@@ -224,9 +234,19 @@ export default class TableForm extends PureComponent {
             render: (text, record) => {
                 if (record.editable) {
                     return (
-                        <C_Select data={icds} defaultValue={text}
+                        <Select
+                            showSearch
                             onChange={e => this.handleFieldChange(e, 'pathologyCode', record.key)}
-                        />
+                            placeholder="Select a person"
+                            optionFilterProp="children"
+                            filterOption={(input, option) => {
+                                return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                            }
+                        >
+                            {icds.map(item => {
+                                return <Select.Option key={item['id'] || Math.random()} value={item['id']}>{item['name']}</Select.Option>
+                            })}
+                        </Select>
                     );
                 }
                 return record.pathologyName;
