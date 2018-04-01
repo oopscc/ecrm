@@ -9,7 +9,7 @@ import {
     updateRole,
     activateUser
 } from '../services/user';
-import { setAuthority, getUserName } from '../utils/authority';
+import { getAuthority, getUserName } from '../utils/authority';
 
 export default {
     namespace: 'user',
@@ -76,7 +76,7 @@ export default {
             if (!response || +response.result) {return}
             yield put({
                 type: 'updateUsers',
-                payload: response,
+                payload,
             });
         },
         *activateUser({ payload, callback }, { call, put }) {
@@ -98,7 +98,10 @@ export default {
         saveCurrentUser(state, action) {
             return {
                 ...state,
-                currentUser: action.payload,
+                currentUser: {
+                    ...action.payload,
+                    ...{auth: getAuthority()}
+                },
             };
         },
         changeNotifyCount(state, action) {

@@ -47,7 +47,8 @@ export default class Analysis extends Component {
     state = {
         currentTabKey: '',
         rangePickerValue: getTimeDistance('month'),
-        pieType: 'year'
+        pieType: 'year',
+        piedata: []
     };
 
     componentDidMount() {
@@ -70,8 +71,10 @@ export default class Analysis extends Component {
     }
 
     handleChangePieType = (e) => {
+        let pieType = e.target.value
         this.setState({
-            pieType: e.target.value,
+            pieType,
+            piedata: this.props.count.callResData[`${pieType}PieData`]
         });
     };
 
@@ -112,24 +115,23 @@ export default class Analysis extends Component {
     render() {
         const { rangePickerValue, currentTabKey, pieType } = this.state;
         const { chart, loading, count, tasks, taskState } = this.props;
-
         const { totalCallData, dayCallData, newCallData, trendData, callResData } = count;
-
+        const piedata = callResData[`${pieType}PieData`];
         const salesExtra = (
             <div className={styles.salesExtraWrap}>
                 <div className={styles.salesExtra}>
                     <a className={this.isActive('today')} onClick={() => this.selectDate('today')}>
                         今日
-          </a>
+                    </a>
                     <a className={this.isActive('week')} onClick={() => this.selectDate('week')}>
                         本周
-          </a>
+                    </a>
                     <a className={this.isActive('month')} onClick={() => this.selectDate('month')}>
                         本月
-          </a>
+                    </a>
                     <a className={this.isActive('year')} onClick={() => this.selectDate('year')}>
                         全年
-          </a>
+                    </a>
                 </div>
                 <RangePicker
                     value={rangePickerValue}
@@ -195,7 +197,7 @@ export default class Analysis extends Component {
             xl: 8,
             style: { marginBottom: 24 },
         };
-
+        console.log(callResData[`${pieType}PieData`]);
         return (
             <div>
                 <Row gutter={24}>
@@ -271,7 +273,7 @@ export default class Analysis extends Component {
                                             <h4 className={styles.rankingTitle}>随访护士排名</h4>
                                             <ul className={styles.rankingList}>
                                                 {trendData.rankingList.map((item, i) => (
-                                                    <li key={item.title}>
+                                                    <li key={item.name}>
                                                         <span className={i < 3 ? styles.active : ''}>{i + 1}</span>
                                                         <span>{item.name}</span>
                                                         <span>{numeral(item.num).format('0,0')}</span>
@@ -324,16 +326,25 @@ export default class Analysis extends Component {
                             }
                             style={{ marginTop: 24, minHeight: 509 }}
                         >
-                            <h4 style={{ marginTop: 8, marginBottom: 32 }}>随访结果</h4>
-                            <Pie
-                                hasLegend
-                                subTitle="统计总数"
-                                total={yuan(callResData[`${pieType}PieData`].reduce((pre, now) => now.y + pre, 0))}
-                                data={callResData[`${pieType}PieData`]}
-                                valueFormat={val => yuan(val)}
-                                height={248}
-                                lineWidth={4}
-                            />
+                            {
+                            piedata.reduce((pre, now) => now.y + pre, 0) >0 &&
+                            <div>
+                                <h4 style={{ marginTop: 8, marginBottom: 32 }}>随访结果</h4>
+                                <Pie
+                                    hasLegend
+                                    subTitle="统计总数"
+                                    total={piedata.reduce((pre, now) => now.y + pre, 0)}
+                                    data={piedata}
+                                    valueFormat={val => val}
+                                    height={248}
+                                    lineWidth={4}
+                                />
+                            </div>
+                            }
+                            {
+                                piedata.reduce((pre, now) => now.y + pre, 0) ==0 &&
+                                <h4 style={{ marginTop: 8, marginBottom: 32 }}>暂无数据</h4>
+                            }
                         </Card>
                     </Col>
                 </Row>

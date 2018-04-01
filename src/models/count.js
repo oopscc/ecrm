@@ -121,7 +121,7 @@ export default {
             total: 0, // 当月随访总量
             avgNum: 0, // 当月日均随访量
             weekTrend: 0, // 上周同上上周随访量同比
-            dayTrend: 0 
+            dayTrend: 0
         },
         dayCallData: {
             total: 0, // 周随访总量
@@ -200,8 +200,10 @@ export default {
             });
         },
         *fetchScl({ payload, callback }, { call, put }) {
-            // const response = yield call(fetchScl, payload);
-            const response = {data};
+            const response = yield call(fetchScl, {
+                ...payload,
+                templateList:['00001', '00002', '00003', '00004', '00005']
+            });
             yield put({
                 type: 'saveSurvivalLine',
                 payload: response.data.survivalRate,
@@ -256,7 +258,7 @@ export default {
                 payload: response.data,
             });
         },
-        
+
     },
     reducers: {
         saveHospitalData(state, { payload }) {
@@ -282,7 +284,7 @@ export default {
                         item.y = item.score;
                         return item;
                     }),
-                    rankingData: [...payload.rankingArray]
+                    rankingData: [...payload.rankingArray].slice(0, 7)
                 }
             };
         },
@@ -296,7 +298,7 @@ export default {
                         item.y = item.score;
                         return item;
                     }),
-                    rankingData: [...payload.rankingArray]
+                    rankingData: [...payload.rankingArray].slice(0, 7)
                 }
             };
         },
@@ -324,14 +326,14 @@ export default {
             for (let [key, title] of Object.entries(menu)) {
                 const rObj = {
                     title,
-                    M3: data.M3 && data.M3[key] || 0,
-                    M6: data.M6 && data.M6[key] || 0,
-                    M9: data.M9 && data.M9[key] || 0,
-                    M12: data.M12 && data.M12[key] || 0,
-                    M24: data.M24 && data.M24[key] || 0,
-                    M36: data.M36 && data.M36[key] || 0,
-                    M48: data.M48 && data.M48[key] || 0,
-                    M60: data.M60 && data.M60[key] || 0,
+                    M3: data.M3 && +data.M3[key].toFixed(2)*1 || 0,
+                    M6: data.M6 && +data.M6[key].toFixed(2)*1 || 0,
+                    M9: data.M9 && +data.M9[key].toFixed(2)*1 || 0,
+                    M12: data.M12 && +data.M12[key].toFixed(2)*1 || 0,
+                    M24: data.M24 && +data.M24[key].toFixed(2)*1 || 0,
+                    M36: data.M36 && +data.M36[key].toFixed(2)*1 || 0,
+                    M48: data.M48 && +data.M48[key].toFixed(2)*1 || 0,
+                    M60: data.M60 && +data.M60[key].toFixed(2)*1 || 0,
                 };
                 res.push(rObj);
             }
@@ -352,9 +354,9 @@ export default {
                     titleName: payload.titleName,
                     data: payload.diseaseRateArr.map(item => {
                         item.x = item.name;
-                        item.y = item.resultRate;
+                        item.y = item.accordCount;
                         return item;
-                    })
+                    }).slice(0, 7)
                 }
             };
         },
@@ -366,9 +368,9 @@ export default {
                     titleName: payload.titleName,
                     data: payload.cureModeRateArr.map(item => {
                         item.x = item.name;
-                        item.y = item.resultRate;
+                        item.y = item.accordCount;
                         return item;
-                    })
+                    }).slice(0, 8)
                 }
             };
         },
@@ -408,7 +410,8 @@ export default {
                         item.x = item.name;
                         item.y = item.num;
                         return item;
-                    })
+                    }),
+                    rankingList: payload.rankingList
                 }
             };
         },
@@ -421,17 +424,17 @@ export default {
                         item.x = item.name;
                         item.y = item.num;
                         return item;
-                    }),
+                    }).slice(0,8),
                     monthPieData: payload.monthPieData.map(item => {
                         item.x = item.name;
                         item.y = item.num;
                         return item;
-                    }),
+                    }).slice(0,8),
                     yearPieData: payload.yearPieData.map(item => {
                         item.x = item.name;
                         item.y = item.num;
                         return item;
-                    })
+                    }).slice(0,8)
                 }
             };
         },

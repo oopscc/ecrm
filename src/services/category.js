@@ -32,8 +32,10 @@ export async function fetchUsers(params) {
 export async function fetchDiseases(params) {
     return req('/hospitalCRM/diseaseKind/diseaseLikeList.do', params);
 }
-
-
+// 疾病列表
+export async function fetchIcds(params) {
+    return req('/hospitalCRM/illnessCoding/illnessPageQuery.do', params);
+}
 // 患者状态
 export async function fetchPStates(params) {
     return req('/hospitalCRM/patient/patientStateList.do', params);

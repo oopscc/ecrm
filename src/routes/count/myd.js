@@ -53,7 +53,7 @@ export default class Analysis extends Component {
     };
 
     componentDidMount() {
-        const {depts, doctors} = this.props;
+        const { depts, doctors } = this.props;
         this.setState({
             currentDept: depts[0],
             currentDoctor: doctors[0],
@@ -72,13 +72,13 @@ export default class Analysis extends Component {
 
         // 获取医院data
         this.fetch('', 1, this.state.rangePickerValue);
-        // this.props.dispatch({
-        //     type: 'count/fetch',
-        //     payload: {
-        //         currentDept: depts[0],
-        //         currentDoctor: doctors[0]
-        //     }
-        // });
+        this.props.dispatch({
+            type: 'count/fetch',
+            payload: {
+                currentDept: depts[0],
+                currentDoctor: doctors[0]
+            }
+        });
     }
     // 拿到科室，人员列表之后，开始搜索一次绘图
     componentWillReceiveProps(nextProps) {
@@ -170,9 +170,9 @@ export default class Analysis extends Component {
     }
 
     render() {
-        const { rangePickerValue, currentDept, currentDoctor, deptPicker, doctorPicker} = this.state;
+        const { rangePickerValue, currentDept, currentDoctor, deptPicker, doctorPicker } = this.state;
         const { loading, depts, doctors, count } = this.props;
-        const {doctorData, deptData, hospitalData} = count;
+        const { doctorData, deptData, hospitalData } = count;
         const salesExtra = type => {
             const pickerValue = type == 1 ? rangePickerValue : type == 2 ? deptPicker : doctorPicker;
             return (
@@ -202,7 +202,7 @@ export default class Analysis extends Component {
         return (
             <div>
 
-                { hospitalData.chartData[0] && <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
+                {hospitalData.chartData[0] && <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
                     <div className={styles.salesCard}>
                         <Tabs tabBarExtraContent={salesExtra(1)} size="large" tabBarStyle={{ marginBottom: 24 }}>
                             <TabPane tab="医院满意度统计" key="1">
@@ -225,7 +225,7 @@ export default class Analysis extends Component {
                                 <Row>
                                     <Col xl={16} lg={12} md={12} sm={24} xs={24}>
                                         <div className={styles.salesBar}>
-                                            <Bar height={295} title={currentDept ? currentDept.name + "满意度趋势" : ''} data={deptData.chartData} />
+                                            <Bar height={295} title={currentDept ? currentDept.name + "的满意度趋势" : ''} data={deptData.chartData} />
                                         </div>
                                     </Col>
                                     <Col xl={8} lg={12} md={12} sm={24} xs={24}>
@@ -255,7 +255,7 @@ export default class Analysis extends Component {
                                 <Row>
                                     <Col xl={16} lg={12} md={12} sm={24} xs={24}>
                                         <div className={styles.salesBar}>
-                                            <Bar height={295} title={currentDoctor ? currentDoctor.name + "满意度趋势" : ''} data={doctorData.chartData} />
+                                            <Bar height={295} title={currentDoctor ? currentDoctor.name + "的满意度趋势" : ''} data={doctorData.chartData} />
                                         </div>
                                     </Col>
                                     <Col xl={8} lg={12} md={12} sm={24} xs={24}>

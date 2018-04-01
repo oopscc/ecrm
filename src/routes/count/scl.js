@@ -35,14 +35,6 @@ import styles from './scl.less';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
-const rankingListData = [];
-for (let i = 0; i < 7; i += 1) {
-    rankingListData.push({
-        title: `工专路 ${i} 号店`,
-        total: 323234,
-    });
-}
-
 @connect(({ loading, count }) => ({
     count,
     loading: loading.effects['chart/fetch'],
@@ -119,10 +111,10 @@ export default class Analysis extends Component {
     render() {
         const { rangePickerValue, salesType, currentTabKey } = this.state;
         const { loading, count } = this.props;
-        
-        const {survivalLine, survivalRate, diseaseRate,  cureModeRate} = count;
-        
 
+        const { survivalLine, survivalRate, diseaseRate, cureModeRate } = count;
+
+        console.log({count});
         const columns = [
             {
                 title: '项目/月',
@@ -223,13 +215,13 @@ export default class Analysis extends Component {
                             bordered={false}
                             title={diseaseRate.titleName}
                             bodyStyle={{ padding: 24 }}
-                            
+
                             style={{ marginTop: 24, minHeight: 400 }}
                         >
                             <Pie
                                 hasLegend
                                 subTitle="患者总数"
-                                total={yuan(diseaseRate.data.reduce((pre, now) => now.y + pre, 0))}
+                                total={diseaseRate.data.reduce((pre, now) => now.y + pre, 0)}
                                 data={diseaseRate.data}
                                 valueFormat={val => numeral(val).format('0,0')}
                                 height={248}
@@ -244,13 +236,13 @@ export default class Analysis extends Component {
                             bordered={false}
                             title={cureModeRate.titleName}
                             bodyStyle={{ padding: 24 }}
-                            
+
                             style={{ marginTop: 24, minHeight: 400 }}
                         >
                             <Pie
                                 hasLegend
                                 subTitle="患者总数"
-                                total={yuan(cureModeRate.data.reduce((pre, now) => now.y + pre, 0))}
+                                total={cureModeRate.data.reduce((pre, now) => now.y + pre, 0)}
                                 data={cureModeRate.data}
                                 valueFormat={val => numeral(val).format('0,0')}
                                 height={248}
@@ -259,7 +251,7 @@ export default class Analysis extends Component {
                         </Card>
                     </Col>
                 </Row>
-                <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginTop: 24}}>
+                <Card loading={loading} bordered={false} bodyStyle={{ padding: 0, marginTop: 24 }}>
                     <div className={styles.salesCard}>
                         <Table
                             loading={loading}
@@ -279,14 +271,14 @@ export default class Analysis extends Component {
                                             <Bar height={295} title={survivalLine.titleName} data={survivalLine.data} />
                                         </div>
                                     </Col>
-                                    
+
                                 </Row>
                             </TabPane>
-                            
+
                         </Tabs>
                     </div>
                 </Card>
-                
+
             </div>
         );
     }

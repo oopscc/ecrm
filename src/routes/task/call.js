@@ -88,7 +88,14 @@ export default class BasicProfile extends Component {
     submitWj = id => {
         this.props.dispatch({
             type: 'sms/sendWJSms',
-            payload: { wjId: id, callIdArray: [this.state.id] }
+            payload: { wjId: id, callIdArray: [this.state.id]},
+            callback: (res) => {
+                if (res && !res.result) {
+                    let wjId = {};
+                    wjId[id] = true;
+                    this.setState(wjId);
+                }
+            }
         });
     }
     render() {
@@ -196,7 +203,7 @@ export default class BasicProfile extends Component {
                 align: 'center',
                 render: (text, record) => {
                     return <div>
-                        <Tag color="#2db7f5" onClick={this.submitWj.bind(this, record.id)}>发送短信问卷</Tag>
+                        <Button type="primary" disabled={this.state[record.id] || record.doneFlag == 1} onClick={this.submitWj.bind(this, record.id)}>发送短信问卷</Button>
                     </div>
                 }
             }];
@@ -277,7 +284,7 @@ export default class BasicProfile extends Component {
                                 <Input placeholder="联系电话" disabled={true} />
                             )}
                         </FormItem>
-                        <FormItem
+                        {/* <FormItem
                             {...formItemLayout}
                             label='显示号码'
                         >
@@ -322,7 +329,7 @@ export default class BasicProfile extends Component {
                                     })}
                                 </Select>
                             )}
-                        </FormItem>
+                        </FormItem> */}
                         <FormItem
                             {...formItemLayout}
                             label='随访结果'

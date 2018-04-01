@@ -43,7 +43,7 @@ const CreateForm = Form.create()((props) => {
                     initialValue: rolePayload.roleId,
                     rules: [{ required: true, message: 'Please input some description...' }],
                 })(
-                    <C_Select data={roles} style={{width: '80%'}}/>
+                    <C_Select data={roles} style={{ width: '80%' }} />
                 )}
             </FormItem>
         </Modal>
@@ -86,7 +86,7 @@ export default class TableList extends PureComponent {
             type: 'user/updateRole',
             payload,
             callback(res) {
-                if(res && !res.result) {
+                if (res && !res.result) {
                     message.success('修改成功');
                 }
             }
@@ -181,12 +181,12 @@ export default class TableList extends PureComponent {
         this.setState(data);
         this.props.dispatch({
             type: 'user/editUserLock',
-            payload: {id, lockFlag: lockFlag ? 1 : 0},
+            payload: { id, lockFlag: lockFlag ? 1 : 0 },
             callback: res => {
                 let data = {};
                 data[`switchId_${id}`] = false;
                 this.setState(data);
-                if(res && !res.result) {
+                if (res && !res.result) {
                     message.success('修改成功');
                 }
             }
@@ -196,9 +196,9 @@ export default class TableList extends PureComponent {
     resetPassword(id) {
         this.props.dispatch({
             type: 'user/resetPassword',
-            payload: {id},
+            payload: { id },
             callback(res) {
-                if(res && !res.result) {
+                if (res && !res.result) {
                     message.success('修改成功');
                 }
             }
@@ -223,9 +223,9 @@ export default class TableList extends PureComponent {
         }
     }
     render() {
-        const { user: { users: data }, loading, category } = this.props;
+        const { user: { users: data, currentUser }, loading, category } = this.props;
         const { modalVisible, rolePayload } = this.state;
-        const columns = [
+        let columns = [
             {
                 title: '序号',
                 dataIndex: 'id',
@@ -233,7 +233,7 @@ export default class TableList extends PureComponent {
                 width: 80,
                 align: 'center',
                 render: (text, record, index) => {
-                    let {currentPage: current, pageSize: size} = data.pagination;
+                    let { currentPage: current, pageSize: size } = data.pagination;
                     return (current - 1) * size + +index + 1;
                 },
             },
@@ -276,37 +276,44 @@ export default class TableList extends PureComponent {
                 width: 100
             }, {
                 title: '角色',
-                dataIndex: 'role',
-                key: 'role',
-                width: 100
-            }, {
-                title: '锁定',
-                dataIndex: 'lockFlag',
-                key: 'lockFlag',
+                dataIndex: 'roleId',
+                key: 'roleId',
                 width: 100,
-                render: (text, record) => {
-                    return <Switch checkedChildren={<Icon type="check" />} unCheckedChildren={<Icon type="cross" />} defaultChecked={!!+text} onChange={this.editUserLock.bind(this,record.id)} checked={!!+record.lockFlag}
-                    loading={this.state[`switchId_${record.id}`]}
-                    />
-                }
-            }, {
-                title: '操作',
-                key: 'operation',
-                width: 100,
-                fixed: 'right',
-                render: (text, record) => {
-                    return <DropOption onMenuClick={e => this.handleOptionClick(record, e)}
-                        menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '重置密码' }, { key: '3', name: '修改角色' }]} />
+                render: (roleId, record) => {
+                    return <div>{category.Roles.filter(item => item.id == roleId)[0].name}</div>
                 }
             }];
-
-            const menu = (
+        if (currentUser.auth === 'admin') {
+            const operation = [
+                {
+                    title: '锁定',
+                    dataIndex: 'lockFlag',
+                    key: 'lockFlag',
+                    width: 100,
+                    render: (text, record) => {
+                        return <Switch checkedChildren={<Icon type="check" />} unCheckedChildren={<Icon type="cross" />} defaultChecked={!!+text} onChange={this.editUserLock.bind(this, record.id)} checked={!!+record.lockFlag}
+                            loading={this.state[`switchId_${record.id}`]}
+                        />
+                    }
+                }, {
+                    title: '操作',
+                    key: 'operation',
+                    width: 100,
+                    fixed: 'right',
+                    render: (text, record) => {
+                        return <DropOption onMenuClick={e => this.handleOptionClick(record, e)}
+                            menuOptions={[{ key: '1', name: '编辑' }, { key: '2', name: '重置密码' }, { key: '3', name: '修改角色' }]} />
+                    }
+                }]
+            columns = [...columns, ...operation];
+        }
+        const menu = (
             <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
                 <Menu.Item key="remove">删除</Menu.Item>
                 <Menu.Item key="approval">批量审批</Menu.Item>
             </Menu>
         );
-
+        console.log(this.props.user);
         const parentMethods = {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,

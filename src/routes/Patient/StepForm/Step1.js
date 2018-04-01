@@ -49,7 +49,7 @@ class Step1 extends React.PureComponent {
         });
     }
     render() {
-        const { patient, dispatch, data, form, depts, doctors } = this.props;
+        const { patient, dispatch, data, form, depts, doctors, category } = this.props;
         const { getFieldDecorator, validateFields } = form;
         const onValidateForm = () => {
             validateFields((err, values) => {
@@ -166,6 +166,16 @@ class Step1 extends React.PureComponent {
                                 <C_Select data={depts} style={{ width: '50%' }}/>
                             )}
                         </FormItem>
+                        <FormItem
+                            {...formItemLayout}
+                            label="诊断病种"
+                        >
+                            {getFieldDecorator('diseaseId', {
+                                initialValue: patient.diseaseId,
+                            })(
+                                <C_Select data={category.Diseases} style={{ width: '50%' }}/>
+                            )}
+                        </FormItem>
 
                         <Button type="primary" onClick={onValidateForm}>
                             下一步
@@ -185,5 +195,6 @@ class Step1 extends React.PureComponent {
 export default connect(({ patient, category }) => ({
     patient: patient.diagnoseInfo,
     depts: category.Depts,
-    doctors: category.Doctors
+    doctors: category.Doctors,
+    category
 }))(Step1);

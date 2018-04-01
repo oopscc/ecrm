@@ -34,9 +34,9 @@ export default {
     *sendWJSms({ payload, callback }, { call, put }) {
         const response = yield call(sendWJSms, payload);
         if (response && !response.result) {
-            message.success('发送成功');
+            message.success('提交请求成功');
         }
-        if (callback) callback();
+        if (callback) callback(response);
       },
 
     *fetchTpls({ payload }, { call, put }) {

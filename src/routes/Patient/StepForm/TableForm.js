@@ -31,13 +31,16 @@ export default class TableForm extends PureComponent {
         const data = (props.value.diagnoseRecords || []).map(item => {
             return { ...item, key: item.id }
         })
+        const icds = props.value.icds;
         this.state = {
             data,
             cures: diseaseType || [],
             diseases: admissionState || [],
             loading: false,
+            icds
         };
     }
+
     componentWillReceiveProps(nextProps) {
         // if ('value' in nextProps) {
         //     this.setState({
@@ -101,6 +104,12 @@ export default class TableForm extends PureComponent {
         const target = this.getRowByKey(key, newData);
         if (target) {
             target[fieldName] = value;
+            if (fieldName === 'diagnoseCode' && value) {
+                target.diagnoseName = this.state.icds.filter(item => item.id == value)[0].name
+            }
+            if (fieldName === 'pathologyCode' && value) {
+                target.pathologyName = this.state.icds.filter(item => item.id == value)[0].name
+            }
             this.setState({ data: newData });
         }
     }
@@ -158,7 +167,7 @@ export default class TableForm extends PureComponent {
         this.setState({ data: newData });
     }
     render() {
-        const { cures, diseases } = this.state;
+        const { cures, diseases, icds } = this.state;
         const columns = [{
             title: '诊断类型',
             dataIndex: 'diagnoseMode',
@@ -194,37 +203,33 @@ export default class TableForm extends PureComponent {
             },
         }, {
             title: '诊断名称',
-            dataIndex: 'diagnoseName',
-            key: 'diagnoseName',
-            width: '15%',
-            render: (text, record) => {
-                if (record.editable) {
-                    return (
-                        <Input
-                            value={text}
-                            onChange={e => this.handleFieldChange(e.target.value, 'diagnoseName', record.key)}
-                            placeholder="所属部门"
-                        />
-                    );
-                }
-                return text;
-            },
-        }, {
-            title: '诊断疾病编码',
             dataIndex: 'diagnoseCode',
             key: 'diagnoseCode',
             width: '15%',
             render: (text, record) => {
                 if (record.editable) {
                     return (
-                        <Input
-                            value={text}
-                            onChange={e => this.handleFieldChange(e.target.value, 'diagnoseCode', record.key)}
-                            placeholder="所属部门"
+                        <C_Select data={icds} defaultValue={text}
+                            onChange={e => this.handleFieldChange(e, 'diagnoseCode', record.key)}
                         />
                     );
                 }
-                return text;
+                return record.diagnoseName;
+            },
+        }, {
+            title: '病理诊断名称',
+            dataIndex: 'pathologyCode',
+            key: 'pathologyCode',
+            width: '15%',
+            render: (text, record) => {
+                if (record.editable) {
+                    return (
+                        <C_Select data={icds} defaultValue={text}
+                            onChange={e => this.handleFieldChange(e, 'pathologyCode', record.key)}
+                        />
+                    );
+                }
+                return record.pathologyName;
             },
         }, {
             title: '入院病情',

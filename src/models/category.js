@@ -37,6 +37,7 @@ export default {
         Cures: [],
         Depts: [],
         Diseases: [],
+        Icds: [],
         PStates: [],
         Users: [],
         Pays: [],
@@ -86,6 +87,24 @@ export default {
             yield put({
 				type: 'saveDiseases',
 				payload: response.data.contentArray,
+            });
+            if (callback) callback(response);
+        },
+        // 疾病
+        *fetchIcds({ payload, callback }, { call, put }) {
+            const response = yield call(API.fetchIcds, {
+                currentPage: 1,
+                pageSize: 100
+            });
+            yield put({
+				type: 'saveIcds',
+				payload: [
+                    ...response.data.rows.map(item => {
+                        item.id = item.illnessCode;
+                        item.name = item.illnessName
+                        return {...item}
+                    })
+                ],
             });
             if (callback) callback(response);
         },
@@ -184,7 +203,7 @@ export default {
             const response = yield call(API.fetchRoles, payload);
             yield put({
 				type: 'saveRoles',
-				payload: response.data.contentArray,
+				payload: response.data,
             });
             if (callback) callback(response);
         },
@@ -241,6 +260,12 @@ export default {
 				Diseases: payload,
 			};
         },
+        saveIcds(state, { payload }) {
+			return {
+				...state,
+				Icds: payload,
+			};
+        },
         savePStates(state, { payload }) {
 			return {
 				...state,
@@ -290,9 +315,10 @@ export default {
 			};
         },
         saveRoles(state, { payload }) {
+            console.log(payload)
 			return {
 				...state,
-				Roles: payload,
+				Roles: payload
 			};
         },
         /**

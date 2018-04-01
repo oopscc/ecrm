@@ -64,9 +64,16 @@ const tableData = [{
 
 @Form.create()
 class Step2 extends React.PureComponent {
+    componentDidMount() {
+        const { dispatch } = this.props;
+        this.props.dispatch({
+            type: 'category/fetchIcds',
+        });
+    }
     render() {
-        const { form, dispatch, data, patient, cures,  diseases} = this.props;
+        const { form, dispatch, data, patient, cures,  diseases, category} = this.props;
         const { getFieldDecorator, validateFields } = form;
+        console.log(category)
         const onPrev = () => {
             dispatch(routerRedux.push('/patient/diagnoseInfo'));
         };
@@ -100,7 +107,8 @@ class Step2 extends React.PureComponent {
                             initialValue: {
                                 ...patient,
                                 cures,
-                                diseases
+                                diseases,
+                                icds: category.Icds
                             },
                         })(<TableForm onChange={onChange} />)}
                     </Card>
@@ -133,6 +141,7 @@ class Step2 extends React.PureComponent {
 export default connect(({ patient, category }) => ({
     patient: patient.diagnoseInfo,
     diseases: category.Diseases,
-    cures: category.Cures
+    cures: category.Cures,
+    category
 }))(Step2);
 

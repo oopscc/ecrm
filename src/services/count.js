@@ -24,7 +24,7 @@ export async function fetchMyd(params) {
 }
 // 生存率数据
 export async function fetchScl(params) {
-    return req('/hospitalCRM/satisfaction/countList.do', params);
+    return req('/hospitalCRM/statTemplate/statTemplateResult.do', params);
 }
 
 // 首页数据
