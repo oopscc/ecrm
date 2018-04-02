@@ -313,7 +313,6 @@ export default class TableList extends PureComponent {
                 <Menu.Item key="approval">批量审批</Menu.Item>
             </Menu>
         );
-        console.log(this.props.user);
         const parentMethods = {
             handleAdd: this.handleAdd,
             handleModalVisible: this.handleModalVisible,

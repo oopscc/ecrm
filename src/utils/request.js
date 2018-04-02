@@ -74,6 +74,9 @@ export default function request(url, options) {
                     const { dispatch } = store;
                     dispatch({
                         type: 'login/logout',
+                        payload: {
+                            notReal: true
+                        }
                     });
                     return;
                 }

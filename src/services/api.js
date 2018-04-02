@@ -92,6 +92,12 @@ export async function fakeAccountLogin(params) {
         body: params,
     });
 }
+export async function fakeLogout(params) {
+    return request('/hospitalCRM/user/logout.do', {
+        method: 'POST',
+        body: params,
+    });
+}
 
 export async function queryPatients(params) {
     return request('/hospitalCRM/patient/allPatientList.do', {

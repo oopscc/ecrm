@@ -199,6 +199,7 @@ const menuData = [{
         }, {
             name: '问卷详情',
             path: 'wj',
+            hideInMenu: true,
         }]
     }, {
         name: '病种管理',

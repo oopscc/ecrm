@@ -69,7 +69,6 @@ export default class BasicForms extends PureComponent {
     }
     render() {
         const { submitting, form, category } = this.props;
-        console.log(category.Roles)
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const { user } = this.state;
         const formItemLayout = {

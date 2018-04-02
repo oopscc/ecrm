@@ -8,7 +8,6 @@ export default class DynamicFieldSet extends React.Component {
     constructor(props) {
         super(props);
         const {replys} = props;
-        console.log(replys);
         this.state = {
             keys: Array.from(replys, (x, index) => `replyId${index}`),
             uuid: replys.length,
@@ -23,7 +22,7 @@ export default class DynamicFieldSet extends React.Component {
         })
 
     }
-    
+
     remove = (k) => {
         const { form } = this.props;
         const keys = this.state.keys;
@@ -48,7 +47,7 @@ export default class DynamicFieldSet extends React.Component {
             keys: nextKeys,
             smsReplys: newsmsReplys
         })
-    } 
+    }
 
 
     render() {
@@ -95,7 +94,7 @@ export default class DynamicFieldSet extends React.Component {
                                 {getFieldDecorator(`smsReplys[${replyId}].replyContent`, {
                                     initialValue: smsReplys[index].replyContent,
                                     validateTrigger: ['onChange', 'onBlur'],
-                                    
+
                                 })(
                                     <Input placeholder="passenger name" style={{ width: '90%' }} />
                                 )}
@@ -112,10 +111,10 @@ export default class DynamicFieldSet extends React.Component {
                                 {getFieldDecorator(`smsReplys[${replyId}].contentResult`, {
                                     initialValue: smsReplys[index].contentResult,
                                     validateTrigger: ['onChange', 'onBlur'],
-                                    
+
                                 })(
-                                    <C_Select 
-                                        data={PStates} 
+                                    <C_Select
+                                        data={PStates}
                                         style={{ width: '56%', color: '#999', marginRight: 4 }}
                                     />
                                 )}

@@ -197,7 +197,6 @@ export default class Analysis extends Component {
             xl: 8,
             style: { marginBottom: 24 },
         };
-        console.log(callResData[`${pieType}PieData`]);
         return (
             <div>
                 <Row gutter={24}>

@@ -114,7 +114,6 @@ export default class Analysis extends Component {
 
         const { survivalLine, survivalRate, diseaseRate, cureModeRate } = count;
 
-        console.log({count});
         const columns = [
             {
                 title: '项目/月',

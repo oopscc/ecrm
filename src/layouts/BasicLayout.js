@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Layout, Icon, message, Modal, Button, Card } from 'antd';
+import { Layout, Icon, message, Modal, Button, Card, Form, Input } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { Route, Redirect, Switch, routerRedux } from 'dva/router';
@@ -15,7 +15,7 @@ import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
-
+import md5 from 'md5';
 const { Content } = Layout;
 const { AuthorizedRoute } = Authorized;
 
@@ -64,6 +64,7 @@ enquireScreen((b) => {
     isMobile = b;
 });
 
+@Form.create()
 class BasicLayout extends React.PureComponent {
     static childContextTypes = {
         location: PropTypes.object,
@@ -71,7 +72,8 @@ class BasicLayout extends React.PureComponent {
     }
     state = {
         isMobile,
-        callVisible: false
+        callVisible: false,
+        reset: false
     };
     getChildContext() {
         const { location, routerData } = this.props;
@@ -161,7 +163,6 @@ class BasicLayout extends React.PureComponent {
         // 系统挂断电话
         // TODO,系统拿到录音，上传
         window.call = (to) => {
-            console.log(phone);
             if (window.url_StartDial(0, to) <= 0) {
                 console.log("拨号错误");
             }
@@ -285,6 +286,13 @@ class BasicLayout extends React.PureComponent {
                 type: 'login/logout',
             });
         }
+        if (key === 'reset') {
+            this.setState({
+                reset: true
+            })
+            return;
+        }
+
     }
     handleNoticeVisibleChange = (visible) => {
         if (visible) {
@@ -293,17 +301,67 @@ class BasicLayout extends React.PureComponent {
             // });
         }
     }
+    handleReset = () => {
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                console.log('password: ', values, this.props);
+                this.props.dispatch({
+                    type: 'user/changePassword',
+                    payload: {
+                        ...values,
+                        oldPassword: md5(values.oldPassword),
+                        newPassword: md5(values.newPassword)
+                    },
+                    callback:(res) => {
+                        if (res && !res.result) {
+                            this.setState({
+                                reset: false
+                            })
+                        }
+                    }
+                })
+            }
+        });
+    }
+    onCancelReset = () => {
+        this.setState({
+            reset: false
+        })
+    }
     render() {
         const {
-            currentUser, collapsed, fetchingNotices, notices, routerData, match, location,
+            currentUser, collapsed, fetchingNotices, notices, routerData, match, location, form
         } = this.props;
         console.log(this.props);
+        const { getFieldDecorator } = this.props.form;
         const {
             name,
             phone,
-            callVisible
+            callVisible,
+            reset
         } = this.state;
         const bashRedirect = this.getBashRedirect();
+        const FormItem = Form.Item;
+        const formItemLayout = {
+            labelCol: {
+                span: 5,
+            },
+            wrapperCol: {
+                span: 19,
+            },
+        };
+        const submitFormLayout = {
+            wrapperCol: {
+                xs: {
+                    span: 24,
+                    offset: 0
+                },
+                sm: {
+                    span: 18,
+                    offset: 6
+                },
+            },
+        };
         const layout = (
             <Layout>
                 <SiderMenu
@@ -349,6 +407,50 @@ class BasicLayout extends React.PureComponent {
                                 </Button>
                             </div>
                         </div>
+
+                    </Modal>
+                    <Modal
+                        visible={reset}
+                        closable={false}
+                        footer={null}
+                        width={360}
+                    >
+                        <Form onSubmit={this.handleReset} className="login-form">
+                            <FormItem
+                                {...formItemLayout}
+                                label='旧密码'
+                            >
+                                {getFieldDecorator('oldPassword', {
+                                    rules: [{
+                                        required: true, message: '请输入旧密码',
+                                    }],
+                                })(
+                                    <Input type="password" placeholder="旧密码" />
+                                )}
+                            </FormItem>
+
+                            <FormItem
+                                {...formItemLayout}
+                                label="新密码"
+                            >
+                                {getFieldDecorator('newPassword', {
+                                    rules: [{
+                                        required: true, message: '请输入新密码',
+                                    }],
+                                })(
+                                    <Input type="password" placeholder="新密码" />
+                                )}
+                            </FormItem>
+
+                            <FormItem {...submitFormLayout}>
+                                <Button type="primary" htmlType="submit">
+                                    提交
+                                </Button>
+                                <Button onClick={this.onCancelReset} style={{marginLeft: 16}}>
+                                    取消
+                                </Button>
+                            </FormItem>
+                        </Form>
 
                     </Modal>
                     <Content style={{ margin: '24px 24px 0', height: '100%' }}>

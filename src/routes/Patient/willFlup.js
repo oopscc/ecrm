@@ -89,7 +89,6 @@ export default class TableList extends PureComponent {
                 beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
                 endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD') : '',
             };
-            console.log(values)
             this.setState({
                 formValues: values,
             });
@@ -316,7 +315,7 @@ export default class TableList extends PureComponent {
                 title: '主治医师',
                 dataIndex: 'treatmentDoctor',
                 key: 'treatmentDoctor',
-                width: 80
+                width: 80,
             }, {
                 title: '随访阶段',
                 dataIndex: 'callStageStr',

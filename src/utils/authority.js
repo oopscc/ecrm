@@ -14,4 +14,11 @@ export function getUserName() {
 export function setUserName(username) {
     return localStorage.setItem('antd-pro-username', username);
 }
+export function getUserId() {
+    return localStorage.getItem('antd-pro-id') || '';
+}
+
+export function setUserId(id) {
+    return localStorage.setItem('antd-pro-id', id);
+}
 

@@ -6,10 +6,11 @@ import {
     fetchUsers,
     editUserLock,
     resetPassword,
+    changePassword,
     updateRole,
     activateUser
 } from '../services/user';
-import { getAuthority, getUserName } from '../utils/authority';
+import { getAuthority, getUserName, getUserId } from '../utils/authority';
 
 export default {
     namespace: 'user',
@@ -34,9 +35,10 @@ export default {
         *fetchCurrent(_, { call, put }) {
             // const response = yield call(queryCurrent);
             const username = getUserName();
+            const id = getUserId();
             yield put({
                 type: 'saveCurrentUser',
-                payload: {username},
+                payload: {username, id},
             });
         },
         *getUser({ payload, callback }, { call, put }) {
@@ -69,6 +71,10 @@ export default {
         },
         *resetPassword({ payload, callback }, { call, put }) {
             const response = yield call(resetPassword, payload);
+            callback && callback(response);
+        },
+        *changePassword({ payload, callback }, { call, put }) {
+            const response = yield call(changePassword, payload);
             callback && callback(response);
         },
         *updateRole({ payload, callback }, { call, put }) {

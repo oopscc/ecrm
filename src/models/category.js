@@ -315,7 +315,6 @@ export default {
 			};
         },
         saveRoles(state, { payload }) {
-            console.log(payload)
 			return {
 				...state,
 				Roles: payload

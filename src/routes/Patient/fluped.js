@@ -90,7 +90,6 @@ export default class TableList extends PureComponent {
                 beginTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[0].format('YYYY-MM-DD') : '',
                 endTime: fieldsValue.diagnoseTime ? fieldsValue.diagnoseTime[1].format('YYYY-MM-DD') : '',
             };
-            console.log(values)
             this.setState({
                 formValues: values,
             });

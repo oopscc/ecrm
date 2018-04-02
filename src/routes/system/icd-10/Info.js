@@ -72,7 +72,6 @@ export default class BasicForms extends PureComponent {
         const { submitting, form } = this.props;
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const { icd } = this.state;
-        console.log(icd)
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },

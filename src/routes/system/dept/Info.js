@@ -27,11 +27,9 @@ export default class BasicForms extends PureComponent {
     const { dispatch, location } = this.props;
     let self = this;
     let userId = qs.parse(location.search).userId;
-    console.log(userId);
     if (!userId) {
       return
     }
-    console.log(2)
     dispatch({
       type: 'user/getUser',
       payload: {
@@ -165,7 +163,7 @@ export default class BasicForms extends PureComponent {
                 <Input style={{ width: '100%' }} />
               )}
             </FormItem>
-            
+
             <FormItem {...formItemLayout}
               label="科室名称">
               {getFieldDecorator('deptId', {
@@ -243,7 +241,7 @@ export default class BasicForms extends PureComponent {
               )}
             </FormItem>
 
-            
+
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>
                 提交

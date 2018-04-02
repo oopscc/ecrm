@@ -115,7 +115,6 @@ class Quest extends PureComponent {
                 delete values.titles;
                 delete values.name;
                 delete values.desc;
-                console.log('Received values of form: ', values);
                 if(this.state.id) {
                     dispatch({
                         type: 'quest/edit',

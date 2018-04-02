@@ -33,6 +33,9 @@ export async function editUserLock(params) {
 export async function resetPassword(params) {
     return req('/hospitalCRM/user/resetPassword.do', params);
 }
+export async function changePassword(params) {
+    return req('/hospitalCRM/user/changePassword.do', params);
+}
 export async function updateRole(params) {
     return req('/hospitalCRM/user/authRole.do', params);
 }

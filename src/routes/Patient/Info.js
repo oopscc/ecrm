@@ -100,7 +100,7 @@ export default class BasicForms extends PureComponent {
             },
         };
         return (
-            <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="收录患者信息，用于建立患者数据库。">
+            <PageHeaderLayout props={this.props} needBack={true} title={!patient ? '新增患者' : '修改患者信息'} content="收录患者信息，用于建立患者数据库。">
                 <Button onClick={this.goBack.bind(this)} />
                 <Card bordered={false}>
                     <Form
