@@ -211,7 +211,7 @@ export const getRouterData = (app) => {
             component: dynamicWrapper(app, ['callRecord'], () => import('../routes/Patient/todayFluped')),
         },
         '/task/list': {
-            component: dynamicWrapper(app, ['task'], () => import('../routes/task/list')),
+            component: dynamicWrapper(app, ['task', 'user'], () => import('../routes/task/list')),
         },
         '/task/creat': {
             component: dynamicWrapper(app, ['task'], () => import('../routes/task/creat')),

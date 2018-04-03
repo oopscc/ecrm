@@ -18,10 +18,11 @@ const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 const { Option } = Select;
 
-@connect(({ task, loading, category }) => ({
+@connect(({ task, loading, category, user }) => ({
     task,
     loading: loading.models.task,
-    category
+    category,
+    user
 }))
 @Form.create()
 export default class TableList extends PureComponent {
@@ -128,7 +129,7 @@ export default class TableList extends PureComponent {
     }
 
     render() {
-        const { task: { tasks: data }, loading, category } = this.props;
+        const { task: { tasks: data }, loading, category, user } = this.props;
         const columns = [
             {
                 title: '序号',
@@ -166,14 +167,16 @@ export default class TableList extends PureComponent {
                     return <Badge status={task.status} text={task.name} />;
                 },
                 align: 'left',
-            }, {
-                title: '操作',
-                key: 'operation',
-                width: 100,
-                render: (text, record) => <Link to={`/task/detail?taskId=${record.taskId}`}>{'查看详情'}</Link>
-
             }];
-
+        const operation = {
+            title: '操作',
+            key: 'operation',
+            width: 100,
+            render: (text, record) => <Link to={`/task/detail?taskId=${record.taskId}`}>{'查看详情'}</Link>
+        };
+        if (data.callUserId == user.currentUser.id) {
+            columns.push(operation);
+        }
         return (
             <PageHeaderLayout title="随访任务">
                 <Card bordered={false} style={{ marginBottom: 16 }}>

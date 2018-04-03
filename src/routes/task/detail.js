@@ -265,10 +265,10 @@ export default class TableList extends PureComponent {
                     </DescriptionList>
                     <Divider style={{ marginBottom: 32 }} />
                     <DescriptionList size="large" title="任务统计" style={{ marginBottom: 32 }}>
-                        <Description className={styles.description} term="未开始">
+                        <Description className={styles.description} term="已完成">
                             {numeral(taskInfo.completedNum).format('0,0')}
                         </Description>
-                        <Description className={styles.description} term="进行中">
+                        <Description className={styles.description} term="未完成">
                             {numeral(taskInfo.undoneNum).format('0,0')}
                         </Description>
                     </DescriptionList>
