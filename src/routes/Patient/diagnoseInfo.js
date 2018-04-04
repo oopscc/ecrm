@@ -92,7 +92,7 @@ export default class BasicForms extends PureComponent {
             },
         };
         return (
-            <PageHeaderLayout title={!patient ? '新增患者' : '修改患者信息'} content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
+            <PageHeaderLayout needBack={true} title={!patient ? '新增患者' : '修改患者信息'} content="表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。">
                 <Card bordered={false}>
                     <Form
                         onSubmit={this.handleSubmit}

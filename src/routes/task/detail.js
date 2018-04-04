@@ -103,7 +103,7 @@ export default class TableList extends PureComponent {
     }
 
     renderSimpleForm() {
-        const {category, form} = this.props;
+        const { category, form } = this.props;
         const { getFieldDecorator } = form;
         return (
             <Form onSubmit={this.handleSearch} layout="inline">
@@ -247,7 +247,7 @@ export default class TableList extends PureComponent {
         }
 
         return (
-            <PageHeaderLayout title={`${taskInfo.taskName}任务详情`}>
+            <PageHeaderLayout needBack={true} title={`${taskInfo.taskName}任务详情`}>
                 <Card bordered={false} style={{ marginBottom: 16 }}>
                     <DescriptionList size="large" title="任务信息" style={{ marginBottom: 32 }}>
                         <Description className={styles.description} term="随访任务">

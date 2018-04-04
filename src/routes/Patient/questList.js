@@ -70,7 +70,7 @@ export default class TableList extends PureComponent {
                 render: (text, record) => <Link to={`/system/tpl/wj?id=${record.id}`}>{'查看'}</Link>
             }]
         return (
-            <PageHeaderLayout title={`${name}的历史调查问卷`}>
+            <PageHeaderLayout needBack={true} title={`${name}的历史调查问卷`}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <StandardTable

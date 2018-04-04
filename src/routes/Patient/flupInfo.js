@@ -125,7 +125,7 @@ export default class BasicForms extends PureComponent {
         callMode
         callPerson*/
         return (
-            <PageHeaderLayout title={!patient ? '新增随访信息' : '修改随访信息'}
+            <PageHeaderLayout needBack={true} title={!patient ? '新增随访信息' : '修改随访信息'}
                 content={`病案号：  ${patientCode}   姓名： ${name}`}>
                 <Card bordered={false}>
                     <Form
@@ -165,7 +165,7 @@ export default class BasicForms extends PureComponent {
 
                                 <C_Select data={category.callRes}
                                     placeholder="请选择随访结果"
-                                    style={{margin: '8px 0'}}
+                                    style={{ margin: '8px 0' }}
                                 />
                             )}
                         </FormItem>
@@ -177,7 +177,7 @@ export default class BasicForms extends PureComponent {
                             })(
                                 <C_Select data={category.flupType}
                                     placeholder="请选择随访方式"
-                                    style={{margin: '8px 0'}}
+                                    style={{ margin: '8px 0' }}
                                 />
                             )}
                         </FormItem>
@@ -191,7 +191,7 @@ export default class BasicForms extends PureComponent {
                             })(
                                 <C_Select data={category.Users}
                                     placeholder="请选择随访人员"
-                                    style={{margin: '8px 0'}}
+                                    style={{ margin: '8px 0' }}
                                 />
                             )}
                         </FormItem>

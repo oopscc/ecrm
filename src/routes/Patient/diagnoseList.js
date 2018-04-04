@@ -168,12 +168,12 @@ export default class TableList extends PureComponent {
         const { patientCode, name } = this.state;
 
         return (
-            <PageHeaderLayout title="住院信息管理">
+            <PageHeaderLayout needBack={true} title="住院信息管理">
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <Alert message={`患者病案号：${patientCode} 患者姓名：${name}`} type="info" />
                         <Button
-                            style={{marginTop: 10}}
+                            style={{ marginTop: 10 }}
                             icon="plus" type="primary" href={"/#/patient/diagnoseInfo" + location.search}>
                             添加信息
                         </Button>
