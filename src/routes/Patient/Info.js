@@ -262,16 +262,16 @@ export default class BasicForms extends PureComponent {
                         >
                             <div>
                                 {getFieldDecorator('canCall', patient && {
-                                    initialValue: patient.canCall+'',
+                                    initialValue: patient.canCall + '',
                                     rules: [{ required: true, message: '请选择是否可以随访' }],
                                 } || {
-                                    rules: [{ required: true, message: '请选择是否可以随访' }]
-                                })(
-                                    <Radio.Group>
-                                        <Radio value="0">不可以</Radio>
-                                        <Radio value="1">可以</Radio>
-                                    </Radio.Group>
-                                )}
+                                        rules: [{ required: true, message: '请选择是否可以随访' }]
+                                    })(
+                                        <Radio.Group>
+                                            <Radio value="0">不可以</Radio>
+                                            <Radio value="1">可以</Radio>
+                                        </Radio.Group>
+                                    )}
                             </div>
                         </FormItem>
                         <FormItem {...formItemLayout}
