@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { routerRedux } from 'dva/router';
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import Call from '../../utils/call';
 import DescriptionList from '../../components/DescriptionList';
 import C_Select from '../../components/c_select';
 import styles from './call.less';
@@ -73,22 +74,29 @@ export default class BasicProfile extends Component {
             }
         });
     }
-
+    // 打电话
     call() {
         const { localFlag, mobile } = this.state;
         let phone = localFlag ? mobile : `0${mobile}`;
-        window.call(phone);
+        // window.call(phone);
+        Call.call(phone);
     }
-
+    // 异地拨打
     callOrigin() {
         const { localFlag, mobile } = this.state;
         let phone = `0${mobile}`;
-        window.call(phone);
+        // window.call(phone);
+        Call.call(phone);
     }
+    // 挂断
+    hang() {
+        Call.hang();
+    }
+
     submitWj = id => {
         this.props.dispatch({
             type: 'sms/sendWJSms',
-            payload: { wjId: id, callIdArray: [this.state.id]},
+            payload: { wjId: id, callIdArray: [this.state.id] },
             callback: (res) => {
                 if (res && !res.result) {
                     let wjId = {};
@@ -365,6 +373,9 @@ export default class BasicProfile extends Component {
                                     </Button>
                                     <Button type="primary" icon="phone" onClick={this.callOrigin.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
                                         异地拨打
+                                    </Button>
+                                    <Button type="primary" icon="phone" onClick={this.hang.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
+                                        挂断
                                     </Button>
                                 </span>
                             }

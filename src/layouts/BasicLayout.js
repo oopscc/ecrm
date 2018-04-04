@@ -13,6 +13,8 @@ import SiderMenu from '../components/SiderMenu';
 import NotFound from '../routes/Exception/404';
 import { getRoutes } from '../utils/utils';
 import Authorized from '../utils/Authorized';
+import Call from '../utils/call';
+
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.svg';
 import md5 from 'md5';
@@ -73,7 +75,8 @@ class BasicLayout extends React.PureComponent {
     state = {
         isMobile,
         callVisible: false,
-        reset: false
+        reset: false,
+        callInit: false
     };
     getChildContext() {
         const { location, routerData } = this.props;
@@ -157,69 +160,65 @@ class BasicLayout extends React.PureComponent {
             type: 'category/fetchRoles',
         });
 
-
+        if (!this.state.callInit) {
+            Call.init();
+            this.setState({
+                callInit: true
+            })
+        }
         // 系统拨打电话
         // 系统接听电话
         // 系统挂断电话
         // TODO,系统拿到录音，上传
-        window.call = (to) => {
-            if (window.url_StartDial(0, to) <= 0) {
-                console.log("拨号错误");
-            }
-            else {
-                console.log("拨号:" + to);
-            }
-        }
-        window.answer = (phone) => {
-            console.log("answer" + phone);
-            if (url_DoAnswer(0) < 0) {
-                console.log("usb设备应答错误");
-            }
-            else {
-                console.log("usb设备应答");
-            }
-        }
-        window.hangup = () => {
-            console.log('hangup!!!')
-            if (url_DoHang(0) < 0) {
-                console.log("挂机错误");
-            }
-            else {
-                console.log("挂机");
-            }
-        }
+        // window.call = (to) => {
+        //     if (url_StartDial(0, to) <= 0) {
+        //         console.log("拨号错误");
+        //     }
+        //     else {
+        //         console.log("拨号:" + to);
+        //     }
+        // }
+        // window.answer = (phone) => {
+        //     console.log("answer" + phone);
+        //     if (url_DoAnswer(0) < 0) {
+        //         console.log("usb设备应答错误");
+        //     }
+        //     else {
+        //         console.log("usb设备应答");
+        //     }
+        // }
+        // window.hangup = () => {
+        //     console.log('hangup!!!')
+        //     if (url_DoHang(0) < 0) {
+        //         console.log("挂机错误");
+        //     }
+        //     else {
+        //         console.log("挂机");
+        //     }
+        // }
         // call-event
-        window.event_callin = (tagaccount, eventObj) => {
-            switch (eventObj.result) {
-                case 102:
-                    {
-                        url_SetCaller(0, url_GetJsonCaller(eventObj));
-                    } break;
-                case 104:
-                    {
-                        // 弹屏
-                        this.props.dispatch({
-                            type: 'callRecord/getCallDataByPhone',
-                            payload: { phone },
-                            callback: data => {
-                                if (data.result == 1000) {
-                                    this.setState({
-                                        name: '未知号码',
-                                        phone,
-                                        callVisible: true
-                                    })
-                                } else {
-                                    this.setState({
-                                        ...data.data,
-                                        phone,
-                                        callVisible: true
-                                    })
-                                }
+        window.event_call_in = (phone) => {
+            // 弹屏
+            this.props.dispatch({
+                type: 'callRecord/getCallDataByPhone',
+                payload: { phone },
+                callback: data => {
+                    if (data.result == 1000) {
+                        this.setState({
+                            name: '未知号码',
+                            phone,
+                            callVisible: true
+                        })
+                    } else {
+                        this.setState({
+                            ...data.data,
+                            phone,
+                            callVisible: true
+                        })
+                    }
 
-                            }
-                        });
-                    } break;
-            }
+                }
+            });
         }
     }
     answer() {
@@ -227,7 +226,8 @@ class BasicLayout extends React.PureComponent {
             callVisible: false
         });
         const { patientCode, phone, name } = this.state;
-        window.answer(phone);
+        // window.answer(phone);
+        Call.answer(phone);
         if (name == '未知号码') return false;
         location.hash = `#/task/call?patientCode=${patientCode}`;
 
@@ -312,7 +312,7 @@ class BasicLayout extends React.PureComponent {
                         oldPassword: md5(values.oldPassword),
                         newPassword: md5(values.newPassword)
                     },
-                    callback:(res) => {
+                    callback: (res) => {
                         if (res && !res.result) {
                             this.setState({
                                 reset: false
@@ -446,7 +446,7 @@ class BasicLayout extends React.PureComponent {
                                 <Button type="primary" htmlType="submit">
                                     提交
                                 </Button>
-                                <Button onClick={this.onCancelReset} style={{marginLeft: 16}}>
+                                <Button onClick={this.onCancelReset} style={{ marginLeft: 16 }}>
                                     取消
                                 </Button>
                             </FormItem>
