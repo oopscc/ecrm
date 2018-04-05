@@ -110,7 +110,7 @@ export default class TableList extends PureComponent {
         const { patient: { flup: data }, loading } = this.props;
         const { patientCode, name } = this.state;
         return (
-            <PageHeaderLayout title={`${name}的历史随访纪录`}>
+            <PageHeaderLayout needBack={true} title={`${name}的历史随访纪录`}>
                 <Card bordered={false}>
                     <div className={styles.tableList}>
                         <div className={styles.tableListOperator}>

@@ -254,10 +254,12 @@ function event_callin(tagaccount, eventObj) {
         case 120:
             {
                 AppendStatus("[" + tagaccount.m_from + "]来电对方挂机/忙音:" + eventObj.from);
+                T_DoHang();
             } break;
         case 121:
             {
                 AppendStatus("[" + tagaccount.m_from + "]来电结束:" + eventObj.from);
+                T_DoHang();
             } break;
         default: break;
     }
@@ -446,7 +448,10 @@ function call_init() {
 }
 export default {
     init: call_init,
-    call: T_StartDial,
+    call: function(){
+        T_DoHang();
+        setTimeout(T_StartDial,1000);
+    },
     answer: T_DoAnswer,
     hangup: T_DoHang
 }

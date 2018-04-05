@@ -198,12 +198,13 @@ class BasicLayout extends React.PureComponent {
         // }
         // call-event
         window.event_call_in = (phone) => {
+            phone = +phone;
             // 弹屏
             this.props.dispatch({
                 type: 'callRecord/getCallDataByPhone',
                 payload: { phone },
                 callback: data => {
-                    if (data.result == 1000) {
+                    if (!data.data) {
                         this.setState({
                             name: '未知号码',
                             phone,
@@ -233,10 +234,10 @@ class BasicLayout extends React.PureComponent {
 
     }
     hangup(phone) {
+        Call.hangup();
         this.setState({
             callVisible: false
         });
-        window.hangup(phone);
     }
     getPageTitle() {
         const { routerData, location } = this.props;

@@ -39,7 +39,7 @@ export default class BasicProfile extends Component {
                     })
                 }
             });
-        } else {
+        } else if (patientCode) {
             this.setState({ patientCode, id });
             dispatch({
                 type: 'callRecord/getCallData',
@@ -79,6 +79,7 @@ export default class BasicProfile extends Component {
         const { localFlag, mobile } = this.state;
         let phone = localFlag ? mobile : `0${mobile}`;
         // window.call(phone);
+        Call.hangup();
         Call.call(phone);
     }
     // 异地拨打
@@ -86,11 +87,12 @@ export default class BasicProfile extends Component {
         const { localFlag, mobile } = this.state;
         let phone = `0${mobile}`;
         // window.call(phone);
+        Call.hangup();
         Call.call(phone);
     }
     // 挂断
-    hang() {
-        Call.hang();
+    hangup() {
+        Call.hangup();
     }
 
     submitWj = id => {
@@ -256,7 +258,7 @@ export default class BasicProfile extends Component {
         const submitFormLayout = {
             wrapperCol: {
                 xs: { span: 24, offset: 0 },
-                sm: { span: 10, offset: 7 },
+                sm: { span: 18, offset: 6 },
             },
         };
         /*
@@ -368,13 +370,13 @@ export default class BasicProfile extends Component {
                         <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
                             {!this.state.phone &&
                                 <span>
-                                    <Button type="primary" icon="phone" onClick={this.call.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
+                                    <Button type="primary" icon="phone" onClick={this.call.bind(this)} loading={false} style={{ marginRight: 32 }}>
                                         拨打电话
                                     </Button>
-                                    <Button type="primary" icon="phone" onClick={this.callOrigin.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
+                                    <Button type="primary" icon="phone" onClick={this.callOrigin.bind(this)} loading={false} style={{ marginRight: 32 }}>
                                         异地拨打
                                     </Button>
-                                    <Button type="primary" icon="phone" onClick={this.hang.bind(this)} loading={submitting} style={{ marginRight: 32 }}>
+                                    <Button type="primary" icon="phone" onClick={this.hangup.bind(this)} loading={false} style={{ marginRight: 32 }}>
                                         挂断
                                     </Button>
                                 </span>

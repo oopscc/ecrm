@@ -27,7 +27,7 @@ export default class StepForm extends PureComponent {
     render() {
         const { loading, match, routerData, location } = this.props;
         return (
-            <PageHeaderLayout title="添加患者住院信息" content="分步填写患者的住院信息，诊断信息，手术信息。">
+            <PageHeaderLayout needBack={true} title="添加患者住院信息" content="分步填写患者的住院信息，诊断信息，手术信息。">
                 <Card bordered={false}>
                     <div>
                         <Steps current={this.getCurrentStep()} className={styles.steps}>
