@@ -21,7 +21,9 @@ import {
     deleteSMSTpl,
     getSMSTpl,
     getSmsSign,
-    setSmsSign
+    setSmsSign,
+    saveHospital,
+    getHospital
 } from '../services/user';
 import {
     message
@@ -217,6 +219,15 @@ export default {
         *setSmsSign({ payload, callback }, { call, put }) {
             const response = yield call(setSmsSign, payload);
             if (callback) callback(response);
+        },
+        /*==============system hosptial=================*/
+        *saveHospital({ payload,callback }, { call, put }) {
+            const response = yield call(saveHospital, payload);
+            callback && callback(response);
+        },
+        *getHospital({ payload, callback }, { call, put }) {
+            const response = yield call(getHospital, payload);
+            callback && callback(response);
         },
     },
 

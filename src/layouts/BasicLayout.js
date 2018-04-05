@@ -97,67 +97,8 @@ class BasicLayout extends React.PureComponent {
         /**
          * 试试刷新的category, 需要场景自己发送请求，不能aop
          */
-        /*
-        // 问卷模版
         this.props.dispatch({
-            type: 'category/fetchWJTpls',
-        });
-        // 短信模版
-        this.props.dispatch({
-            type: 'category/fetchSMSTpls',
-        });
-
-        */
-
-        //人员
-        this.props.dispatch({
-            type: 'category/fetchUsers',
-        });
-        // 科室
-        this.props.dispatch({
-            type: 'category/fetchDepts',
-        });
-
-
-        // 病种
-        this.props.dispatch({
-            type: 'category/fetchDiseases',
-        });
-        //患者状态
-        this.props.dispatch({
-            type: 'category/fetchPStates',
-        });
-        //付费方式
-        this.props.dispatch({
-            type: 'category/fetchPays',
-        });
-        //麻醉方式
-        this.props.dispatch({
-            type: 'category/fetchAnesthesias',
-        });
-        //治疗方式
-        this.props.dispatch({
-            type: 'category/fetchCures',
-        });
-        //随访结果
-        this.props.dispatch({
-            type: 'category/fetchCallRes',
-        });
-        //医生
-        this.props.dispatch({
-            type: 'category/fetchDoctors',
-        });
-        //医院职务
-        this.props.dispatch({
-            type: 'category/fetchDuties',
-        });
-        //医生职称
-        this.props.dispatch({
-            type: 'category/fetchJobs',
-        });
-        //角色
-        this.props.dispatch({
-            type: 'category/fetchRoles',
+            type: 'category/fetchCategory',
         });
 
         if (!this.state.callInit) {
@@ -166,36 +107,7 @@ class BasicLayout extends React.PureComponent {
                 callInit: true
             })
         }
-        // 系统拨打电话
-        // 系统接听电话
-        // 系统挂断电话
-        // TODO,系统拿到录音，上传
-        // window.call = (to) => {
-        //     if (url_StartDial(0, to) <= 0) {
-        //         console.log("拨号错误");
-        //     }
-        //     else {
-        //         console.log("拨号:" + to);
-        //     }
-        // }
-        // window.answer = (phone) => {
-        //     console.log("answer" + phone);
-        //     if (url_DoAnswer(0) < 0) {
-        //         console.log("usb设备应答错误");
-        //     }
-        //     else {
-        //         console.log("usb设备应答");
-        //     }
-        // }
-        // window.hangup = () => {
-        //     console.log('hangup!!!')
-        //     if (url_DoHang(0) < 0) {
-        //         console.log("挂机错误");
-        //     }
-        //     else {
-        //         console.log("挂机");
-        //     }
-        // }
+
         // call-event
         window.event_call_in = (phone) => {
             phone = +phone;
@@ -242,9 +154,9 @@ class BasicLayout extends React.PureComponent {
     getPageTitle() {
         const { routerData, location } = this.props;
         const { pathname } = location;
-        let title = 'Ant Design Pro';
+        let title = '随访系统';
         if (routerData[pathname] && routerData[pathname].name) {
-            title = `${routerData[pathname].name} - Ant Design Pro`;
+            title = `${routerData[pathname].name} - 随访系统`;
         }
         return title;
     }
@@ -261,7 +173,6 @@ class BasicLayout extends React.PureComponent {
         } else {
             return '/index';
         }
-        console.log(redirect)
         return redirect;
     }
     handleMenuCollapse = (collapsed) => {
@@ -305,7 +216,6 @@ class BasicLayout extends React.PureComponent {
     handleReset = () => {
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('password: ', values, this.props);
                 this.props.dispatch({
                     type: 'user/changePassword',
                     payload: {
@@ -517,9 +427,10 @@ class BasicLayout extends React.PureComponent {
     }
 }
 
-export default connect(({ user, global, loading }) => ({
+export default connect(({ user, global, loading, category }) => ({
     currentUser: user.currentUser,
     collapsed: global.collapsed,
     fetchingNotices: loading.effects['global/fetchNotices'],
     notices: global.notices,
+    category
 }))(BasicLayout);

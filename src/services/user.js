@@ -116,3 +116,12 @@ export async function getSmsSign(params) {
 export async function setSmsSign(params) {
     return req('/hospitalCRM/smsMessage/setSmsSign.do', params);
 }
+
+
+/*==============system hosptial=================*/
+export async function saveHospital(params) {
+    return req('/hospitalCRM/hospitalInfo/saveHospitalInfo.do', params);
+}
+export async function getHospital(params) {
+    return req('/hospitalCRM/hospitalInfo/getHospitalInfo.do', params);
+}

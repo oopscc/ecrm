@@ -277,6 +277,9 @@ export const getRouterData = (app) => {
         '/system/tpl/wj': {
             component: dynamicWrapper(app, ['quest'], () => import('../routes/quest/WJ')),
         },
+        '/system/hosptial': {
+            component: dynamicWrapper(app, ['system'], () => import('../routes/system/hospital/Info')),
+        },
 
     };
     // Get name from ./menu.js or just set it in the router data.

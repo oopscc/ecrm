@@ -7,6 +7,7 @@ import {
     Form, Input, DatePicker, Select, Button, Card, InputNumber, Radio, Icon, Tooltip,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import C_Select from '../../components/c_select';
 import styles from './info.less';
 
 const FormItem = Form.Item;
@@ -18,8 +19,9 @@ const { TextArea } = Input;
 // 分布式demo
 // 自定义增加item
 // 分布式数据结构， 1，基本信息 2，诊断信息 3，手术信息
-@connect(({ loading }) => ({
+@connect(({ loading, category }) => ({
     submitting: loading.effects['patient/add'],
+    category
 }))
 @Form.create()
 export default class BasicForms extends PureComponent {
@@ -75,7 +77,7 @@ export default class BasicForms extends PureComponent {
         this.props.form.resetFields();
     }
     render() {
-        const { submitting, form } = this.props;
+        const { submitting, form, category } = this.props;
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const { patient } = this.state;
         const formItemLayout = {
@@ -277,20 +279,10 @@ export default class BasicForms extends PureComponent {
                         <FormItem {...formItemLayout}
                             label="生存状态">
                             {getFieldDecorator('patientState', {
-                                initialValue: patient ? patient.patientState.toString() : '',
+                                initialValue: patient ? patient.patientState : '',
                                 rules: [{ required: true, message: '请选择生存状态' }],
                             })(
-                                <Select
-                                    mode="radio"
-                                    placeholder="请选择生存状态"
-                                    style={{
-                                        margin: '8px 0'
-                                    }}
-                                >
-                                    <Option value="0">死亡</Option>
-                                    <Option value="1">生存</Option>
-                                    <Option value="2">毁灭</Option>
-                                </Select>
+                                <C_Select placeholder="请选择生存状态" data={category.PStates} style={{  margin: '8px 0' }}/>
                             )}
                         </FormItem>
                         <FormItem

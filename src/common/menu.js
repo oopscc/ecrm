@@ -175,6 +175,9 @@ const menuData = [{
     icon: 'profile',
     path: 'system',
     children: [{
+        name: '医院信息',
+        path: 'hosptial',
+    }, {
         name: '随访人员管理',
         path: 'user',
         children: [{

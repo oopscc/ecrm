@@ -31,6 +31,7 @@ class Step1 extends React.PureComponent {
     }
     render() {
         const { patient, dispatch, data, form, category } = this.props;
+        console.log(category, 13)
         const { getFieldDecorator, validateFields } = form;
         const onValidateForm = () => {
             validateFields((err, values) => {
@@ -38,11 +39,6 @@ class Step1 extends React.PureComponent {
                     ...values,
                     beginTime: values.diagnoseTimeStr ? values.diagnoseTimeStr[0].format('YYYY-MM-DD') : '',
                     endTime: values.diagnoseTimeStr ? values.diagnoseTimeStr[1].format('YYYY-MM-DD') : '',
-                    /*admissionStartTimeStr: values.admissionTimeStr ? values.admissionTimeStr[0].format('YYYY-MM-DD'): '',
-                    admissionEndTimeStr: values.admissionTimeStr ? values.admissionTimeStr[1].format('YYYY-MM-DD'): '',
-                    outStartTimeStr: values.diagnoseTimeStr ? values.outTimeStr[0].format('YYYY-MM-DD') : '',
-                    outEndTimeStr: values.diagnoseTimeStr ? values.outTimeStr[1].format('YYYY-MM-DD') : '',
-                    taskStartTimeStr: values.taskStartTimeStr ? values.taskStartTimeStr.format('YYYY-MM-DD') : '',*/
                 };
                 if (!err) {
                     dispatch({
@@ -56,115 +52,6 @@ class Step1 extends React.PureComponent {
             });
         };
 
-        /*
-          <FormItem
-            {...formItemLayout}
-            label='病案号'
-          >
-            {getFieldDecorator('patientCode', {
-
-            })(
-              <TextArea placeholder="可输入多个病案号批量查询，使用，隔开"/>
-            )}
-          </FormItem>
-          <FormItem
-                      {...formItemLayout}
-                      label="性别"
-                    >
-                      <div>
-                        {getFieldDecorator('sex', {
-
-                        })(
-                          <Radio.Group>
-                            <Radio value="0">女</Radio>
-                            <Radio value="1">男</Radio>
-                          </Radio.Group>
-                        )}
-                      </div>
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="病种"
-                    >
-                      {getFieldDecorator('diseaseName', {
-
-                      })(
-                        <Input placeholder="病种"/>
-                      )}
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="年龄"
-                    >
-                      {getFieldDecorator('age', {
-
-                      })(
-                        <Input placeholder="年龄"/>
-                      )}
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="原发性诊断名称"
-                    >
-                      {getFieldDecorator('diagnoseName', {
-                        rules: [{
-                        }],
-                      })(
-                        <Input placeholder="diagnoseName" />
-                      )}
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="诊断时间"
-                    >
-                      {getFieldDecorator('diagnoseTimeStr', {
-
-                      })(
-                          <RangePicker />
-                      )}
-                    </FormItem>
-
-                    <FormItem
-                      {...formItemLayout}
-                      label="入院时间"
-                    >
-                      {getFieldDecorator('admissionTimeStr', {
-
-                      })(
-                          <RangePicker />
-                      )}
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="出院时间"
-                    >
-                      {getFieldDecorator('outTimeStr', {
-
-                      })(
-                          <RangePicker />
-                      )}
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="出院科别"
-                    >
-                      {getFieldDecorator('outDept', {
-
-                      })(
-                        <Input style={{ width: '100%' }} />
-                      )}
-                    </FormItem>
-                    <FormItem
-                      {...formItemLayout}
-                      label="随访任务起始日期"
-                    >
-                      {getFieldDecorator('taskStartTimeStr', {
-
-                      })(
-                          <DatePicker />
-                      )}
-                    </FormItem>
-         */
         return (
             <div>
                 <Card bordered={false}>
